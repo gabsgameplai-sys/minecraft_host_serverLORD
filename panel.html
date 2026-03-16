@@ -319,28 +319,29 @@ input[type="text"]{
       <h2>Servidor Minecraft</h2>
       <p>Nome: <strong>Meu Servidor</strong></p>
       <p>Versão: <strong>Paper 1.21.1</strong></p>
-      <div class="status">● Online</div>
+      <p>IP: <strong id="serverIP">localhost:25565</strong></p>
+      <div class="status" id="serverStatus">● Offline</div>
 
       <div class="server-actions">
-        <button class="btn" onclick="addConsoleLine('Servidor iniciando...')">Iniciar</button>
-        <button class="btn gray" onclick="addConsoleLine('Servidor parando...')">Parar</button>
-        <button class="btn" onclick="addConsoleLine('Servidor reiniciando...')">Reiniciar</button>
+        <button class="btn" onclick="startServer()">Iniciar</button>
+        <button class="btn gray" onclick="stopServer()">Parar</button>
+        <button class="btn" onclick="restartServer()">Reiniciar</button>
       </div>
     </section>
 
-    <section id="consoleSection" class="card">
+    <section id="consoleSection" class="card" style="display:none;">
       <h2>Console</h2>
 
       <textarea id="consoleArea" class="console" readonly>[INFO] Painel iniciado...
-[INFO] Servidor online.</textarea>
+[INFO] Aguardando backend...</textarea>
 
       <div class="console-input-row">
-        <input id="consoleCommand" class="console-input" type="text" placeholder="Digite um comando, ex: say oi">
+        <input id="consoleCommand" class="console-input" type="text" placeholder="Digite um comando, ex: say oi" onkeydown="handleConsoleEnter(event)">
         <button class="btn" onclick="sendCommand()">Enviar</button>
       </div>
     </section>
 
-    <section id="filesSection" class="card">
+    <section id="filesSection" class="card" style="display:none;">
       <div class="files-header">
         <div>
           <h2 style="margin:0;">Gerenciador de Arquivos</h2>
@@ -361,6 +362,14 @@ input[type="text"]{
             <div class="small-note">Escolha um arquivo do seu PC para abrir no editor.</div>
             <br>
             <input type="file" id="fileUpload" onchange="handleFileUpload(event)">
+          </div>
+
+          <div class="upload-box">
+            <strong>Upload de plugin (.jar)</strong>
+            <div class="small-note">Envia direto para a pasta plugins do servidor.</div>
+            <br>
+            <input type="file" id="pluginUpload" accept=".jar">
+            <button class="btn" style="margin-top:10px;" onclick="uploadPlugin()">Enviar plugin</button>
           </div>
 
           <div id="fileListContainer" style="margin-top:12px;"></div>
@@ -393,6 +402,7 @@ input[type="text"]{
 
 <script>
 const STORAGE_KEY = "myminehost_files_v1";
+const API_BASE = "http://localhost:3000/api";
 
 let files = loadFiles();
 let currentFile = "server.properties";
@@ -634,16 +644,172 @@ function handleFileUpload(event){
 
 function addConsoleLine(text){
   const area = document.getElementById("consoleArea");
-  area.value += "\n[INFO] " + text;
+  area.value += "\n" + text;
   area.scrollTop = area.scrollHeight;
 }
 
-function sendCommand(){
+async function startServer(){
+  try{
+    const res = await fetch(`${API_BASE}/start`, {
+      method: "POST"
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro ao iniciar.");
+      return;
+    }
+
+    fetchStatus();
+    fetchConsole();
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
+}
+
+async function stopServer(){
+  try{
+    const res = await fetch(`${API_BASE}/stop`, {
+      method: "POST"
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro ao parar.");
+      return;
+    }
+
+    fetchStatus();
+    fetchConsole();
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
+}
+
+async function restartServer(){
+  try{
+    const res = await fetch(`${API_BASE}/restart`, {
+      method: "POST"
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro ao reiniciar.");
+      return;
+    }
+
+    fetchStatus();
+    fetchConsole();
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
+}
+
+async function sendCommand(){
   const input = document.getElementById("consoleCommand");
   const cmd = input.value.trim();
   if(!cmd) return;
-  addConsoleLine("> " + cmd);
-  input.value = "";
+
+  try{
+    const res = await fetch(`${API_BASE}/command`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ command: cmd })
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro ao enviar comando.");
+      return;
+    }
+
+    input.value = "";
+    fetchConsole();
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
+}
+
+function handleConsoleEnter(event){
+  if(event.key === "Enter"){
+    event.preventDefault();
+    sendCommand();
+  }
+}
+
+async function fetchConsole(){
+  try{
+    const res = await fetch(`${API_BASE}/console`);
+    const data = await res.json();
+
+    const area = document.getElementById("consoleArea");
+    area.value = data.lines.join("\n");
+    area.scrollTop = area.scrollHeight;
+  }catch(err){
+    console.log("Falha ao buscar console");
+  }
+}
+
+async function fetchStatus(){
+  try{
+    const res = await fetch(`${API_BASE}/status`);
+    const data = await res.json();
+
+    const status = document.getElementById("serverStatus");
+    const ip = document.getElementById("serverIP");
+
+    ip.innerText = data.ip || "localhost:25565";
+
+    if(data.online){
+      status.innerText = "● Online";
+      status.style.background = "#14532d";
+      status.style.color = "#bbf7d0";
+    }else{
+      status.innerText = "● Offline";
+      status.style.background = "#7f1d1d";
+      status.style.color = "#fecaca";
+    }
+  }catch(err){
+    console.log("Falha ao buscar status");
+  }
+}
+
+async function uploadPlugin(){
+  const input = document.getElementById("pluginUpload");
+  const file = input.files[0];
+
+  if(!file){
+    alert("Escolha um arquivo .jar");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("plugin", file);
+
+  try{
+    const res = await fetch(`${API_BASE}/upload-plugin`, {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro no upload.");
+      return;
+    }
+
+    alert(`Plugin enviado: ${data.filename}`);
+    input.value = "";
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
 }
 
 function getFileExt(name){
@@ -661,6 +827,12 @@ function escapeHtml(text){
 showSection("dashboard");
 renderFileList();
 openFile(currentFile);
+
+fetchStatus();
+fetchConsole();
+
+setInterval(fetchStatus, 3000);
+setInterval(fetchConsole, 2000);
 </script>
 </body>
 </html>
