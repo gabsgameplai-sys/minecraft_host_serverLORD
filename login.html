@@ -1,131 +1,131 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - MyMineHost</title>
+<title>Login</title>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
 <style>
-*{
-  box-sizing:border-box;
-}
+
 body{
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#0f172a;
-  font-family:Arial,sans-serif;
-  color:white;
+ background:#0f172a;
+ color:white;
+ font-family:Arial;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ height:100vh;
 }
+
 .card{
-  width:100%;
-  max-width:430px;
-  background:#1e293b;
-  border:1px solid #334155;
-  border-radius:16px;
-  padding:24px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.25);
+ background:#1e293b;
+ padding:30px;
+ border-radius:10px;
+ width:300px;
 }
-h1{
-  margin-top:0;
-  margin-bottom:8px;
-}
-.note{
-  color:#94a3b8;
-  margin-bottom:20px;
-}
+
 input{
-  width:100%;
-  margin-bottom:12px;
-  background:#0f172a;
-  color:white;
-  border:1px solid #334155;
-  border-radius:10px;
-  padding:12px;
-  font-size:15px;
+ width:100%;
+ margin:10px 0;
+ padding:10px;
+ background:#020617;
+ color:white;
+ border:none;
 }
+
 button{
-  width:100%;
-  background:#3b82f6;
-  color:white;
-  border:none;
-  border-radius:10px;
-  padding:12px;
-  font-size:15px;
-  cursor:pointer;
+ width:100%;
+ padding:10px;
+ background:#3b82f6;
+ border:none;
+ color:white;
 }
-button:hover{
-  background:#2563eb;
-}
-.error{
-  margin-top:12px;
-  color:#fca5a5;
-  min-height:20px;
-}
-.users-box{
-  margin-top:16px;
-  padding:12px;
-  border-radius:12px;
-  background:#0f172a;
-  border:1px solid #334155;
-  color:#cbd5e1;
-  font-size:14px;
-}
+
 </style>
+
 </head>
+
 <body>
-  <div class="card">
-    <h1>Entrar</h1>
-    <div class="note">Faça login para acessar o painel.</div>
 
-    <input id="username" type="text" placeholder="Usuário">
-    <input id="password" type="password" placeholder="Senha">
-    <button onclick="login()">Entrar</button>
+<div class="card">
 
-    <div id="error" class="error"></div>
+<h2>Login</h2>
 
-    <div class="users-box">
-      <strong>Perfis padrão:</strong><br>
-      adminLord / 123456<br>
-      adminSassdio / 123456
-    </div>
-  </div>
+<input id="user" placeholder="Usuario">
+<input id="pass" type="password" placeholder="Senha">
+
+<button onclick="login()">Entrar</button>
+
+<br><br>
+
+<div id="g_id_onload"
+data-client_id="COLOQUE_SEU_GOOGLE_CLIENT_ID"
+data-callback="handleGoogleLogin">
+</div>
+
+<div class="g_id_signin"
+data-type="standard"
+data-size="large">
+</div>
+
+</div>
 
 <script>
-const API_BASE = "http://localhost:3000/api";
+
+const API="http://localhost:3000/api"
 
 async function login(){
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value;
-  const errorBox = document.getElementById("error");
 
-  errorBox.innerText = "";
+ const username=document.getElementById("user").value
+ const password=document.getElementById("pass").value
 
-  try{
-    const res = await fetch(`${API_BASE}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ username, password })
-    });
+ const res=await fetch(API+"/login",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({username,password})
+ })
 
-    const data = await res.json();
+ const data=await res.json()
 
-    if(!res.ok){
-      errorBox.innerText = data.error || "Falha no login.";
-      return;
-    }
+ if(data.token){
 
-    localStorage.setItem("myminehost_token", data.token);
-    localStorage.setItem("myminehost_user", data.user.username);
+  localStorage.setItem("token",data.token)
+  localStorage.setItem("user",data.user.username)
 
-    window.location.href = "panel.html";
-  }catch(err){
-    errorBox.innerText = "Falha ao conectar com o backend.";
-  }
+  location.href="panel.html"
+
+ }else{
+
+  alert("login invalido")
+
+ }
+
 }
+
+async function handleGoogleLogin(response){
+
+ const res=await fetch(API+"/google-login",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({credential:response.credential})
+ })
+
+ const data=await res.json()
+
+ if(data.token){
+
+  localStorage.setItem("token",data.token)
+  localStorage.setItem("user",data.user.username)
+
+  location.href="panel.html"
+
+ }
+
+}
+
 </script>
+
 </body>
 </html>
