@@ -6,473 +6,661 @@
 <title>Painel MyMineHost</title>
 
 <style>
-
 *{
-box-sizing:border-box;
+  box-sizing:border-box;
 }
 
 body{
-margin:0;
-font-family:Arial;
-background:#0f172a;
-color:white;
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#0f172a;
+  color:white;
 }
 
 header{
-background:#020617;
-padding:18px 24px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-border-bottom:1px solid #1e293b;
+  background:#020617;
+  padding:18px 24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #1e293b;
 }
 
 .logo{
-font-size:22px;
-font-weight:bold;
+  font-size:22px;
+  font-weight:bold;
 }
 
 .top-links a{
-color:white;
-text-decoration:none;
-margin-left:18px;
+  color:white;
+  text-decoration:none;
+  margin-left:18px;
 }
 
 .layout{
-display:grid;
-grid-template-columns:260px 1fr;
-min-height:calc(100vh - 63px);
+  display:grid;
+  grid-template-columns:260px 1fr;
+  min-height:calc(100vh - 63px);
 }
 
 .sidebar{
-background:#111827;
-border-right:1px solid #1e293b;
-padding:20px;
+  background:#111827;
+  border-right:1px solid #1e293b;
+  padding:20px;
 }
 
 .sidebar h3{
-margin-top:0;
-font-size:16px;
-color:#93c5fd;
+  margin-top:0;
+  font-size:16px;
+  color:#93c5fd;
 }
 
 .menu-btn{
-width:100%;
-text-align:left;
-background:#1e293b;
-color:white;
-border:none;
-padding:12px 14px;
-margin-bottom:10px;
-border-radius:10px;
-cursor:pointer;
-font-size:15px;
+  width:100%;
+  text-align:left;
+  background:#1e293b;
+  color:white;
+  border:none;
+  padding:12px 14px;
+  margin-bottom:10px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:15px;
 }
 
 .menu-btn:hover{
-background:#334155;
+  background:#334155;
 }
 
 .main{
-padding:24px;
+  padding:24px;
 }
 
 .card{
-background:#1e293b;
-border:1px solid #334155;
-border-radius:14px;
-padding:18px;
-margin-bottom:20px;
+  background:#1e293b;
+  border:1px solid #334155;
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:20px;
 }
 
 .card h2{
-margin-top:0;
+  margin-top:0;
 }
 
-.server-actions{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-margin-top:12px;
+.server-actions,
+.editor-actions,
+.file-tools{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:12px;
 }
 
 .btn{
-background:#3b82f6;
-color:white;
-border:none;
-padding:12px 18px;
-border-radius:10px;
-cursor:pointer;
-font-size:15px;
+  background:#3b82f6;
+  color:white;
+  border:none;
+  padding:12px 18px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:15px;
 }
 
 .btn:hover{
-background:#2563eb;
+  background:#2563eb;
 }
 
 .btn.gray{
-background:#475569;
+  background:#475569;
 }
 
 .btn.gray:hover{
-background:#64748b;
+  background:#64748b;
 }
 
 .status{
-display:inline-block;
-padding:6px 12px;
-border-radius:999px;
-background:#14532d;
-color:#bbf7d0;
-font-size:14px;
-margin-top:8px;
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
+  background:#14532d;
+  color:#bbf7d0;
+  font-size:14px;
+  margin-top:8px;
 }
 
 .console{
-width:100%;
-height:220px;
-background:#020617;
-color:#4ade80;
-border:1px solid #334155;
-border-radius:10px;
-padding:12px;
-font-family:Consolas, monospace;
-resize:vertical;
+  width:100%;
+  height:220px;
+  background:#020617;
+  color:#4ade80;
+  border:1px solid #334155;
+  border-radius:10px;
+  padding:12px;
+  font-family:Consolas, monospace;
+  resize:vertical;
 }
 
 .console-input-row{
-display:flex;
-gap:10px;
-margin-top:10px;
+  display:flex;
+  gap:10px;
+  margin-top:10px;
 }
 
 .console-input{
-flex:1;
-background:#0f172a;
-color:white;
-border:1px solid #334155;
-border-radius:10px;
-padding:12px;
+  flex:1;
+  background:#0f172a;
+  color:white;
+  border:1px solid #334155;
+  border-radius:10px;
+  padding:12px;
 }
 
 .files-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:12px;
-flex-wrap:wrap;
-margin-bottom:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
 }
 
 .path-box{
-background:#0f172a;
-border:1px solid #334155;
-padding:10px 12px;
-border-radius:10px;
-color:#cbd5e1;
-width:100%;
-max-width:520px;
+  background:#0f172a;
+  border:1px solid #334155;
+  padding:10px 12px;
+  border-radius:10px;
+  color:#cbd5e1;
+  width:100%;
+  max-width:520px;
 }
 
 .file-grid{
-display:grid;
-grid-template-columns:320px 1fr;
-gap:18px;
+  display:grid;
+  grid-template-columns:320px 1fr;
+  gap:18px;
 }
 
 .file-list{
-background:#0f172a;
-border:1px solid #334155;
-border-radius:12px;
-padding:10px;
-min-height:380px;
+  background:#0f172a;
+  border:1px solid #334155;
+  border-radius:12px;
+  padding:10px;
+  min-height:420px;
 }
 
 .file-item{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:8px;
-padding:10px 12px;
-border-radius:10px;
-cursor:pointer;
-margin-bottom:8px;
-background:#111827;
-border:1px solid #1f2937;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  margin-bottom:8px;
+  background:#111827;
+  border:1px solid #1f2937;
 }
 
 .file-item:hover{
-background:#1e293b;
+  background:#1e293b;
 }
 
 .file-name{
-display:flex;
-align-items:center;
-gap:8px;
-overflow:hidden;
-text-overflow:ellipsis;
-white-space:nowrap;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
 .tag{
-font-size:12px;
-padding:4px 8px;
-border-radius:999px;
-background:#1d4ed8;
-color:white;
+  font-size:12px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#1d4ed8;
+  color:white;
 }
 
 .editor-panel{
-background:#0f172a;
-border:1px solid #334155;
-border-radius:12px;
-padding:12px;
-min-height:380px;
-display:flex;
-flex-direction:column;
+  background:#0f172a;
+  border:1px solid #334155;
+  border-radius:12px;
+  padding:12px;
+  min-height:420px;
+  display:flex;
+  flex-direction:column;
 }
 
 .editor-top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-flex-wrap:wrap;
-margin-bottom:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
 }
 
 .editor{
-flex:1;
-width:100%;
-min-height:300px;
-background:#020617;
-color:#e2e8f0;
-border:1px solid #334155;
-border-radius:10px;
-padding:12px;
-font-family:Consolas, monospace;
-}
-
-.editor-actions{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-margin-top:10px;
+  flex:1;
+  width:100%;
+  min-height:300px;
+  background:#020617;
+  color:#e2e8f0;
+  border:1px solid #334155;
+  border-radius:10px;
+  padding:12px;
+  font-family:Consolas, monospace;
+  resize:vertical;
 }
 
 .small-note{
-color:#94a3b8;
-font-size:14px;
-margin-top:8px;
+  color:#94a3b8;
+  font-size:14px;
+  margin-top:8px;
+}
+
+.upload-box{
+  margin-top:10px;
+  padding:14px;
+  border:1px dashed #475569;
+  border-radius:12px;
+  background:#111827;
+}
+
+input[type="file"]{
+  color:white;
+}
+
+input[type="text"]{
+  background:#0f172a;
+  color:white;
+  border:1px solid #334155;
+  border-radius:10px;
+  padding:10px 12px;
+}
+
+.hidden{
+  display:none;
 }
 
 @media (max-width:900px){
-.layout{
-grid-template-columns:1fr;
-}
+  .layout{
+    grid-template-columns:1fr;
+  }
 
-.file-grid{
-grid-template-columns:1fr;
+  .file-grid{
+    grid-template-columns:1fr;
+  }
 }
-}
-
 </style>
 </head>
-
 <body>
 
 <header>
-<div class="logo">MyMineHost</div>
-<div class="top-links">
-<a href="index.html">Início</a>
-<a href="panel.html">Painel</a>
-</div>
+  <div class="logo">MyMineHost</div>
+  <div class="top-links">
+    <a href="index.html">Início</a>
+    <a href="panel.html">Painel</a>
+  </div>
 </header>
 
 <div class="layout">
+  <aside class="sidebar">
+    <h3>Menu do Painel</h3>
+    <button class="menu-btn" onclick="showSection('dashboard')">🏠 Dashboard</button>
+    <button class="menu-btn" onclick="showSection('consoleSection')">🖥 Console</button>
+    <button class="menu-btn" onclick="showSection('filesSection')">📁 Gerenciador de Arquivos</button>
+  </aside>
 
-<aside class="sidebar">
-<h3>Menu do Painel</h3>
+  <main class="main">
+    <section id="dashboard" class="card">
+      <h2>Servidor Minecraft</h2>
+      <p>Nome: <strong>Meu Servidor</strong></p>
+      <p>Versão: <strong>Paper 1.21.1</strong></p>
+      <div class="status">● Online</div>
 
-<button class="menu-btn" onclick="showSection('dashboard')">🏠 Dashboard</button>
+      <div class="server-actions">
+        <button class="btn" onclick="addConsoleLine('Servidor iniciando...')">Iniciar</button>
+        <button class="btn gray" onclick="addConsoleLine('Servidor parando...')">Parar</button>
+        <button class="btn" onclick="addConsoleLine('Servidor reiniciando...')">Reiniciar</button>
+      </div>
+    </section>
 
-<button class="menu-btn" onclick="showSection('consoleSection')">🖥 Console</button>
+    <section id="consoleSection" class="card">
+      <h2>Console</h2>
 
-<button class="menu-btn" onclick="showSection('filesSection')">📁 Gerenciador de Arquivos</button>
-
-</aside>
-
-
-<main class="main">
-
-<section id="dashboard" class="card">
-
-<h2>Servidor Minecraft</h2>
-
-<p>Nome: <strong>Meu Servidor</strong></p>
-
-<p>Versão: <strong>Paper 1.21.1</strong></p>
-
-<div class="status">● Online</div>
-
-<div class="server-actions">
-
-<button class="btn" onclick="addConsoleLine('Servidor iniciando...')">Iniciar</button>
-
-<button class="btn gray" onclick="addConsoleLine('Servidor parando...')">Parar</button>
-
-<button class="btn" onclick="addConsoleLine('Servidor reiniciando...')">Reiniciar</button>
-
-</div>
-
-</section>
-
-
-<section id="consoleSection" class="card">
-
-<h2>Console</h2>
-
-<textarea id="consoleArea" class="console" readonly>[INFO] Painel iniciado...
+      <textarea id="consoleArea" class="console" readonly>[INFO] Painel iniciado...
 [INFO] Servidor online.</textarea>
 
-<div class="console-input-row">
+      <div class="console-input-row">
+        <input id="consoleCommand" class="console-input" type="text" placeholder="Digite um comando, ex: say oi">
+        <button class="btn" onclick="sendCommand()">Enviar</button>
+      </div>
+    </section>
 
-<input id="consoleCommand" class="console-input" placeholder="Digite um comando">
+    <section id="filesSection" class="card">
+      <div class="files-header">
+        <div>
+          <h2 style="margin:0;">Gerenciador de Arquivos</h2>
+          <div class="small-note">Upload, importar e exportar funcionando no navegador.</div>
+        </div>
+        <div class="path-box">/servers/meu-servidor/</div>
+      </div>
 
-<button class="btn" onclick="sendCommand()">Enviar</button>
+      <div class="file-grid">
+        <div class="file-list">
+          <div class="file-tools">
+            <button class="btn" onclick="createNewFile()">Novo Arquivo</button>
+            <button class="btn gray" onclick="createNewFolder()">Nova Pasta</button>
+          </div>
 
-</div>
+          <div class="upload-box">
+            <strong>Upload / Importar arquivo</strong>
+            <div class="small-note">Escolha um arquivo do seu PC para abrir no editor.</div>
+            <br>
+            <input type="file" id="fileUpload" onchange="handleFileUpload(event)">
+          </div>
 
-</section>
+          <div id="fileListContainer" style="margin-top:12px;"></div>
+        </div>
 
+        <div class="editor-panel">
+          <div class="editor-top">
+            <strong id="currentFileName">server.properties</strong>
+            <div class="small-note">Arquivo atual</div>
+          </div>
 
-<section id="filesSection" class="card">
+          <textarea id="fileEditor" class="editor"></textarea>
 
-<div class="files-header">
+          <div class="editor-actions">
+            <button class="btn" onclick="saveCurrentFile()">Salvar</button>
+            <button class="btn gray" onclick="deleteCurrentFile()">Excluir</button>
+            <button class="btn gray" onclick="exportCurrentFile()">Exportar</button>
+            <button class="btn gray" onclick="importTrigger()">Importar</button>
+            <button class="btn gray" onclick="renameCurrentFile()">Renomear</button>
+          </div>
 
-<h2>Gerenciador de Arquivos</h2>
-
-<div class="path-box">/servers/meu-servidor/</div>
-
-</div>
-
-<div class="file-grid">
-
-<div class="file-list">
-
-<div class="file-item" onclick="openFile('server.properties',sampleFiles['server.properties'])">
-<div class="file-name">📄 server.properties</div>
-<span class="tag">txt</span>
-</div>
-
-<div class="file-item" onclick="openFile('eula.txt',sampleFiles['eula.txt'])">
-<div class="file-name">📄 eula.txt</div>
-<span class="tag">txt</span>
-</div>
-
-<div class="file-item" onclick="openFile('spigot.yml',sampleFiles['spigot.yml'])">
-<div class="file-name">📄 spigot.yml</div>
-<span class="tag">yml</span>
-</div>
-
-<div class="file-item" onclick="openFile('logs/latest.log',sampleFiles['logs/latest.log'])">
-<div class="file-name">📄 logs/latest.log</div>
-<span class="tag">log</span>
-</div>
-
-</div>
-
-<div class="editor-panel">
-
-<strong id="currentFileName">server.properties</strong>
-
-<textarea id="fileEditor" class="editor">motd=Meu servidor</textarea>
-
-<div class="editor-actions">
-
-<button class="btn" onclick="fakeSave()">Salvar</button>
-
-<button class="btn gray" onclick="fakeDelete()">Excluir</button>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-</main>
-
+          <div class="small-note">
+            No GitHub Pages isso salva no navegador. Para salvar no servidor real, depois você liga numa API.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 </div>
 
 <script>
+const STORAGE_KEY = "myminehost_files_v1";
 
-const sampleFiles={
-"server.properties":"motd=Meu servidor\nmax-players=20",
-"eula.txt":"eula=true",
-"spigot.yml":"settings:\n bungeecord: false",
-"logs/latest.log":"[INFO] Server started"
-};
+let files = loadFiles();
+let currentFile = "server.properties";
 
-function showSection(id){
-
-const sections=["dashboard","consoleSection","filesSection"];
-
-sections.forEach(sectionId=>{
-document.getElementById(sectionId).style.display=
-sectionId===id?"block":"none";
-});
-
+function defaultFiles(){
+  return {
+    "server.properties": {
+      type: "file",
+      content: `motd=Meu servidor
+online-mode=true
+max-players=20
+view-distance=10
+spawn-protection=16`
+    },
+    "eula.txt": {
+      type: "file",
+      content: `eula=true`
+    },
+    "spigot.yml": {
+      type: "file",
+      content: `settings:
+  bungeecord: false
+  save-user-cache-on-stop-only: false`
+    },
+    "logs/latest.log": {
+      type: "file",
+      content: `[Server thread/INFO]: Starting minecraft server version 1.21.1
+[Server thread/INFO]: Loading properties
+[Server thread/INFO]: Done (3.421s)!`
+    },
+    "plugins": {
+      type: "folder"
+    },
+    "world": {
+      type: "folder"
+    }
+  };
 }
 
-function openFile(name,content){
+function loadFiles(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw) return defaultFiles();
 
-document.getElementById("currentFileName").innerText=name;
+  try{
+    return JSON.parse(raw);
+  }catch{
+    return defaultFiles();
+  }
+}
 
-document.getElementById("fileEditor").value=content;
+function persistFiles(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+}
 
+function showSection(id){
+  const sections = ["dashboard", "consoleSection", "filesSection"];
+  sections.forEach(sectionId => {
+    document.getElementById(sectionId).style.display = sectionId === id ? "block" : "none";
+  });
+}
+
+function renderFileList(){
+  const container = document.getElementById("fileListContainer");
+  container.innerHTML = "";
+
+  const entries = Object.keys(files).sort((a,b) => {
+    if(files[a].type === files[b].type) return a.localeCompare(b);
+    return files[a].type === "folder" ? -1 : 1;
+  });
+
+  entries.forEach(name => {
+    const item = files[name];
+    const div = document.createElement("div");
+    div.className = "file-item";
+
+    const icon = item.type === "folder" ? "📁" : "📄";
+    const tag = item.type === "folder" ? "dir" : getFileExt(name);
+
+    div.innerHTML = `
+      <div class="file-name">${icon} ${escapeHtml(name)}</div>
+      <span class="tag">${escapeHtml(tag)}</span>
+    `;
+
+    if(item.type === "file"){
+      div.onclick = () => openFile(name);
+    }
+
+    container.appendChild(div);
+  });
+}
+
+function openFile(name){
+  if(!files[name] || files[name].type !== "file") return;
+  currentFile = name;
+  document.getElementById("currentFileName").innerText = name;
+  document.getElementById("fileEditor").value = files[name].content || "";
+}
+
+function createNewFile(){
+  const name = prompt("Nome do novo arquivo:", "novo-arquivo.txt");
+  if(!name) return;
+
+  if(files[name]){
+    alert("Já existe um arquivo ou pasta com esse nome.");
+    return;
+  }
+
+  files[name] = {
+    type: "file",
+    content: ""
+  };
+
+  persistFiles();
+  renderFileList();
+  openFile(name);
+}
+
+function createNewFolder(){
+  const name = prompt("Nome da nova pasta:", "nova-pasta");
+  if(!name) return;
+
+  if(files[name]){
+    alert("Já existe um arquivo ou pasta com esse nome.");
+    return;
+  }
+
+  files[name] = {
+    type: "folder"
+  };
+
+  persistFiles();
+  renderFileList();
+}
+
+function saveCurrentFile(){
+  if(!currentFile || !files[currentFile] || files[currentFile].type !== "file"){
+    alert("Nenhum arquivo selecionado.");
+    return;
+  }
+
+  files[currentFile].content = document.getElementById("fileEditor").value;
+  persistFiles();
+  alert("Arquivo salvo no navegador.");
+}
+
+function deleteCurrentFile(){
+  if(!currentFile || !files[currentFile]){
+    alert("Nenhum arquivo selecionado.");
+    return;
+  }
+
+  const ok = confirm(`Excluir "${currentFile}"?`);
+  if(!ok) return;
+
+  delete files[currentFile];
+  persistFiles();
+  renderFileList();
+
+  const nextFile = Object.keys(files).find(name => files[name].type === "file");
+  if(nextFile){
+    openFile(nextFile);
+  }else{
+    currentFile = "";
+    document.getElementById("currentFileName").innerText = "Nenhum arquivo";
+    document.getElementById("fileEditor").value = "";
+  }
+}
+
+function renameCurrentFile(){
+  if(!currentFile || !files[currentFile]){
+    alert("Nenhum arquivo selecionado.");
+    return;
+  }
+
+  const newName = prompt("Novo nome do arquivo:", currentFile);
+  if(!newName || newName === currentFile) return;
+
+  if(files[newName]){
+    alert("Já existe outro arquivo com esse nome.");
+    return;
+  }
+
+  files[newName] = files[currentFile];
+  delete files[currentFile];
+  currentFile = newName;
+
+  persistFiles();
+  renderFileList();
+  openFile(newName);
+}
+
+function exportCurrentFile(){
+  if(!currentFile || !files[currentFile] || files[currentFile].type !== "file"){
+    alert("Nenhum arquivo selecionado.");
+    return;
+  }
+
+  const content = document.getElementById("fileEditor").value;
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = currentFile;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
+}
+
+function importTrigger(){
+  document.getElementById("fileUpload").click();
+}
+
+function handleFileUpload(event){
+  const file = event.target.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const text = e.target.result;
+    const name = file.name;
+
+    files[name] = {
+      type: "file",
+      content: text
+    };
+
+    persistFiles();
+    renderFileList();
+    openFile(name);
+    alert(`Arquivo "${name}" importado.`);
+  };
+
+  reader.readAsText(file);
+  event.target.value = "";
 }
 
 function addConsoleLine(text){
-
-const area=document.getElementById("consoleArea");
-
-area.value+="\n[INFO] "+text;
-
-area.scrollTop=area.scrollHeight;
-
+  const area = document.getElementById("consoleArea");
+  area.value += "\n[INFO] " + text;
+  area.scrollTop = area.scrollHeight;
 }
 
 function sendCommand(){
-
-const input=document.getElementById("consoleCommand");
-
-const cmd=input.value.trim();
-
-if(!cmd)return;
-
-addConsoleLine("> "+cmd);
-
-input.value="";
-
+  const input = document.getElementById("consoleCommand");
+  const cmd = input.value.trim();
+  if(!cmd) return;
+  addConsoleLine("> " + cmd);
+  input.value = "";
 }
 
-function fakeSave(){
-
-alert("Salvar arquivo (backend necessário)");
-
+function getFileExt(name){
+  const parts = name.split(".");
+  return parts.length > 1 ? parts.pop().toLowerCase() : "file";
 }
 
-function fakeDelete(){
-
-alert("Excluir arquivo (backend necessário)");
-
+function escapeHtml(text){
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
 
 showSection("dashboard");
-
+renderFileList();
+openFile(currentFile);
 </script>
-
 </body>
 </html>
