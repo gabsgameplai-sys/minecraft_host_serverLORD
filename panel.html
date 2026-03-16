@@ -24,6 +24,8 @@ header{
   justify-content:space-between;
   align-items:center;
   border-bottom:1px solid #1e293b;
+  gap:16px;
+  flex-wrap:wrap;
 }
 
 .logo{
@@ -33,13 +35,32 @@ header{
 
 .top-links{
   display:flex;
-  gap:18px;
+  gap:12px;
   align-items:center;
+  flex-wrap:wrap;
 }
 
 .top-links a{
   color:white;
   text-decoration:none;
+}
+
+.user-chip{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#111827;
+  border:1px solid #334155;
+  border-radius:999px;
+  padding:6px 10px;
+}
+
+.user-chip img{
+  width:32px;
+  height:32px;
+  border-radius:999px;
+  object-fit:cover;
+  border:2px solid #334155;
 }
 
 .layout{
@@ -95,7 +116,8 @@ header{
 
 .server-actions,
 .editor-actions,
-.file-tools{
+.file-tools,
+.profile-actions{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
@@ -280,16 +302,68 @@ header{
   background:#111827;
 }
 
-input[type="file"]{
+input[type="file"],
+input[type="text"],
+input[type="password"]{
   color:white;
 }
 
-input[type="text"]{
+input[type="text"],
+input[type="password"]{
   background:#0f172a;
   color:white;
   border:1px solid #334155;
   border-radius:10px;
   padding:10px 12px;
+  width:100%;
+}
+
+.profile-wrap{
+  display:flex;
+  gap:22px;
+  align-items:flex-start;
+  flex-wrap:wrap;
+}
+
+.profile-avatar-box{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+}
+
+.profile-avatar{
+  width:130px;
+  height:130px;
+  border-radius:999px;
+  object-fit:cover;
+  border:3px solid #334155;
+  background:#0f172a;
+}
+
+.profile-card{
+  flex:1;
+  min-width:260px;
+  background:#0f172a;
+  border:1px solid #334155;
+  border-radius:12px;
+  padding:16px;
+}
+
+.form-row{
+  margin-bottom:12px;
+}
+
+.success{
+  color:#86efac;
+  margin-top:8px;
+  min-height:18px;
+}
+
+.error-text{
+  color:#fca5a5;
+  margin-top:8px;
+  min-height:18px;
 }
 
 .mc-black{color:#000000;}
@@ -329,7 +403,12 @@ input[type="text"]{
 
 <header>
   <div class="logo">MyMineHost</div>
+
   <div class="top-links">
+    <div class="user-chip">
+      <img id="headerAvatar" src="" alt="avatar">
+      <span id="headerUsername">Usuário</span>
+    </div>
     <a href="index.html">Início</a>
     <a href="panel.html">Painel</a>
     <button class="btn gray" onclick="logout()">Sair</button>
@@ -342,6 +421,7 @@ input[type="text"]{
     <button class="menu-btn" onclick="showSection('dashboard')">🏠 Dashboard</button>
     <button class="menu-btn" onclick="showSection('consoleSection')">🖥 Console</button>
     <button class="menu-btn" onclick="showSection('filesSection')">📁 Gerenciador de Arquivos</button>
+    <button class="menu-btn" onclick="showSection('profileSection')">👤 Perfil</button>
   </aside>
 
   <main class="main">
@@ -426,6 +506,47 @@ input[type="text"]{
         </div>
       </div>
     </section>
+
+    <section id="profileSection" class="card" style="display:none;">
+      <h2>Perfil do Usuário</h2>
+
+      <div class="profile-wrap">
+        <div class="profile-avatar-box">
+          <img id="profileAvatar" class="profile-avatar" src="" alt="avatar">
+          <input type="file" id="avatarUpload" accept="image/*" onchange="handleAvatarUpload(event)">
+          <div class="profile-actions">
+            <button class="btn" onclick="saveProfile()">Salvar foto</button>
+            <button class="btn gray" onclick="removeAvatar()">Remover foto</button>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <p>Usuário: <strong id="profileUsername">-</strong></p>
+          <p class="small-note">A foto do perfil está salva no navegador deste PC.</p>
+
+          <hr style="border:none;border-top:1px solid #334155;margin:16px 0;">
+
+          <h3 style="margin-top:0;">Redefinir senha</h3>
+
+          <div class="form-row">
+            <input id="currentPassword" type="password" placeholder="Senha atual">
+          </div>
+
+          <div class="form-row">
+            <input id="newPassword" type="password" placeholder="Nova senha">
+          </div>
+
+          <div class="form-row">
+            <input id="confirmPassword" type="password" placeholder="Confirmar nova senha">
+          </div>
+
+          <button class="btn" onclick="changePassword()">Salvar nova senha</button>
+
+          <div id="passwordSuccess" class="success"></div>
+          <div id="passwordError" class="error-text"></div>
+        </div>
+      </div>
+    </section>
   </main>
 </div>
 
@@ -440,6 +561,21 @@ if(!AUTH_TOKEN){
 let currentFile = "";
 let currentDir = "";
 let currentItems = [];
+let currentUser = localStorage.getItem("myminehost_user") || "Usuário";
+
+function defaultAvatarData(username){
+  const initial = (username || "U").charAt(0).toUpperCase();
+  return "data:image/svg+xml;utf8," + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160">
+      <rect width="100%" height="100%" fill="#1e293b"/>
+      <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="56" font-family="Arial">${initial}</text>
+    </svg>`
+  );
+}
+
+function profileStorageKey(){
+  return "myminehost_profile_" + currentUser;
+}
 
 async function apiFetch(url, options = {}){
   const headers = new Headers(options.headers || {});
@@ -477,8 +613,23 @@ async function logout(){
   window.location.href = "login.html";
 }
 
+async function fetchMe(){
+  try{
+    const res = await apiFetch(`${API_BASE}/me`);
+    const data = await res.json();
+
+    if(res.ok && data.user){
+      currentUser = data.user.username;
+      localStorage.setItem("myminehost_user", currentUser);
+      loadProfile();
+    }
+  }catch(err){
+    console.log("Falha ao buscar usuário");
+  }
+}
+
 function showSection(id){
-  const sections = ["dashboard", "consoleSection", "filesSection"];
+  const sections = ["dashboard", "consoleSection", "filesSection", "profileSection"];
   sections.forEach(sectionId => {
     document.getElementById(sectionId).style.display = sectionId === id ? "block" : "none";
   });
@@ -580,6 +731,108 @@ function colorizeLogLine(text){
     return "§a" + text;
   }
   return text;
+}
+
+function loadProfile(){
+  const saved = localStorage.getItem(profileStorageKey());
+  let avatar = defaultAvatarData(currentUser);
+
+  if(saved){
+    try{
+      const profile = JSON.parse(saved);
+      if(profile.avatar){
+        avatar = profile.avatar;
+      }
+    }catch(err){
+    }
+  }
+
+  document.getElementById("profileUsername").innerText = currentUser;
+  document.getElementById("headerUsername").innerText = currentUser;
+  document.getElementById("profileAvatar").src = avatar;
+  document.getElementById("headerAvatar").src = avatar;
+}
+
+function handleAvatarUpload(event){
+  const file = event.target.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    document.getElementById("profileAvatar").src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveProfile(){
+  const avatar = document.getElementById("profileAvatar").src;
+
+  localStorage.setItem(profileStorageKey(), JSON.stringify({
+    username: currentUser,
+    avatar
+  }));
+
+  document.getElementById("headerAvatar").src = avatar;
+  alert("Perfil salvo.");
+}
+
+function removeAvatar(){
+  const avatar = defaultAvatarData(currentUser);
+  document.getElementById("profileAvatar").src = avatar;
+  document.getElementById("headerAvatar").src = avatar;
+
+  localStorage.setItem(profileStorageKey(), JSON.stringify({
+    username: currentUser,
+    avatar
+  }));
+}
+
+async function changePassword(){
+  const currentPassword = document.getElementById("currentPassword").value;
+  const newPassword = document.getElementById("newPassword").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+  const successBox = document.getElementById("passwordSuccess");
+  const errorBox = document.getElementById("passwordError");
+
+  successBox.innerText = "";
+  errorBox.innerText = "";
+
+  if(!currentPassword || !newPassword || !confirmPassword){
+    errorBox.innerText = "Preencha todos os campos.";
+    return;
+  }
+
+  if(newPassword !== confirmPassword){
+    errorBox.innerText = "A confirmação da senha não bate.";
+    return;
+  }
+
+  try{
+    const res = await apiFetch(`${API_BASE}/change-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        currentPassword,
+        newPassword
+      })
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      errorBox.innerText = data.error || "Erro ao alterar senha.";
+      return;
+    }
+
+    successBox.innerText = "Senha alterada com sucesso.";
+    document.getElementById("currentPassword").value = "";
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmPassword").value = "";
+  }catch(err){
+    errorBox.innerText = "Falha ao conectar com o backend.";
+  }
 }
 
 async function startServer(){
@@ -1061,7 +1314,8 @@ function exportCurrentFile(){
 }
 
 showSection("dashboard");
-
+loadProfile();
+fetchMe();
 fetchFiles();
 fetchStatus();
 fetchConsole();
