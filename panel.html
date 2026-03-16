@@ -31,10 +31,15 @@ header{
   font-weight:bold;
 }
 
+.top-links{
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+
 .top-links a{
   color:white;
   text-decoration:none;
-  margin-left:18px;
 }
 
 .layout{
@@ -287,11 +292,6 @@ input[type="text"]{
   padding:10px 12px;
 }
 
-.hidden{
-  display:none;
-}
-
-/* Cores do Minecraft */
 .mc-black{color:#000000;}
 .mc-dark_blue{color:#0000AA;}
 .mc-dark_green{color:#00AA00;}
@@ -332,6 +332,7 @@ input[type="text"]{
   <div class="top-links">
     <a href="index.html">Início</a>
     <a href="panel.html">Painel</a>
+    <button class="btn gray" onclick="logout()">Sair</button>
   </div>
 </header>
 
@@ -430,10 +431,51 @@ input[type="text"]{
 
 <script>
 const API_BASE = "http://localhost:3000/api";
+const AUTH_TOKEN = localStorage.getItem("myminehost_token");
+
+if(!AUTH_TOKEN){
+  window.location.href = "login.html";
+}
 
 let currentFile = "";
 let currentDir = "";
 let currentItems = [];
+
+async function apiFetch(url, options = {}){
+  const headers = new Headers(options.headers || {});
+  const token = localStorage.getItem("myminehost_token");
+
+  if(token){
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers
+  });
+
+  if(response.status === 401){
+    localStorage.removeItem("myminehost_token");
+    localStorage.removeItem("myminehost_user");
+    window.location.href = "login.html";
+    throw new Error("Não autorizado");
+  }
+
+  return response;
+}
+
+async function logout(){
+  try{
+    await apiFetch(`${API_BASE}/logout`, {
+      method: "POST"
+    });
+  }catch(err){
+  }
+
+  localStorage.removeItem("myminehost_token");
+  localStorage.removeItem("myminehost_user");
+  window.location.href = "login.html";
+}
 
 function showSection(id){
   const sections = ["dashboard", "consoleSection", "filesSection"];
@@ -540,18 +582,9 @@ function colorizeLogLine(text){
   return text;
 }
 
-function addConsoleLine(text){
-  const area = document.getElementById("consoleArea");
-  const line = document.createElement("div");
-  line.className = "console-line";
-  line.innerHTML = parseMinecraftColors(colorizeLogLine(text));
-  area.appendChild(line);
-  area.scrollTop = area.scrollHeight;
-}
-
 async function startServer(){
   try{
-    const res = await fetch(`${API_BASE}/start`, {
+    const res = await apiFetch(`${API_BASE}/start`, {
       method: "POST"
     });
 
@@ -571,7 +604,7 @@ async function startServer(){
 
 async function stopServer(){
   try{
-    const res = await fetch(`${API_BASE}/stop`, {
+    const res = await apiFetch(`${API_BASE}/stop`, {
       method: "POST"
     });
 
@@ -591,7 +624,7 @@ async function stopServer(){
 
 async function restartServer(){
   try{
-    const res = await fetch(`${API_BASE}/restart`, {
+    const res = await apiFetch(`${API_BASE}/restart`, {
       method: "POST"
     });
 
@@ -615,7 +648,7 @@ async function sendCommand(){
   if(!cmd) return;
 
   try{
-    const res = await fetch(`${API_BASE}/command`, {
+    const res = await apiFetch(`${API_BASE}/command`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -646,7 +679,7 @@ function handleConsoleEnter(event){
 
 async function fetchConsole(){
   try{
-    const res = await fetch(`${API_BASE}/console`);
+    const res = await apiFetch(`${API_BASE}/console`);
     const data = await res.json();
 
     const area = document.getElementById("consoleArea");
@@ -667,7 +700,7 @@ async function fetchConsole(){
 
 async function fetchStatus(){
   try{
-    const res = await fetch(`${API_BASE}/status`);
+    const res = await apiFetch(`${API_BASE}/status`);
     const data = await res.json();
 
     const status = document.getElementById("serverStatus");
@@ -702,7 +735,7 @@ async function uploadPlugin(){
   formData.append("plugin", file);
 
   try{
-    const res = await fetch(`${API_BASE}/upload-plugin`, {
+    const res = await apiFetch(`${API_BASE}/upload-plugin`, {
       method: "POST",
       body: formData
     });
@@ -724,7 +757,7 @@ async function uploadPlugin(){
 
 async function fetchFiles(dir = ""){
   try{
-    const res = await fetch(`${API_BASE}/files?dir=${encodeURIComponent(dir)}`);
+    const res = await apiFetch(`${API_BASE}/files?dir=${encodeURIComponent(dir)}`);
     const data = await res.json();
 
     if(!res.ok){
@@ -789,7 +822,7 @@ function renderFileList(){
 
 async function openFile(filePath){
   try{
-    const res = await fetch(`${API_BASE}/file?path=${encodeURIComponent(filePath)}`);
+    const res = await apiFetch(`${API_BASE}/file?path=${encodeURIComponent(filePath)}`);
     const data = await res.json();
 
     if(!res.ok){
@@ -810,7 +843,7 @@ async function createNewFile(){
   if(!name) return;
 
   try{
-    const res = await fetch(`${API_BASE}/file/new`, {
+    const res = await apiFetch(`${API_BASE}/file/new`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -840,7 +873,7 @@ async function createNewFolder(){
   if(!name) return;
 
   try{
-    const res = await fetch(`${API_BASE}/folder/new`, {
+    const res = await apiFetch(`${API_BASE}/folder/new`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -871,7 +904,7 @@ async function saveCurrentFile(){
   }
 
   try{
-    const res = await fetch(`${API_BASE}/file`, {
+    const res = await apiFetch(`${API_BASE}/file`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -906,7 +939,7 @@ async function deleteCurrentFile(){
   if(!ok) return;
 
   try{
-    const res = await fetch(`${API_BASE}/file?path=${encodeURIComponent(currentFile)}`, {
+    const res = await apiFetch(`${API_BASE}/file?path=${encodeURIComponent(currentFile)}`, {
       method: "DELETE"
     });
 
@@ -938,7 +971,7 @@ async function renameCurrentFile(){
   if(!newName || newName === oldName) return;
 
   try{
-    const res = await fetch(`${API_BASE}/file/rename`, {
+    const res = await apiFetch(`${API_BASE}/file/rename`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
@@ -979,7 +1012,7 @@ async function handleFileUpload(event){
       ? `${currentDir}/${file.name}`
       : file.name;
 
-    const res = await fetch(`${API_BASE}/file`, {
+    const res = await apiFetch(`${API_BASE}/file`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
