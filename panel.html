@@ -129,16 +129,22 @@ header{
   margin-top:8px;
 }
 
-.console{
+.console-html{
   width:100%;
   height:220px;
   background:#020617;
-  color:#4ade80;
   border:1px solid #334155;
   border-radius:10px;
   padding:12px;
   font-family:Consolas, monospace;
-  resize:vertical;
+  overflow:auto;
+  white-space:pre-wrap;
+  word-break:break-word;
+  line-height:1.45;
+}
+
+.console-line{
+  margin:0 0 2px 0;
 }
 
 .console-input-row{
@@ -285,6 +291,29 @@ input[type="text"]{
   display:none;
 }
 
+/* Cores do Minecraft */
+.mc-black{color:#000000;}
+.mc-dark_blue{color:#0000AA;}
+.mc-dark_green{color:#00AA00;}
+.mc-dark_aqua{color:#00AAAA;}
+.mc-dark_red{color:#AA0000;}
+.mc-dark_purple{color:#AA00AA;}
+.mc-gold{color:#FFAA00;}
+.mc-gray{color:#AAAAAA;}
+.mc-dark_gray{color:#555555;}
+.mc-blue{color:#5555FF;}
+.mc-green{color:#55FF55;}
+.mc-aqua{color:#55FFFF;}
+.mc-red{color:#FF5555;}
+.mc-light_purple{color:#FF55FF;}
+.mc-yellow{color:#FFFF55;}
+.mc-white{color:#FFFFFF;}
+
+.mc-bold{font-weight:bold;}
+.mc-italic{font-style:italic;}
+.mc-underlined{text-decoration:underline;}
+.mc-strikethrough{text-decoration:line-through;}
+
 @media (max-width:900px){
   .layout{
     grid-template-columns:1fr;
@@ -332,8 +361,7 @@ input[type="text"]{
     <section id="consoleSection" class="card" style="display:none;">
       <h2>Console</h2>
 
-      <textarea id="consoleArea" class="console" readonly>[INFO] Painel iniciado...
-[INFO] Aguardando backend...</textarea>
+      <div id="consoleArea" class="console-html"></div>
 
       <div class="console-input-row">
         <input id="consoleCommand" class="console-input" type="text" placeholder="Digite um comando, ex: say oi" onkeydown="handleConsoleEnter(event)">
@@ -345,9 +373,9 @@ input[type="text"]{
       <div class="files-header">
         <div>
           <h2 style="margin:0;">Gerenciador de Arquivos</h2>
-          <div class="small-note">Upload, importar e exportar funcionando no navegador.</div>
+          <div class="small-note">Agora lendo a pasta real do backend.</div>
         </div>
-        <div class="path-box">/servers/meu-servidor/</div>
+        <div class="path-box" id="pathBox">/server-files</div>
       </div>
 
       <div class="file-grid">
@@ -359,7 +387,7 @@ input[type="text"]{
 
           <div class="upload-box">
             <strong>Upload / Importar arquivo</strong>
-            <div class="small-note">Escolha um arquivo do seu PC para abrir no editor.</div>
+            <div class="small-note">Escolha um arquivo do seu PC para salvar no servidor.</div>
             <br>
             <input type="file" id="fileUpload" onchange="handleFileUpload(event)">
           </div>
@@ -377,7 +405,7 @@ input[type="text"]{
 
         <div class="editor-panel">
           <div class="editor-top">
-            <strong id="currentFileName">server.properties</strong>
+            <strong id="currentFileName">Nenhum arquivo</strong>
             <div class="small-note">Arquivo atual</div>
           </div>
 
@@ -392,7 +420,7 @@ input[type="text"]{
           </div>
 
           <div class="small-note">
-            No GitHub Pages isso salva no navegador. Para salvar no servidor real, depois você liga numa API.
+            Os arquivos agora são lidos e salvos direto na pasta server-files do backend.
           </div>
         </div>
       </div>
@@ -401,61 +429,11 @@ input[type="text"]{
 </div>
 
 <script>
-const STORAGE_KEY = "myminehost_files_v1";
 const API_BASE = "http://localhost:3000/api";
 
-let files = loadFiles();
-let currentFile = "server.properties";
-
-function defaultFiles(){
-  return {
-    "server.properties": {
-      type: "file",
-      content: `motd=Meu servidor
-online-mode=true
-max-players=20
-view-distance=10
-spawn-protection=16`
-    },
-    "eula.txt": {
-      type: "file",
-      content: `eula=true`
-    },
-    "spigot.yml": {
-      type: "file",
-      content: `settings:
-  bungeecord: false
-  save-user-cache-on-stop-only: false`
-    },
-    "logs/latest.log": {
-      type: "file",
-      content: `[Server thread/INFO]: Starting minecraft server version 1.21.1
-[Server thread/INFO]: Loading properties
-[Server thread/INFO]: Done (3.421s)!`
-    },
-    "plugins": {
-      type: "folder"
-    },
-    "world": {
-      type: "folder"
-    }
-  };
-}
-
-function loadFiles(){
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if(!raw) return defaultFiles();
-
-  try{
-    return JSON.parse(raw);
-  }catch{
-    return defaultFiles();
-  }
-}
-
-function persistFiles(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
-}
+let currentFile = "";
+let currentDir = "";
+let currentItems = [];
 
 function showSection(id){
   const sections = ["dashboard", "consoleSection", "filesSection"];
@@ -464,187 +442,110 @@ function showSection(id){
   });
 }
 
-function renderFileList(){
-  const container = document.getElementById("fileListContainer");
-  container.innerHTML = "";
+function escapeHtml(text){
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
 
-  const entries = Object.keys(files).sort((a,b) => {
-    if(files[a].type === files[b].type) return a.localeCompare(b);
-    return files[a].type === "folder" ? -1 : 1;
-  });
+function getFileExt(name){
+  const parts = name.split(".");
+  return parts.length > 1 ? parts.pop().toLowerCase() : "file";
+}
 
-  entries.forEach(name => {
-    const item = files[name];
-    const div = document.createElement("div");
-    div.className = "file-item";
+function parseMinecraftColors(text){
+  const colorMap = {
+    "0":"mc-black",
+    "1":"mc-dark_blue",
+    "2":"mc-dark_green",
+    "3":"mc-dark_aqua",
+    "4":"mc-dark_red",
+    "5":"mc-dark_purple",
+    "6":"mc-gold",
+    "7":"mc-gray",
+    "8":"mc-dark_gray",
+    "9":"mc-blue",
+    "a":"mc-green",
+    "b":"mc-aqua",
+    "c":"mc-red",
+    "d":"mc-light_purple",
+    "e":"mc-yellow",
+    "f":"mc-white"
+  };
 
-    const icon = item.type === "folder" ? "📁" : "📄";
-    const tag = item.type === "folder" ? "dir" : getFileExt(name);
+  const formatMap = {
+    "l":"mc-bold",
+    "o":"mc-italic",
+    "n":"mc-underlined",
+    "m":"mc-strikethrough"
+  };
 
-    div.innerHTML = `
-      <div class="file-name">${icon} ${escapeHtml(name)}</div>
-      <span class="tag">${escapeHtml(tag)}</span>
-    `;
+  text = escapeHtml(String(text));
 
-    if(item.type === "file"){
-      div.onclick = () => openFile(name);
+  let result = "";
+  let currentColor = "mc-white";
+  let activeFormats = [];
+
+  function wrapChar(char){
+    const classes = [currentColor, ...activeFormats].join(" ").trim();
+    return `<span class="${classes}">${char}</span>`;
+  }
+
+  let i = 0;
+  while(i < text.length){
+    if(text[i] === "§" && i + 1 < text.length){
+      const code = text[i + 1].toLowerCase();
+
+      if(colorMap[code]){
+        currentColor = colorMap[code];
+        activeFormats = [];
+        i += 2;
+        continue;
+      }
+
+      if(formatMap[code]){
+        if(!activeFormats.includes(formatMap[code])){
+          activeFormats.push(formatMap[code]);
+        }
+        i += 2;
+        continue;
+      }
+
+      if(code === "r"){
+        currentColor = "mc-white";
+        activeFormats = [];
+        i += 2;
+        continue;
+      }
     }
 
-    container.appendChild(div);
-  });
-}
-
-function openFile(name){
-  if(!files[name] || files[name].type !== "file") return;
-  currentFile = name;
-  document.getElementById("currentFileName").innerText = name;
-  document.getElementById("fileEditor").value = files[name].content || "";
-}
-
-function createNewFile(){
-  const name = prompt("Nome do novo arquivo:", "novo-arquivo.txt");
-  if(!name) return;
-
-  if(files[name]){
-    alert("Já existe um arquivo ou pasta com esse nome.");
-    return;
+    result += wrapChar(text[i]);
+    i++;
   }
 
-  files[name] = {
-    type: "file",
-    content: ""
-  };
-
-  persistFiles();
-  renderFileList();
-  openFile(name);
+  return result;
 }
 
-function createNewFolder(){
-  const name = prompt("Nome da nova pasta:", "nova-pasta");
-  if(!name) return;
-
-  if(files[name]){
-    alert("Já existe um arquivo ou pasta com esse nome.");
-    return;
+function colorizeLogLine(text){
+  if(text.includes("[ERRO]") || text.includes("[ERROR]")){
+    return "§c" + text;
   }
-
-  files[name] = {
-    type: "folder"
-  };
-
-  persistFiles();
-  renderFileList();
-}
-
-function saveCurrentFile(){
-  if(!currentFile || !files[currentFile] || files[currentFile].type !== "file"){
-    alert("Nenhum arquivo selecionado.");
-    return;
+  if(text.includes("[WARN]")){
+    return "§e" + text;
   }
-
-  files[currentFile].content = document.getElementById("fileEditor").value;
-  persistFiles();
-  alert("Arquivo salvo no navegador.");
-}
-
-function deleteCurrentFile(){
-  if(!currentFile || !files[currentFile]){
-    alert("Nenhum arquivo selecionado.");
-    return;
+  if(text.includes("[INFO]")){
+    return "§a" + text;
   }
-
-  const ok = confirm(`Excluir "${currentFile}"?`);
-  if(!ok) return;
-
-  delete files[currentFile];
-  persistFiles();
-  renderFileList();
-
-  const nextFile = Object.keys(files).find(name => files[name].type === "file");
-  if(nextFile){
-    openFile(nextFile);
-  }else{
-    currentFile = "";
-    document.getElementById("currentFileName").innerText = "Nenhum arquivo";
-    document.getElementById("fileEditor").value = "";
-  }
-}
-
-function renameCurrentFile(){
-  if(!currentFile || !files[currentFile]){
-    alert("Nenhum arquivo selecionado.");
-    return;
-  }
-
-  const newName = prompt("Novo nome do arquivo:", currentFile);
-  if(!newName || newName === currentFile) return;
-
-  if(files[newName]){
-    alert("Já existe outro arquivo com esse nome.");
-    return;
-  }
-
-  files[newName] = files[currentFile];
-  delete files[currentFile];
-  currentFile = newName;
-
-  persistFiles();
-  renderFileList();
-  openFile(newName);
-}
-
-function exportCurrentFile(){
-  if(!currentFile || !files[currentFile] || files[currentFile].type !== "file"){
-    alert("Nenhum arquivo selecionado.");
-    return;
-  }
-
-  const content = document.getElementById("fileEditor").value;
-  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = currentFile;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-
-  URL.revokeObjectURL(url);
-}
-
-function importTrigger(){
-  document.getElementById("fileUpload").click();
-}
-
-function handleFileUpload(event){
-  const file = event.target.files[0];
-  if(!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(e){
-    const text = e.target.result;
-    const name = file.name;
-
-    files[name] = {
-      type: "file",
-      content: text
-    };
-
-    persistFiles();
-    renderFileList();
-    openFile(name);
-    alert(`Arquivo "${name}" importado.`);
-  };
-
-  reader.readAsText(file);
-  event.target.value = "";
+  return text;
 }
 
 function addConsoleLine(text){
   const area = document.getElementById("consoleArea");
-  area.value += "\n" + text;
+  const line = document.createElement("div");
+  line.className = "console-line";
+  line.innerHTML = parseMinecraftColors(colorizeLogLine(text));
+  area.appendChild(line);
   area.scrollTop = area.scrollHeight;
 }
 
@@ -749,7 +650,15 @@ async function fetchConsole(){
     const data = await res.json();
 
     const area = document.getElementById("consoleArea");
-    area.value = data.lines.join("\n");
+    area.innerHTML = "";
+
+    for(const line of data.lines){
+      const div = document.createElement("div");
+      div.className = "console-line";
+      div.innerHTML = parseMinecraftColors(colorizeLogLine(line));
+      area.appendChild(div);
+    }
+
     area.scrollTop = area.scrollHeight;
   }catch(err){
     console.log("Falha ao buscar console");
@@ -807,32 +716,326 @@ async function uploadPlugin(){
 
     alert(`Plugin enviado: ${data.filename}`);
     input.value = "";
+    fetchFiles(currentDir);
   }catch(err){
     alert("Erro ao conectar com o backend.");
   }
 }
 
-function getFileExt(name){
-  const parts = name.split(".");
-  return parts.length > 1 ? parts.pop().toLowerCase() : "file";
+async function fetchFiles(dir = ""){
+  try{
+    const res = await fetch(`${API_BASE}/files?dir=${encodeURIComponent(dir)}`);
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro ao listar arquivos.");
+      return;
+    }
+
+    currentDir = data.currentPath || "";
+    currentItems = data.items || [];
+    renderFileList();
+    updatePathBox();
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
 }
 
-function escapeHtml(text){
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
+function updatePathBox(){
+  const pathBox = document.getElementById("pathBox");
+  pathBox.innerText = "/server-files" + (currentDir ? "/" + currentDir : "");
+}
+
+function renderFileList(){
+  const container = document.getElementById("fileListContainer");
+  container.innerHTML = "";
+
+  if(currentDir){
+    const backItem = document.createElement("div");
+    backItem.className = "file-item";
+    backItem.innerHTML = `
+      <div class="file-name">⬅️ ..</div>
+      <span class="tag">voltar</span>
+    `;
+    backItem.onclick = () => {
+      const parts = currentDir.split("/");
+      parts.pop();
+      fetchFiles(parts.join("/"));
+    };
+    container.appendChild(backItem);
+  }
+
+  currentItems.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "file-item";
+
+    const icon = item.type === "folder" ? "📁" : "📄";
+    const tag = item.type === "folder" ? "dir" : getFileExt(item.name);
+
+    div.innerHTML = `
+      <div class="file-name">${icon} ${escapeHtml(item.name)}</div>
+      <span class="tag">${escapeHtml(tag)}</span>
+    `;
+
+    if(item.type === "folder"){
+      div.onclick = () => fetchFiles(item.path);
+    }else{
+      div.onclick = () => openFile(item.path);
+    }
+
+    container.appendChild(div);
+  });
+}
+
+async function openFile(filePath){
+  try{
+    const res = await fetch(`${API_BASE}/file?path=${encodeURIComponent(filePath)}`);
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro ao abrir arquivo.");
+      return;
+    }
+
+    currentFile = data.path;
+    document.getElementById("currentFileName").innerText = data.name;
+    document.getElementById("fileEditor").value = data.content || "";
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
+}
+
+async function createNewFile(){
+  const name = prompt("Nome do novo arquivo:", "novo-arquivo.txt");
+  if(!name) return;
+
+  try{
+    const res = await fetch(`${API_BASE}/file/new`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        dir: currentDir,
+        name: name.trim()
+      })
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro ao criar arquivo.");
+      return;
+    }
+
+    await fetchFiles(currentDir);
+    await openFile(data.path);
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
+}
+
+async function createNewFolder(){
+  const name = prompt("Nome da nova pasta:", "nova-pasta");
+  if(!name) return;
+
+  try{
+    const res = await fetch(`${API_BASE}/folder/new`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        dir: currentDir,
+        name: name.trim()
+      })
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro ao criar pasta.");
+      return;
+    }
+
+    await fetchFiles(currentDir);
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
+}
+
+async function saveCurrentFile(){
+  if(!currentFile){
+    alert("Nenhum arquivo selecionado.");
+    return;
+  }
+
+  try{
+    const res = await fetch(`${API_BASE}/file`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        path: currentFile,
+        content: document.getElementById("fileEditor").value
+      })
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro ao salvar.");
+      return;
+    }
+
+    alert("Arquivo salvo no servidor.");
+    await fetchFiles(currentDir);
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
+}
+
+async function deleteCurrentFile(){
+  if(!currentFile){
+    alert("Nenhum arquivo selecionado.");
+    return;
+  }
+
+  const ok = confirm(`Excluir "${currentFile}"?`);
+  if(!ok) return;
+
+  try{
+    const res = await fetch(`${API_BASE}/file?path=${encodeURIComponent(currentFile)}`, {
+      method: "DELETE"
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro ao excluir.");
+      return;
+    }
+
+    currentFile = "";
+    document.getElementById("currentFileName").innerText = "Nenhum arquivo";
+    document.getElementById("fileEditor").value = "";
+    await fetchFiles(currentDir);
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
+}
+
+async function renameCurrentFile(){
+  if(!currentFile){
+    alert("Nenhum arquivo selecionado.");
+    return;
+  }
+
+  const oldName = currentFile.split("/").pop();
+  const newName = prompt("Novo nome do arquivo:", oldName);
+
+  if(!newName || newName === oldName) return;
+
+  try{
+    const res = await fetch(`${API_BASE}/file/rename`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        oldPath: currentFile,
+        newName: newName.trim()
+      })
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro ao renomear.");
+      return;
+    }
+
+    currentFile = data.newPath;
+    await fetchFiles(currentDir);
+    await openFile(currentFile);
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
+}
+
+function importTrigger(){
+  document.getElementById("fileUpload").click();
+}
+
+async function handleFileUpload(event){
+  const file = event.target.files[0];
+  if(!file) return;
+
+  try{
+    const text = await file.text();
+
+    const relativePath = currentDir
+      ? `${currentDir}/${file.name}`
+      : file.name;
+
+    const res = await fetch(`${API_BASE}/file`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        path: relativePath,
+        content: text
+      })
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro ao importar arquivo.");
+      return;
+    }
+
+    await fetchFiles(currentDir);
+    await openFile(relativePath);
+    alert(`Arquivo "${file.name}" importado no servidor.`);
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
+
+  event.target.value = "";
+}
+
+function exportCurrentFile(){
+  if(!currentFile){
+    alert("Nenhum arquivo selecionado.");
+    return;
+  }
+
+  const content = document.getElementById("fileEditor").value;
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = currentFile.split("/").pop();
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
 }
 
 showSection("dashboard");
-renderFileList();
-openFile(currentFile);
 
+fetchFiles();
 fetchStatus();
 fetchConsole();
 
 setInterval(fetchStatus, 3000);
 setInterval(fetchConsole, 2000);
+setInterval(() => fetchFiles(currentDir), 3000);
 </script>
 </body>
 </html>
