@@ -8,7 +8,6 @@
 *{
   box-sizing:border-box;
 }
-
 body{
   margin:0;
   min-height:100vh;
@@ -19,27 +18,23 @@ body{
   font-family:Arial,sans-serif;
   color:white;
 }
-
 .card{
   width:100%;
-  max-width:420px;
+  max-width:430px;
   background:#1e293b;
   border:1px solid #334155;
   border-radius:16px;
   padding:24px;
   box-shadow:0 10px 30px rgba(0,0,0,0.25);
 }
-
 h1{
   margin-top:0;
   margin-bottom:8px;
 }
-
 .note{
   color:#94a3b8;
   margin-bottom:20px;
 }
-
 input{
   width:100%;
   margin-bottom:12px;
@@ -50,7 +45,6 @@ input{
   padding:12px;
   font-size:15px;
 }
-
 button{
   width:100%;
   background:#3b82f6;
@@ -61,15 +55,22 @@ button{
   font-size:15px;
   cursor:pointer;
 }
-
 button:hover{
   background:#2563eb;
 }
-
 .error{
   margin-top:12px;
   color:#fca5a5;
   min-height:20px;
+}
+.users-box{
+  margin-top:16px;
+  padding:12px;
+  border-radius:12px;
+  background:#0f172a;
+  border:1px solid #334155;
+  color:#cbd5e1;
+  font-size:14px;
 }
 </style>
 </head>
@@ -78,11 +79,17 @@ button:hover{
     <h1>Entrar</h1>
     <div class="note">Faça login para acessar o painel.</div>
 
-    <input id="username" type="text" placeholder="Usuário" value="admin">
-    <input id="password" type="password" placeholder="Senha" value="123456">
+    <input id="username" type="text" placeholder="Usuário">
+    <input id="password" type="password" placeholder="Senha">
     <button onclick="login()">Entrar</button>
 
     <div id="error" class="error"></div>
+
+    <div class="users-box">
+      <strong>Perfis padrão:</strong><br>
+      adminLord / 123456<br>
+      adminSassdio / 123456
+    </div>
   </div>
 
 <script>
