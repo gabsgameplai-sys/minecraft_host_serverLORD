@@ -1,91 +1,500 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel MyMineHost</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    *{
+      box-sizing:border-box;
+    }
 
-<title>Painel MyMineHost</title>
+    body{
+      margin:0;
+      font-family:Arial, sans-serif;
+      background:#0f172a;
+      color:white;
+    }
 
-<style>
+    header{
+      background:#020617;
+      padding:18px 24px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border-bottom:1px solid #1e293b;
+    }
 
-body{
-font-family:Arial;
-background:#0f172a;
-color:white;
-margin:0;
-}
+    .logo{
+      font-size:22px;
+      font-weight:bold;
+    }
 
-header{
-background:#020617;
-padding:20px;
-text-align:center;
-font-size:22px;
-}
+    .top-links a{
+      color:white;
+      text-decoration:none;
+      margin-left:18px;
+    }
 
-.container{
-padding:40px;
-text-align:center;
-}
+    .layout{
+      display:grid;
+      grid-template-columns:260px 1fr;
+      min-height:calc(100vh - 63px);
+    }
 
-button{
-background:#3b82f6;
-border:none;
-padding:15px 25px;
-border-radius:8px;
-color:white;
-font-size:16px;
-cursor:pointer;
-}
+    .sidebar{
+      background:#111827;
+      border-right:1px solid #1e293b;
+      padding:20px;
+    }
 
-.console{
-margin-top:30px;
-width:80%;
-height:300px;
-background:black;
-color:lime;
-padding:10px;
-font-family:monospace;
-}
+    .sidebar h3{
+      margin-top:0;
+      font-size:16px;
+      color:#93c5fd;
+    }
 
-</style>
+    .menu-btn{
+      width:100%;
+      text-align:left;
+      background:#1e293b;
+      color:white;
+      border:none;
+      padding:12px 14px;
+      margin-bottom:10px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:15px;
+    }
 
+    .menu-btn:hover{
+      background:#334155;
+    }
+
+    .main{
+      padding:24px;
+    }
+
+    .card{
+      background:#1e293b;
+      border:1px solid #334155;
+      border-radius:14px;
+      padding:18px;
+      margin-bottom:20px;
+    }
+
+    .card h2{
+      margin-top:0;
+    }
+
+    .server-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    .btn{
+      background:#3b82f6;
+      color:white;
+      border:none;
+      padding:12px 18px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:15px;
+    }
+
+    .btn:hover{
+      background:#2563eb;
+    }
+
+    .btn.gray{
+      background:#475569;
+    }
+
+    .btn.gray:hover{
+      background:#64748b;
+    }
+
+    .status{
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      background:#14532d;
+      color:#bbf7d0;
+      font-size:14px;
+      margin-top:8px;
+    }
+
+    .console{
+      width:100%;
+      height:220px;
+      background:#020617;
+      color:#4ade80;
+      border:1px solid #334155;
+      border-radius:10px;
+      padding:12px;
+      font-family:Consolas, monospace;
+      resize:vertical;
+    }
+
+    .console-input-row{
+      display:flex;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .console-input{
+      flex:1;
+      background:#0f172a;
+      color:white;
+      border:1px solid #334155;
+      border-radius:10px;
+      padding:12px;
+    }
+
+    .files-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+
+    .path-box{
+      background:#0f172a;
+      border:1px solid #334155;
+      padding:10px 12px;
+      border-radius:10px;
+      color:#cbd5e1;
+      width:100%;
+      max-width:520px;
+    }
+
+    .file-grid{
+      display:grid;
+      grid-template-columns:320px 1fr;
+      gap:18px;
+    }
+
+    .file-list{
+      background:#0f172a;
+      border:1px solid #334155;
+      border-radius:12px;
+      padding:10px;
+      min-height:380px;
+    }
+
+    .file-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      margin-bottom:8px;
+      background:#111827;
+      border:1px solid #1f2937;
+    }
+
+    .file-item:hover{
+      background:#1e293b;
+    }
+
+    .file-name{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .tag{
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      background:#1d4ed8;
+      color:white;
+    }
+
+    .editor-panel{
+      background:#0f172a;
+      border:1px solid #334155;
+      border-radius:12px;
+      padding:12px;
+      min-height:380px;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .editor-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+
+    .editor-top strong{
+      color:#93c5fd;
+    }
+
+    .editor{
+      flex:1;
+      width:100%;
+      min-height:300px;
+      background:#020617;
+      color:#e2e8f0;
+      border:1px solid #334155;
+      border-radius:10px;
+      padding:12px;
+      font-family:Consolas, monospace;
+      resize:vertical;
+    }
+
+    .editor-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .small-note{
+      color:#94a3b8;
+      font-size:14px;
+      margin-top:8px;
+    }
+
+    .upload-box{
+      margin-top:10px;
+      padding:14px;
+      border:1px dashed #475569;
+      border-radius:12px;
+      background:#111827;
+    }
+
+    input[type="file"]{
+      color:white;
+    }
+
+    @media (max-width: 900px){
+      .layout{
+        grid-template-columns:1fr;
+      }
+
+      .file-grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
 </head>
-
 <body>
 
-<header>
+  <header>
+    <div class="logo">MyMineHost</div>
+    <div class="top-links">
+      <a href="index.html">Início</a>
+      <a href="panel.html">Painel</a>
+    </div>
+  </header>
 
-Painel de Controle
+  <div class="layout">
+    <aside class="sidebar">
+      <h3>Menu do Painel</h3>
+      <button class="menu-btn" onclick="showSection('dashboard')">🏠 Dashboard</button>
+      <button class="menu-btn" onclick="showSection('consoleSection')">🖥 Console</button>
+      <button class="menu-btn" onclick="showSection('filesSection')">📁 Gerenciador de Arquivos</button>
+      <button class="menu-btn">🔌 Plugins</button>
+      <button class="menu-btn">💾 Backups</button>
+      <button class="menu-btn">⚙ Configurações</button>
+    </aside>
 
-</header>
+    <main class="main">
+      <section id="dashboard" class="card">
+        <h2>Servidor Minecraft</h2>
+        <p>Nome: <strong>Meu Servidor</strong></p>
+        <p>Versão: <strong>Paper 1.21.1</strong></p>
+        <div class="status">● Online</div>
 
+        <div class="server-actions">
+          <button class="btn" onclick="addConsoleLine('Iniciando servidor...')">Iniciar</button>
+          <button class="btn gray" onclick="addConsoleLine('Parando servidor...')">Parar</button>
+          <button class="btn" onclick="addConsoleLine('Reiniciando servidor...')">Reiniciar</button>
+        </div>
+      </section>
 
-<div class="container">
+      <section id="consoleSection" class="card">
+        <h2>Console</h2>
+        <textarea id="consoleArea" class="console" readonly>[INFO] Painel iniciado...
+[INFO] Servidor online.</textarea>
 
-<h2>Seu Servidor</h2>
+        <div class="console-input-row">
+          <input id="consoleCommand" class="console-input" type="text" placeholder="Digite um comando, ex: say oi">
+          <button class="btn" onclick="sendCommand()">Enviar</button>
+        </div>
+      </section>
 
-<br>
+      <section id="filesSection" class="card">
+        <div class="files-header">
+          <div>
+            <h2 style="margin:0;">Gerenciador de Arquivos</h2>
+            <div class="small-note">Visual do file manager. Depois você conecta com backend para funcionar de verdade.</div>
+          </div>
+          <div class="path-box">/servers/meu-servidor/</div>
+        </div>
 
-<button>Criar Servidor</button>
+        <div class="file-grid">
+          <div class="file-list">
+            <div class="file-item" onclick="openFile('server.properties', sampleFiles['server.properties'])">
+              <div class="file-name">📄 server.properties</div>
+              <span class="tag">txt</span>
+            </div>
 
-<button>Iniciar</button>
+            <div class="file-item" onclick="openFile('eula.txt', sampleFiles['eula.txt'])">
+              <div class="file-name">📄 eula.txt</div>
+              <span class="tag">txt</span>
+            </div>
 
-<button>Parar</button>
+            <div class="file-item" onclick="openFile('spigot.yml', sampleFiles['spigot.yml'])">
+              <div class="file-name">📄 spigot.yml</div>
+              <span class="tag">yml</span>
+            </div>
 
-<button>Reiniciar</button>
+            <div class="file-item" onclick="openFile('bukkit.yml', sampleFiles['bukkit.yml'])">
+              <div class="file-name">📄 bukkit.yml</div>
+              <span class="tag">yml</span>
+            </div>
 
-<br><br>
+            <div class="file-item" onclick="openFile('plugins/LuckPerms/config.yml', sampleFiles['plugins/LuckPerms/config.yml'])">
+              <div class="file-name">📄 plugins/LuckPerms/config.yml</div>
+              <span class="tag">yml</span>
+            </div>
 
-<textarea class="console">
+            <div class="file-item" onclick="openFile('logs/latest.log', sampleFiles['logs/latest.log'])">
+              <div class="file-name">📄 logs/latest.log</div>
+              <span class="tag">log</span>
+            </div>
 
-Console do servidor aparecerá aqui...
+            <div class="file-item">
+              <div class="file-name">📁 world</div>
+              <span class="tag">dir</span>
+            </div>
 
-</textarea>
+            <div class="file-item">
+              <div class="file-name">📁 plugins</div>
+              <span class="tag">dir</span>
+            </div>
 
-</div>
+            <div class="upload-box">
+              <strong>Upload de arquivo</strong>
+              <div class="small-note">Visual por enquanto</div>
+              <br>
+              <input type="file">
+            </div>
+          </div>
 
+          <div class="editor-panel">
+            <div class="editor-top">
+              <strong id="currentFileName">server.properties</strong>
+              <div>
+                <button class="btn">Novo Arquivo</button>
+                <button class="btn gray">Nova Pasta</button>
+              </div>
+            </div>
 
+            <textarea id="fileEditor" class="editor">motd=Meu servidor
+online-mode=true
+max-players=20
+view-distance=10</textarea>
+
+            <div class="editor-actions">
+              <button class="btn" onclick="fakeSave()">Salvar</button>
+              <button class="btn gray" onclick="fakeDelete()">Excluir</button>
+              <button class="btn gray" onclick="fakeDownload()">Baixar</button>
+              <button class="btn gray" onclick="fakeRename()">Renomear</button>
+            </div>
+
+            <div class="small-note">
+              Quando você tiver backend, esses botões podem chamar rotas como:
+              <code>/files/list</code>, <code>/files/read</code>, <code>/files/save</code>, <code>/files/delete</code>.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const sampleFiles = {
+      "server.properties": `motd=Meu servidor
+online-mode=true
+max-players=20
+view-distance=10
+spawn-protection=16`,
+      "eula.txt": `# By changing the setting below to TRUE you are indicating your agreement to the EULA.
+eula=true`,
+      "spigot.yml": `settings:
+  bungeecord: false
+  save-user-cache-on-stop-only: false`,
+      "bukkit.yml": `settings:
+  allow-end: true
+spawn-limits:
+  monsters: 70`,
+      "plugins/LuckPerms/config.yml": `server: global
+sync-minutes: 3`,
+      "logs/latest.log": `[Server thread/INFO]: Starting minecraft server version 1.21.1
+[Server thread/INFO]: Loading properties
+[Server thread/INFO]: Done (3.421s)!`
+    };
+
+    function showSection(id){
+      const sections = ["dashboard", "consoleSection", "filesSection"];
+      sections.forEach(sectionId => {
+        document.getElementById(sectionId).style.display = sectionId === id ? "block" : "none";
+      });
+    }
+
+    function openFile(name, content){
+      document.getElementById("currentFileName").innerText = name;
+      document.getElementById("fileEditor").value = content;
+    }
+
+    function addConsoleLine(text){
+      const area = document.getElementById("consoleArea");
+      area.value += "\\n[INFO] " + text;
+      area.scrollTop = area.scrollHeight;
+    }
+
+    function sendCommand(){
+      const input = document.getElementById("consoleCommand");
+      const cmd = input.value.trim();
+      if(!cmd) return;
+      addConsoleLine("> " + cmd);
+      input.value = "";
+    }
+
+    function fakeSave(){
+      alert("Botão Salvar clicado. Quando conectar com backend, ele salva o arquivo de verdade.");
+    }
+
+    function fakeDelete(){
+      alert("Botão Excluir clicado. Depois você conecta com a API para apagar arquivos.");
+    }
+
+    function fakeDownload(){
+      alert("Botão Baixar clicado. Depois você conecta com a API para download real.");
+    }
+
+    function fakeRename(){
+      alert("Botão Renomear clicado. Depois você conecta com a API para renomear.");
+    }
+
+    showSection("dashboard");
+  </script>
 </body>
 </html>
