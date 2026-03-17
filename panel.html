@@ -117,7 +117,8 @@ header{
 .server-actions,
 .editor-actions,
 .file-tools,
-.profile-actions{
+.profile-actions,
+.settings-actions{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
@@ -304,12 +305,15 @@ header{
 
 input[type="file"],
 input[type="text"],
-input[type="password"]{
+input[type="password"],
+select,
+textarea{
   color:white;
 }
 
 input[type="text"],
-input[type="password"]{
+input[type="password"],
+select{
   background:#0f172a;
   color:white;
   border:1px solid #334155;
@@ -354,6 +358,13 @@ input[type="password"]{
   margin-bottom:12px;
 }
 
+.form-row label{
+  display:block;
+  font-size:14px;
+  color:#cbd5e1;
+  margin-bottom:6px;
+}
+
 .success{
   color:#86efac;
   margin-top:8px;
@@ -387,6 +398,51 @@ input[type="password"]{
 .mc-italic{font-style:italic;}
 .mc-underlined{text-decoration:underline;}
 .mc-strikethrough{text-decoration:line-through;}
+
+/* SETTINGS */
+.settings-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+.settings-section{
+  background:#0f172a;
+  border:1px solid #334155;
+  border-radius:12px;
+  padding:16px;
+}
+
+.settings-section h3{
+  margin-top:0;
+}
+
+.settings-highlight{
+  background:
+    radial-gradient(circle at top right, rgba(59,130,246,.18), transparent 30%),
+    radial-gradient(circle at bottom left, rgba(16,185,129,.14), transparent 28%),
+    linear-gradient(135deg, #111827, #1e293b 65%, #0f172a);
+  border:1px solid rgba(59,130,246,.25);
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:18px;
+}
+
+.settings-pills{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+
+.settings-pill{
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  background:#1e293b;
+  border:1px solid #334155;
+  color:#cbd5e1;
+}
 
 /* TIKTOK */
 .tiktok-shell{
@@ -641,7 +697,8 @@ input[type="password"]{
 }
 
 @media (max-width:980px){
-  .tiktok-shell{
+  .tiktok-shell,
+  .settings-grid{
     grid-template-columns:1fr;
   }
 
@@ -683,6 +740,7 @@ input[type="password"]{
     <button class="menu-btn" onclick="showSection('dashboard')">🏠 Dashboard</button>
     <button class="menu-btn" onclick="showSection('consoleSection')">🖥 Console</button>
     <button class="menu-btn" onclick="showSection('filesSection')">📁 Gerenciador de Arquivos</button>
+    <button class="menu-btn" onclick="showSection('settingsSection')">⚙️ Configurações</button>
     <button class="menu-btn" onclick="showSection('tiktokSection')">🎵 TikTok LIVE</button>
     <button class="menu-btn" onclick="showSection('profileSection')">👤 Perfil</button>
   </aside>
@@ -775,6 +833,195 @@ input[type="password"]{
           <div class="small-note">
             Os arquivos agora são lidos e salvos direto na pasta server-files do backend.
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="settingsSection" class="card" style="display:none;">
+      <div class="settings-highlight">
+        <h2 style="margin:0 0 8px;">Configurações do Servidor</h2>
+        <p class="small-note" style="margin:0;">
+          Edite as opções principais do <strong>server.properties</strong> de forma visual, no estilo de painel de host.
+        </p>
+        <div class="settings-pills">
+          <span class="settings-pill">server.properties</span>
+          <span class="settings-pill">Gameplay</span>
+          <span class="settings-pill">Mundo</span>
+          <span class="settings-pill">Rede</span>
+          <span class="settings-pill">Salvar e reiniciar</span>
+        </div>
+      </div>
+
+      <div class="settings-grid">
+        <div class="settings-section">
+          <h3>Geral</h3>
+
+          <div class="form-row">
+            <label for="cfg_motd">MOTD</label>
+            <input id="cfg_motd" type="text" placeholder="Mensagem do servidor">
+          </div>
+
+          <div class="form-row">
+            <label for="cfg_gamemode">Gamemode</label>
+            <select id="cfg_gamemode">
+              <option value="survival">Survival</option>
+              <option value="creative">Creative</option>
+              <option value="adventure">Adventure</option>
+              <option value="spectator">Spectator</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="cfg_difficulty">Dificuldade</label>
+            <select id="cfg_difficulty">
+              <option value="peaceful">Peaceful</option>
+              <option value="easy">Easy</option>
+              <option value="normal">Normal</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="cfg_max_players">Máximo de jogadores</label>
+            <input id="cfg_max_players" type="text" placeholder="20">
+          </div>
+
+          <div class="form-row">
+            <label for="cfg_server_port">Porta</label>
+            <input id="cfg_server_port" type="text" placeholder="25565">
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Gameplay</h3>
+
+          <div class="switch-row">
+            <div class="switch-text">
+              <strong>PVP</strong>
+              <small>Permitir combate entre jogadores.</small>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="cfg_pvp">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <div class="switch-text">
+              <strong>Whitelist</strong>
+              <small>Permitir apenas jogadores autorizados.</small>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="cfg_whitelist">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <div class="switch-text">
+              <strong>Command Block</strong>
+              <small>Ativar blocos de comando.</small>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="cfg_command_block">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <div class="switch-text">
+              <strong>Online Mode</strong>
+              <small>Verificação oficial das contas.</small>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="cfg_online_mode">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <div class="switch-text">
+              <strong>Allow Nether</strong>
+              <small>Permitir Nether no servidor.</small>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="cfg_allow_nether">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-grid" style="margin-top:18px;">
+        <div class="settings-section">
+          <h3>Mundo</h3>
+
+          <div class="form-row">
+            <label for="cfg_level_name">Nome do mundo</label>
+            <input id="cfg_level_name" type="text" placeholder="world">
+          </div>
+
+          <div class="form-row">
+            <label for="cfg_level_seed">Seed</label>
+            <input id="cfg_level_seed" type="text" placeholder="Opcional">
+          </div>
+
+          <div class="switch-row">
+            <div class="switch-text">
+              <strong>Hardcore</strong>
+              <small>Ativa o modo hardcore.</small>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="cfg_hardcore">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <div class="switch-text">
+              <strong>Generate Structures</strong>
+              <small>Gerar vilas, templos e estruturas.</small>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="cfg_generate_structures">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Distâncias e Proteção</h3>
+
+          <div class="form-row">
+            <label for="cfg_spawn_protection">Spawn Protection</label>
+            <input id="cfg_spawn_protection" type="text" placeholder="16">
+          </div>
+
+          <div class="form-row">
+            <label for="cfg_view_distance">View Distance</label>
+            <input id="cfg_view_distance" type="text" placeholder="10">
+          </div>
+
+          <div class="form-row">
+            <label for="cfg_simulation_distance">Simulation Distance</label>
+            <input id="cfg_simulation_distance" type="text" placeholder="10">
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section" style="margin-top:18px;">
+        <h3>Edição bruta</h3>
+        <p class="small-note">Você também pode visualizar o conteúdo bruto do arquivo.</p>
+        <textarea id="cfg_raw" class="editor" style="min-height:240px;"></textarea>
+
+        <div class="settings-actions">
+          <button class="btn" onclick="saveServerConfig()">Salvar configurações</button>
+          <button class="btn gray" onclick="loadServerConfig()">Recarregar</button>
+          <button class="btn gray" onclick="restartServer()">Reiniciar servidor</button>
+        </div>
+
+        <div class="small-note">
+          As alterações salvam no arquivo <code>server.properties</code>.
         </div>
       </div>
     </section>
@@ -959,7 +1206,7 @@ input[type="password"]{
 </div>
 
 <script>
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = `${window.location.origin}/api`;
 const AUTH_TOKEN = localStorage.getItem("myminehost_token");
 
 if(!AUTH_TOKEN){
@@ -1047,6 +1294,7 @@ function showSection(id){
     "dashboard",
     "consoleSection",
     "filesSection",
+    "settingsSection",
     "tiktokSection",
     "profileSection"
   ];
@@ -1642,7 +1890,6 @@ async function handleFileUpload(event){
 
   try{
     const text = await file.text();
-
     const relativePath = currentDir ? `${currentDir}/${file.name}` : file.name;
 
     const res = await apiFetch(`${API_BASE}/file`, {
@@ -1686,6 +1933,105 @@ function exportCurrentFile(){
   a.remove();
 
   URL.revokeObjectURL(url);
+}
+
+/* SETTINGS */
+function boolFromString(value){
+  return String(value).toLowerCase() === "true";
+}
+
+function setInputValue(id, value){
+  const el = document.getElementById(id);
+  if(el) el.value = value ?? "";
+}
+
+function setCheckboxValue(id, value){
+  const el = document.getElementById(id);
+  if(el) el.checked = boolFromString(value);
+}
+
+async function loadServerConfig(){
+  try{
+    const res = await apiFetch(`${API_BASE}/server-config`);
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro ao carregar configurações.");
+      return;
+    }
+
+    const cfg = data.config || {};
+
+    setInputValue("cfg_motd", cfg["motd"]);
+    setInputValue("cfg_gamemode", cfg["gamemode"]);
+    setInputValue("cfg_difficulty", cfg["difficulty"]);
+    setInputValue("cfg_max_players", cfg["max-players"]);
+    setInputValue("cfg_server_port", cfg["server-port"]);
+
+    setCheckboxValue("cfg_pvp", cfg["pvp"]);
+    setCheckboxValue("cfg_whitelist", cfg["white-list"]);
+    setCheckboxValue("cfg_command_block", cfg["enable-command-block"]);
+    setCheckboxValue("cfg_online_mode", cfg["online-mode"]);
+    setCheckboxValue("cfg_allow_nether", cfg["allow-nether"]);
+
+    setInputValue("cfg_level_name", cfg["level-name"]);
+    setInputValue("cfg_level_seed", cfg["level-seed"]);
+    setCheckboxValue("cfg_hardcore", cfg["hardcore"]);
+    setCheckboxValue("cfg_generate_structures", cfg["generate-structures"]);
+
+    setInputValue("cfg_spawn_protection", cfg["spawn-protection"]);
+    setInputValue("cfg_view_distance", cfg["view-distance"]);
+    setInputValue("cfg_simulation_distance", cfg["simulation-distance"]);
+
+    setInputValue("cfg_raw", data.raw || "");
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
+}
+
+async function saveServerConfig(){
+  try{
+    const config = {
+      "motd": document.getElementById("cfg_motd").value,
+      "gamemode": document.getElementById("cfg_gamemode").value,
+      "difficulty": document.getElementById("cfg_difficulty").value,
+      "max-players": document.getElementById("cfg_max_players").value,
+      "server-port": document.getElementById("cfg_server_port").value,
+
+      "pvp": String(document.getElementById("cfg_pvp").checked),
+      "white-list": String(document.getElementById("cfg_whitelist").checked),
+      "enable-command-block": String(document.getElementById("cfg_command_block").checked),
+      "online-mode": String(document.getElementById("cfg_online_mode").checked),
+      "allow-nether": String(document.getElementById("cfg_allow_nether").checked),
+
+      "level-name": document.getElementById("cfg_level_name").value,
+      "level-seed": document.getElementById("cfg_level_seed").value,
+      "hardcore": String(document.getElementById("cfg_hardcore").checked),
+      "generate-structures": String(document.getElementById("cfg_generate_structures").checked),
+
+      "spawn-protection": document.getElementById("cfg_spawn_protection").value,
+      "view-distance": document.getElementById("cfg_view_distance").value,
+      "simulation-distance": document.getElementById("cfg_simulation_distance").value
+    };
+
+    const res = await apiFetch(`${API_BASE}/server-config`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ config })
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.error || "Erro ao salvar configurações.");
+      return;
+    }
+
+    alert("Configurações salvas com sucesso.");
+    await loadServerConfig();
+  }catch(err){
+    alert("Erro ao conectar com o backend.");
+  }
 }
 
 /* TIKTOK */
@@ -1813,6 +2159,7 @@ fetchFiles();
 fetchStatus();
 fetchConsole();
 fetchPublicUrl();
+loadServerConfig();
 updateTikTokUI();
 
 setInterval(fetchStatus, 3000);
