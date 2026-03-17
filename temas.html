@@ -1,1 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
 
+<meta charset="UTF-8">
+<title>Temas - Host LORD</title>
+
+<style>
+
+body{
+  font-family: Arial, sans-serif;
+  background:#0f172a;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.container{
+  background:#111827;
+  padding:40px;
+  border-radius:12px;
+  width:320px;
+  text-align:center;
+}
+
+h1{
+  margin-bottom:20px;
+}
+
+select{
+  width:100%;
+  padding:10px;
+  margin-bottom:20px;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#1d4ed8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎨 Temas</h1>
+
+<select id="themeSelect">
+<option value="dark">🌙 Escuro</option>
+<option value="light">☀️ Claro</option>
+<option value="lord">👑 Lord</option>
+<option value="creeper">🟩 Creeper</option>
+</select>
+
+<button onclick="saveTheme()">Salvar Tema</button>
+
+<br><br>
+
+<button onclick="voltar()">⬅ Voltar ao Painel</button>
+
+</div>
+
+<script>
+
+function applyTheme(theme){
+
+const allowed=["dark","light","lord","creeper"]
+
+const finalTheme=allowed.includes(theme)?theme:"dark"
+
+document.documentElement.setAttribute("data-theme",finalTheme)
+
+}
+
+function saveTheme(){
+
+const theme=document.getElementById("themeSelect").value
+
+localStorage.setItem("theme",theme)
+
+applyTheme(theme)
+
+alert("Tema salvo!")
+
+}
+
+function loadTheme(){
+
+const saved=localStorage.getItem("theme")||"dark"
+
+document.getElementById("themeSelect").value=saved
+
+applyTheme(saved)
+
+}
+
+function voltar(){
+
+window.location.href="panel.html"
+
+}
+
+window.onload=loadTheme
+
+</script>
+
+</body>
+</html>
