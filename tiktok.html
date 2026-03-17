@@ -338,13 +338,14 @@
           <div class="list-item"><strong>Usuário:</strong> <span id="summaryUsername">--</span></div>
           <div class="list-item"><strong>Status:</strong> <span id="summaryStatus">Desconectado</span></div>
           <div class="list-item"><strong>Total de eventos:</strong> <span id="summaryCount">0</span></div>
+          <div class="list-item"><strong>Player alvo:</strong> <span id="summaryTargetPlayer">lordruann</span></div>
         </div>
 
         <div class="legend">
-          <div class="legend-item">👤 Seguidor = 💀 Esqueleto</div>
-          <div class="legend-item">🌹 Rosa = 🧟 Zumbi</div>
-          <div class="legend-item">🦖 Dino = 💥 Creeper</div>
-          <div class="legend-item">🤠 Chapéu = ☠️ Wither</div>
+          <div class="legend-item">👤 Seguidor = 💀 Esqueleto no lordruann</div>
+          <div class="legend-item">🌹 Rosa = 🧟 Zumbi no lordruann</div>
+          <div class="legend-item">🦖 Dino = 💥 Creeper no lordruann</div>
+          <div class="legend-item">🤠 Chapéu = ☠️ Wither no lordruann</div>
         </div>
       </div>
 
@@ -365,14 +366,14 @@
       <div class="card full">
         <h3>Exemplos para o backend</h3>
         <div class="list">
-          <div class="list-item"><code>follow => summon skeleton ~ ~ ~</code></div>
-          <div class="list-item"><code>Rosa => summon zombie ~ ~ ~</code></div>
-          <div class="list-item"><code>Dinossauro => summon creeper ~ ~ ~</code></div>
-          <div class="list-item"><code>Chapéu de cowboy => summon wither ~ ~ ~</code></div>
+          <div class="list-item"><code>follow => execute at lordruann run summon skeleton ~ ~ ~</code></div>
+          <div class="list-item"><code>Rosa => execute at lordruann run summon zombie ~ ~ ~</code></div>
+          <div class="list-item"><code>Dinossauro => execute at lordruann run summon creeper ~ ~ ~</code></div>
+          <div class="list-item"><code>Chapéu de cowboy => execute at lordruann run summon wither ~ ~ ~</code></div>
         </div>
 
         <p class="small" style="margin-top:14px;">
-          Spawnar wither pode destruir o mapa. Se quiser mais segurança, use no backend algo como <code>summon wither ~ ~20 ~</code>.
+          Spawnar wither pode destruir o mapa. Mais seguro seria usar <code>execute at lordruann run summon wither ~ ~20 ~</code>.
         </p>
       </div>
     </div>
@@ -380,11 +381,13 @@
 
   <script>
     const STORAGE_KEY = "hostlord_tiktok_config";
+    const TARGET_PLAYER = "lordruann";
 
     function getDefaultConfig() {
       return {
         username: "",
         connected: false,
+        targetPlayer: TARGET_PLAYER,
         mappings: [
           {
             id: "follow",
@@ -392,7 +395,7 @@
             label: "Seguidor",
             coins: 0,
             mob: "skeleton",
-            command: "summon skeleton ~ ~ ~",
+            command: `execute at ${TARGET_PLAYER} run summon skeleton ~ ~ ~`,
             icon: "👤",
             mobIcon: "💀"
           },
@@ -402,7 +405,7 @@
             label: "Rosa",
             coins: 1,
             mob: "zombie",
-            command: "summon zombie ~ ~ ~",
+            command: `execute at ${TARGET_PLAYER} run summon zombie ~ ~ ~`,
             icon: "🌹",
             mobIcon: "🧟"
           },
@@ -412,7 +415,7 @@
             label: "Dinossauro",
             coins: 10,
             mob: "creeper",
-            command: "summon creeper ~ ~ ~",
+            command: `execute at ${TARGET_PLAYER} run summon creeper ~ ~ ~`,
             icon: "🦖",
             mobIcon: "💥"
           },
@@ -422,7 +425,7 @@
             label: "Chapéu de cowboy",
             coins: 100,
             mob: "wither",
-            command: "summon wither ~ ~ ~",
+            command: `execute at ${TARGET_PLAYER} run summon wither ~ ~ ~`,
             icon: "🤠",
             mobIcon: "☠️"
           }
@@ -441,11 +444,21 @@
         return {
           ...defaults,
           ...parsed,
-          mappings: Array.isArray(parsed.mappings) ? parsed.mappings : defaults.mappings
+          targetPlayer: TARGET_PLAYER,
+          mappings: Array.isArray(parsed.mappings) && parsed.mappings.length
+            ? parsed.mappings.map(item => ({
+                ...item,
+                command: fixCommandToTarget(item.mob || "zombie")
+              }))
+            : defaults.mappings
         };
       } catch {
         return getDefaultConfig();
       }
+    }
+
+    function fixCommandToTarget(mob) {
+      return `execute at ${TARGET_PLAYER} run summon ${mob} ~ ~ ~`;
     }
 
     function saveConfig(config) {
@@ -456,7 +469,12 @@
       const current = loadTikTokConfig();
       const updated = {
         ...current,
-        username: document.getElementById("tiktokUsername").value.trim().replace(/^@/, "")
+        targetPlayer: TARGET_PLAYER,
+        username: document.getElementById("tiktokUsername").value.trim().replace(/^@/, ""),
+        mappings: (current.mappings || []).map(item => ({
+          ...item,
+          command: fixCommandToTarget(item.mob || "zombie")
+        }))
       };
 
       saveConfig(updated);
@@ -474,7 +492,12 @@
 
       const updated = {
         ...current,
-        connected: !current.connected
+        connected: !current.connected,
+        targetPlayer: TARGET_PLAYER,
+        mappings: (current.mappings || []).map(item => ({
+          ...item,
+          command: fixCommandToTarget(item.mob || "zombie")
+        }))
       };
 
       saveConfig(updated);
@@ -488,6 +511,7 @@
       const fresh = getDefaultConfig();
       fresh.username = old.username || "";
       fresh.connected = false;
+      fresh.targetPlayer = TARGET_PLAYER;
 
       saveConfig(fresh);
       renderTikTokConfig(fresh);
@@ -500,6 +524,7 @@
       document.getElementById("summaryUsername").textContent = config.username || "--";
       document.getElementById("summaryStatus").textContent = config.connected ? "Conectado" : "Desconectado";
       document.getElementById("summaryCount").textContent = Array.isArray(config.mappings) ? config.mappings.length : 0;
+      document.getElementById("summaryTargetPlayer").textContent = config.targetPlayer || TARGET_PLAYER;
 
       const dot = document.getElementById("liveDot");
       const text = document.getElementById("liveStatusText");
@@ -533,6 +558,7 @@
             <span class="tag">tipo: ${escapeHtml(item.type || "--")}</span>
             <span class="tag">moedas: ${Number(item.coins || 0)}</span>
             <span class="tag">mob: ${escapeHtml(item.mob || "--")}</span>
+            <span class="tag">alvo: ${TARGET_PLAYER}</span>
             <span class="tag">resultado: ${escapeHtml(item.mobIcon || "⚡")}</span>
           </div>
 
