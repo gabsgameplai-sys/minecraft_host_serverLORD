@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Host LORD - Login</title>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     :root{
       --bg:#0b1120;
@@ -13,6 +12,7 @@
       --text:#e5e7eb;
       --muted:#94a3b8;
       --primary:#2563eb;
+      --primary-hover:#1d4ed8;
       --danger-bg:#3a1624;
       --danger-border:#7f1d1d;
     }
@@ -83,6 +83,10 @@
       font-weight:700;
     }
 
+    button:hover{
+      background:var(--primary-hover);
+    }
+
     .msg{
       margin-top:16px;
       padding:14px 16px;
@@ -98,86 +102,70 @@
       margin-top:14px;
       line-height:1.5;
     }
-
-    #googleBtnWrap{
-      margin-top:16px;
-      display:flex;
-      justify-content:center;
-    }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>Host LORD</h1>
-    <p>Entre com sua conta Google para acessar o painel.</p>
+    <p>Entre com seu usuário e senha para acessar o painel.</p>
 
     <label for="backendUrl">URL do backend</label>
     <input id="backendUrl" placeholder="http://192.168.0.10:3000" />
 
-    <div class="row">
-      <button onclick="saveBackendUrl()">Salvar backend</button>
-      <button onclick="goPanel()">Abrir painel</button>
-    </div>
+    <label for="username">Usuário</label>
+    <input id="username" placeholder="admin" />
 
-    <div id="googleBtnWrap"></div>
+    <label for="password">Senha</label>
+    <input id="password" type="password" placeholder="********" />
+
+    <div class="row">
+      <button onclick="doLogin()">Entrar</button>
+    </div>
 
     <div id="msg" class="msg"></div>
 
     <div class="small">
-      O backend precisa estar rodando no seu PC/VPS.  
-      Exemplo: <code>http://192.168.0.10:3000</code>
+      Exemplo de backend: <code>http://192.168.0.10:3000</code>
     </div>
   </div>
 
   <script>
-    const GOOGLE_CLIENT_ID = "SEU_GOOGLE_CLIENT_ID_AQUI";
-
     const backendInput = document.getElementById("backendUrl");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
     const msg = document.getElementById("msg");
 
     backendInput.value = localStorage.getItem("backend_url") || "http://localhost:3000";
 
-    function showError(text){
+    function showError(text) {
       msg.style.display = "block";
       msg.textContent = text;
     }
 
-    function clearError(){
+    function clearError() {
       msg.style.display = "none";
       msg.textContent = "";
     }
 
-    function saveBackendUrl(){
-      const url = backendInput.value.trim();
-      if(!url){
-        showError("Preencha a URL do backend.");
-        return;
-      }
-      localStorage.setItem("backend_url", url);
-      clearError();
-      alert("Backend salvo.");
-    }
-
-    function goPanel(){
-      window.location.href = "panel.html";
-    }
-
-    async function handleGoogleCredentialResponse(response){
-      try{
+    async function doLogin() {
+      try {
         clearError();
 
-        const backend = (localStorage.getItem("backend_url") || backendInput.value || "").trim();
-        if(!backend){
-          showError("Defina a URL do backend antes de entrar.");
+        const backend = backendInput.value.trim();
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!backend) {
+          showError("Preencha a URL do backend.");
+          return;
+        }
+
+        if (!username || !password) {
+          showError("Preencha usuário e senha.");
           return;
         }
 
         localStorage.setItem("backend_url", backend);
-
-        if(!response || !response.credential){
-          showError("O Google não retornou o token de login.");
-          return;
-        }
 
         const res = await fetch(backend + "/api/login", {
           method: "POST",
@@ -185,13 +173,14 @@
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            token: response.credential
+            username,
+            password
           })
         });
 
         const data = await res.json();
 
-        if(!res.ok || !data.ok){
+        if (!res.ok || !data.ok) {
           throw new Error(data.error || "Falha no login.");
         }
 
@@ -199,35 +188,14 @@
         localStorage.setItem("user", JSON.stringify(data.user || {}));
 
         window.location.href = "panel.html";
-      }catch(err){
+      } catch (err) {
         showError(err.message || "Erro no login.");
       }
     }
 
-    window.handleGoogleCredentialResponse = handleGoogleCredentialResponse;
-
-    window.onload = () => {
-      if(!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === "735004448085-15s049l8cd9ged1d9gva134t8hoc39gm.apps.googleusercontent.com"){
-        showError("Coloque seu GOOGLE_CLIENT_ID no login.html.");
-        return;
-      }
-
-      google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: handleGoogleCredentialResponse
-      });
-
-      google.accounts.id.renderButton(
-        document.getElementById("googleBtnWrap"),
-        {
-          theme: "outline",
-          size: "large",
-          text: "signin_with",
-          shape: "pill",
-          width: 280
-        }
-      );
-    };
+    passwordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") doLogin();
+    });
   </script>
 </body>
 </html>
