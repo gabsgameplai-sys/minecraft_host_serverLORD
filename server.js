@@ -32,9 +32,13 @@ const MAX_CONSOLE_LINES = 500;
 
 let mcProcess = null;
 let consoleLines = [];
-let sessions = new Map();
+const sessions = new Map();
 
-app.use(cors());
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
+
 app.use(express.json({ limit: "15mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
@@ -51,9 +55,11 @@ ensureDir(PLUGINS_DIR);
 function addConsoleLine(message) {
   const line = `[${new Date().toLocaleString("pt-BR")}] ${message}`;
   consoleLines.push(line);
+
   if (consoleLines.length > MAX_CONSOLE_LINES) {
     consoleLines = consoleLines.slice(-MAX_CONSOLE_LINES);
   }
+
   console.log(line);
 }
 
