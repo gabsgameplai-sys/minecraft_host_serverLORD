@@ -412,6 +412,17 @@
       border: 3px solid var(--input-border);
     }
 
+    code {
+      background: rgba(255,255,255,0.08);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-family: Consolas, monospace;
+    }
+
+    html[data-theme="light"] code {
+      background: rgba(15,23,42,0.08);
+    }
+
     @media (max-width: 900px) {
       .layout {
         grid-template-columns: 1fr;
@@ -651,6 +662,50 @@
             <h3>Eventos ao vivo</h3>
             <div id="tiktokEvents" class="console-box">Aguardando eventos...</div>
           </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <h3>Automações TikTok → Minecraft</h3>
+          <p class="small-note">
+            Exemplo: a cada 1 follow executar <code>/summon zombie</code>.
+            Você pode editar depois para <code>/summon creeper</code> ou qualquer outro comando.
+          </p>
+
+          <div class="grid-2">
+            <div class="form-row">
+              <label>Evento</label>
+              <select id="ruleEventType">
+                <option value="follow">Follow</option>
+                <option value="like">Like</option>
+                <option value="gift">Gift</option>
+                <option value="share">Share</option>
+                <option value="member">Member</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label>A cada quantos eventos</label>
+              <input id="ruleEveryCount" type="number" min="1" value="1" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label>Comando do Minecraft</label>
+            <input id="ruleCommand" type="text" value="/summon zombie" placeholder="/summon zombie" />
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button onclick="createTikTokRule()">Adicionar regra</button>
+            <button class="secondary" onclick="loadTikTokRules()">Atualizar regras</button>
+            <button class="secondary" onclick="resetTikTokCountersUI()">Resetar contadores</button>
+          </div>
+
+          <div style="margin-top:14px;">
+            <strong>Contadores atuais:</strong>
+            <div class="small-note" id="tiktokCountersInfo">-</div>
+          </div>
+
+          <div id="tiktokRulesList" class="file-list"></div>
         </div>
       </section>
 
@@ -1420,6 +1475,7 @@
 
         setMessage(data.message || "TikTok LIVE conectado.", "success");
         await loadTikTokStatus();
+        await loadTikTokRules();
         startTikTokStream();
       } catch (err) {
         setMessage(err.message || "Erro ao conectar TikTok LIVE.");
@@ -1436,6 +1492,170 @@
         await loadTikTokStatus();
       } catch (err) {
         setMessage(err.message || "Erro ao desconectar TikTok LIVE.");
+      }
+    }
+
+    async function loadTikTokRules() {
+      try {
+        const data = await api("/api/tiktoklive/rules");
+        const rules = data.rules || [];
+        const counters = data.counters || {};
+
+        document.getElementById("tiktokCountersInfo").textContent =
+          `follow: ${counters.follow || 0} | like: ${counters.like || 0} | gift: ${counters.gift || 0} | share: ${counters.share || 0} | member: ${counters.member || 0}`;
+
+        const list = document.getElementById("tiktokRulesList");
+        list.innerHTML = "";
+
+        if (!rules.length) {
+          list.innerHTML = '<div class="muted">Nenhuma regra criada.</div>';
+          return;
+        }
+
+        rules.forEach((rule) => {
+          const item = document.createElement("div");
+          item.className = "file-item";
+
+          const left = document.createElement("div");
+          left.className = "file-item-left";
+          left.innerHTML = `
+            <strong>${escapeHtml(rule.eventType)}</strong>
+            <span class="tag">a cada ${escapeHtml(rule.everyCount)}</span>
+            <span class="tag">${rule.enabled ? "ativa" : "desativada"}</span>
+            <span class="small-note">${escapeHtml(rule.command)}</span>
+          `;
+
+          const right = document.createElement("div");
+          right.style.display = "flex";
+          right.style.gap = "8px";
+          right.style.flexWrap = "wrap";
+
+          const editBtn = document.createElement("button");
+          editBtn.className = "secondary";
+          editBtn.textContent = "Editar";
+          editBtn.onclick = () => editTikTokRule(rule);
+
+          const toggleBtn = document.createElement("button");
+          toggleBtn.className = "secondary";
+          toggleBtn.textContent = rule.enabled ? "Desativar" : "Ativar";
+          toggleBtn.onclick = () => toggleTikTokRule(rule);
+
+          const delBtn = document.createElement("button");
+          delBtn.className = "danger";
+          delBtn.textContent = "Excluir";
+          delBtn.onclick = () => deleteTikTokRule(rule.id);
+
+          right.appendChild(editBtn);
+          right.appendChild(toggleBtn);
+          right.appendChild(delBtn);
+
+          item.appendChild(left);
+          item.appendChild(right);
+          list.appendChild(item);
+        });
+      } catch (err) {
+        setMessage(err.message || "Erro ao carregar regras TikTok.");
+      }
+    }
+
+    async function createTikTokRule() {
+      const eventType = document.getElementById("ruleEventType").value;
+      const everyCount = Number(document.getElementById("ruleEveryCount").value || 1);
+      const command = document.getElementById("ruleCommand").value.trim();
+
+      if (!command) {
+        setMessage("Digite um comando do Minecraft.");
+        return;
+      }
+
+      try {
+        const data = await api("/api/tiktoklive/rules", {
+          method: "POST",
+          body: JSON.stringify({
+            eventType,
+            everyCount,
+            command,
+            enabled: true
+          })
+        });
+
+        setMessage(data.message || "Regra criada com sucesso.", "success");
+        await loadTikTokRules();
+      } catch (err) {
+        setMessage(err.message || "Erro ao criar regra.");
+      }
+    }
+
+    async function editTikTokRule(rule) {
+      const newEventType = prompt("Evento (follow, like, gift, share, member):", rule.eventType);
+      if (!newEventType) return;
+
+      const newEveryCount = prompt("Executar a cada quantos eventos?", rule.everyCount);
+      if (!newEveryCount) return;
+
+      const newCommand = prompt("Comando do Minecraft:", rule.command);
+      if (!newCommand) return;
+
+      try {
+        const data = await api(`/api/tiktoklive/rules/${encodeURIComponent(rule.id)}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            eventType: newEventType.trim(),
+            everyCount: Number(newEveryCount),
+            command: newCommand.trim()
+          })
+        });
+
+        setMessage(data.message || "Regra atualizada com sucesso.", "success");
+        await loadTikTokRules();
+      } catch (err) {
+        setMessage(err.message || "Erro ao editar regra.");
+      }
+    }
+
+    async function toggleTikTokRule(rule) {
+      try {
+        const data = await api(`/api/tiktoklive/rules/${encodeURIComponent(rule.id)}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            enabled: !rule.enabled
+          })
+        });
+
+        setMessage(data.message || "Regra atualizada com sucesso.", "success");
+        await loadTikTokRules();
+      } catch (err) {
+        setMessage(err.message || "Erro ao alterar regra.");
+      }
+    }
+
+    async function deleteTikTokRule(ruleId) {
+      if (!confirm("Deseja excluir esta regra?")) {
+        return;
+      }
+
+      try {
+        const data = await api(`/api/tiktoklive/rules/${encodeURIComponent(ruleId)}`, {
+          method: "DELETE"
+        });
+
+        setMessage(data.message || "Regra removida com sucesso.", "success");
+        await loadTikTokRules();
+      } catch (err) {
+        setMessage(err.message || "Erro ao excluir regra.");
+      }
+    }
+
+    async function resetTikTokCountersUI() {
+      try {
+        const data = await api("/api/tiktoklive/rules/reset-counters", {
+          method: "POST"
+        });
+
+        setMessage(data.message || "Contadores resetados.", "success");
+        await loadTikTokRules();
+      } catch (err) {
+        setMessage(err.message || "Erro ao resetar contadores.");
       }
     }
 
@@ -1478,6 +1698,7 @@
       await loadPlugins();
       await loadFiles();
       await loadTikTokStatus();
+      await loadTikTokRules();
 
       startTikTokStream();
 
