@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Minecraft Host Panel</title>
+  <title>Painel - Minecraft Host LORD</title>
   <style>
     * {
       box-sizing: border-box;
@@ -11,65 +11,144 @@
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #081633;
-      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
     }
 
-    header {
-      background: #1f2b44;
-      padding: 18px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 18px;
-    }
-
-    .logout-btn {
-      background: #22c55e;
-      color: white;
-      border: none;
-      padding: 10px 14px;
-      cursor: pointer;
-      border-radius: 4px;
-      font-weight: bold;
-    }
-
-    .logout-btn:hover,
-    button:hover {
-      opacity: 0.92;
-    }
-
-    main {
+    .sidebar {
+      background: #111827;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
       padding: 20px;
     }
 
-    .grid {
+    .brand {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .subbrand {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    .user-box {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 18px;
+    }
+
+    .user-box strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      text-align: left;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      background: #1e293b;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: #2563eb;
+      border-color: #2563eb;
+    }
+
+    .main {
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 12px;
+      background: #2563eb;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .danger {
+      background: #dc2626;
+    }
+
+    .danger:hover {
+      background: #b91c1c;
+    }
+
+    .secondary {
+      background: #334155;
+    }
+
+    .secondary:hover {
+      background: #475569;
+    }
+
+    .cards {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 18px;
+      margin-bottom: 22px;
     }
 
     .card {
-      background: #0d1d42;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px;
-      padding: 16px;
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
     }
 
-    .card h2 {
+    .card h3 {
       margin-top: 0;
-      font-size: 18px;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
+      font-size: 17px;
     }
 
-    .status-line {
-      margin: 8px 0;
-      font-size: 14px;
+    .card p {
+      margin: 6px 0;
+      color: #cbd5e1;
     }
 
     .status-online {
@@ -82,297 +161,406 @@
       font-weight: bold;
     }
 
-    .actions {
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .console-box {
+      background: #020617;
+      color: #d1fae5;
+      border: 1px solid #1e293b;
+      border-radius: 14px;
+      padding: 14px;
+      min-height: 360px;
+      max-height: 480px;
+      overflow: auto;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .console-controls {
       display: flex;
-      flex-wrap: wrap;
       gap: 10px;
-      margin-top: 14px;
+      margin-top: 12px;
     }
 
-    button {
-      background: #22c55e;
-      color: white;
-      border: none;
-      padding: 10px 14px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .secondary {
-      background: #3b82f6;
-    }
-
-    .danger {
-      background: #ef4444;
-    }
-
-    .warning {
-      background: #f59e0b;
+    .console-controls input {
+      flex: 1;
     }
 
     input,
     textarea,
     select {
       width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: #081633;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      background: #0f172a;
       color: white;
-      margin-top: 8px;
-      margin-bottom: 10px;
+      outline: none;
+      margin-top: 6px;
     }
 
     textarea {
-      min-height: 220px;
+      min-height: 320px;
       resize: vertical;
       font-family: Consolas, monospace;
-    }
-
-    .console {
-      background: black;
-      color: #e5e7eb;
-      height: 340px;
-      overflow-y: auto;
-      padding: 12px;
-      border-radius: 6px;
-      font-family: Consolas, monospace;
       font-size: 13px;
-      line-height: 1.35;
-      white-space: pre-wrap;
-      word-break: break-word;
     }
 
-    .row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
     }
 
-    .row input {
-      margin: 0;
-      flex: 1;
+    .form-row {
+      margin-bottom: 14px;
     }
 
-    ul {
-      padding-left: 18px;
-      margin: 10px 0 0;
-    }
-
-    li {
-      margin: 6px 0;
-      font-size: 14px;
-    }
-
-    .small {
+    .small-note {
+      color: #94a3b8;
       font-size: 13px;
-      opacity: 0.9;
-    }
-
-    .mono {
-      font-family: Consolas, monospace;
-      word-break: break-all;
-    }
-
-    .full {
-      grid-column: 1 / -1;
-    }
-
-    .muted {
-      opacity: 0.8;
+      line-height: 1.5;
     }
 
     .file-list {
-      max-height: 240px;
-      overflow-y: auto;
-      background: #081633;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.08);
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
     }
 
     .file-item {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       gap: 10px;
-      padding: 8px 6px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      font-size: 14px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 12px 14px;
+      flex-wrap: wrap;
     }
 
-    .file-item:last-child {
-      border-bottom: none;
+    .file-item-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .tag {
       display: inline-block;
       font-size: 12px;
-      padding: 3px 8px;
+      color: #cbd5e1;
+      background: #1e293b;
       border-radius: 999px;
-      background: rgba(255,255,255,0.1);
+      padding: 4px 8px;
     }
 
-    .notice {
-      margin-top: 12px;
-      padding: 10px 12px;
-      border-radius: 6px;
-      font-size: 14px;
+    .path-box {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .path-box input {
+      flex: 1;
+      margin-top: 0;
+    }
+
+    .muted {
+      color: #94a3b8;
+    }
+
+    .message {
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border-radius: 12px;
       display: none;
     }
 
-    .notice.success {
+    .message.error {
       display: block;
-      background: rgba(34, 197, 94, 0.18);
-      border: 1px solid rgba(34, 197, 94, 0.35);
-      color: #bbf7d0;
-    }
-
-    .notice.error {
-      display: block;
-      background: rgba(239, 68, 68, 0.18);
-      border: 1px solid rgba(239, 68, 68, 0.35);
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.25);
       color: #fecaca;
     }
 
-    .notice.info {
+    .message.success {
       display: block;
-      background: rgba(59, 130, 246, 0.18);
-      border: 1px solid rgba(59, 130, 246, 0.35);
-      color: #bfdbfe;
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      color: #bbf7d0;
     }
 
     @media (max-width: 900px) {
-      .grid {
+      .layout {
         grid-template-columns: 1fr;
       }
 
-      .row {
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .console-controls {
         flex-direction: column;
-        align-items: stretch;
       }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Minecraft Host Panel</h1>
-    <button class="logout-btn" onclick="logout()">Logout</button>
-  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">Host LORD</div>
+      <div class="subbrand">Painel Minecraft local</div>
 
-  <main>
-    <div id="notice" class="notice"></div>
+      <div class="user-box">
+        <strong id="userName">Usuário</strong>
+        <span class="muted" id="apiBaseView"></span>
+      </div>
 
-    <div class="grid">
-      <section class="card">
-        <h2>Status do servidor</h2>
-        <div class="status-line">
-          Estado:
-          <span id="serverState" class="muted">Carregando...</span>
-        </div>
-        <div class="status-line">PID: <span id="serverPid">-</span></div>
-        <div class="status-line">Painel público: <span id="panelUrl" class="mono">-</span></div>
-        <div class="status-line">Painel local: <span id="localPanelUrl" class="mono">-</span></div>
-        <div class="status-line">IP local: <span id="localIp" class="mono">-</span></div>
-        <div class="status-line">Minecraft host: <span id="minecraftHost" class="mono">-</span></div>
-        <div class="status-line">Minecraft porta: <span id="minecraftPort" class="mono">-</span></div>
+      <button class="nav-btn active" onclick="showSection('dashboard', this)">Dashboard</button>
+      <button class="nav-btn" onclick="showSection('console', this)">Console</button>
+      <button class="nav-btn" onclick="showSection('config', this)">Configuração</button>
+      <button class="nav-btn" onclick="showSection('plugins', this)">Plugins</button>
+      <button class="nav-btn" onclick="showSection('files', this)">Arquivos</button>
+      <button class="nav-btn" onclick="showSection('password', this)">Senha</button>
 
-        <div class="actions">
-          <button onclick="startServer()">Start</button>
-          <button class="danger" onclick="stopServer()">Stop</button>
-          <button class="warning" onclick="restartServer()">Restart</button>
-          <button class="secondary" onclick="manualRefresh()">Atualizar</button>
-        </div>
-      </section>
+      <div style="margin-top:20px;">
+        <button class="danger" style="width:100%;" onclick="logout()">Sair</button>
+      </div>
+    </aside>
 
-      <section class="card">
-        <h2>Informações rápidas</h2>
-        <div class="status-line small">
-          Backend atual: <span class="mono" id="apiBaseText"></span>
+    <main class="main">
+      <div class="topbar">
+        <div class="page-title">Painel do Servidor</div>
+        <div class="top-actions">
+          <button onclick="startServer()">Iniciar</button>
+          <button class="secondary" onclick="restartServer()">Reiniciar</button>
+          <button class="danger" onclick="stopServer()">Parar</button>
         </div>
-        <div class="status-line small">
-          O link público do painel é só para o site/API.
-        </div>
-        <div class="status-line small">
-          Para conectar no Minecraft fora da rede local, ainda precisa expor a porta TCP 25565.
-        </div>
-      </section>
+      </div>
 
-      <section class="card full">
-        <h2>Console</h2>
-        <div id="console" class="console"></div>
+      <div id="messageBox" class="message"></div>
 
-        <div class="row" style="margin-top: 12px;">
-          <input id="cmd" type="text" placeholder="Digite um comando, ex: say Olá" />
-          <button onclick="sendCommand()">Enviar</button>
-          <button class="secondary" onclick="loadConsole(true)">Recarregar console</button>
-        </div>
-      </section>
+      <section id="dashboard" class="section active">
+        <div class="cards">
+          <div class="card">
+            <h3>Status do servidor</h3>
+            <p id="serverStatus" class="status-offline">● Offline</p>
+            <p>PID: <span id="serverPid">-</span></p>
+          </div>
 
-      <section class="card">
-        <h2>Plugins</h2>
-        <div class="actions" style="margin-top: 0;">
-          <button class="secondary" onclick="loadPlugins(true)">Atualizar plugins</button>
-        </div>
-        <ul id="pluginsList">
-          <li class="muted">Carregando plugins...</li>
-        </ul>
-      </section>
+          <div class="card">
+            <h3>Conexão Minecraft</h3>
+            <p>IP/Porta: <strong id="serverIP">-</strong></p>
+            <p class="small-note">Use esse endereço no cliente Minecraft dentro da sua rede local.</p>
+          </div>
 
-      <section class="card">
-        <h2>Arquivos</h2>
-        <label for="filesDir">Pasta</label>
-        <input id="filesDir" type="text" value="" placeholder="Ex: plugins" />
-        <div class="actions" style="margin-top: 0;">
-          <button class="secondary" onclick="loadFiles(true)">Listar arquivos</button>
-        </div>
-        <div id="filesList" class="file-list">
-          <div class="muted">Carregando arquivos...</div>
+          <div class="card">
+            <h3>Acesso do painel</h3>
+            <p class="small-note">Use o endereço abaixo para abrir o dashboard na sua rede local.</p>
+            <div class="path-box">
+              <input id="publicUrlBox" type="text" readonly />
+              <button type="button" class="secondary" onclick="copyPublicUrl()">Copiar</button>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section class="card full">
-        <h2>Configuração do servidor</h2>
-        <div class="small muted">
-          Edita as propriedades do <span class="mono">server.properties</span>.
-        </div>
-
-        <textarea id="serverConfigRaw" placeholder="Carregando configurações..."></textarea>
-
-        <div class="actions">
-          <button class="secondary" onclick="loadServerConfig(true)">Recarregar config</button>
-          <button onclick="saveServerConfig()">Salvar config</button>
+      <section id="console" class="section">
+        <div class="card">
+          <h3>Console do servidor</h3>
+          <div id="consoleArea" class="console-box">Carregando console...</div>
+          <div class="console-controls">
+            <input
+              id="consoleCommand"
+              type="text"
+              placeholder="Digite um comando, ex: say Olá"
+              onkeydown="handleConsoleEnter(event)"
+            />
+            <button onclick="sendCommand()">Enviar</button>
+          </div>
         </div>
       </section>
-    </div>
-  </main>
+
+      <section id="config" class="section">
+        <div class="card">
+          <h3>Configuração do servidor</h3>
+          <div class="grid-2">
+            <div class="form-row">
+              <label>MOTD</label>
+              <input id="cfg_motd" type="text" />
+            </div>
+            <div class="form-row">
+              <label>Gamemode</label>
+              <select id="cfg_gamemode">
+                <option value="survival">survival</option>
+                <option value="creative">creative</option>
+                <option value="adventure">adventure</option>
+                <option value="spectator">spectator</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>Dificuldade</label>
+              <select id="cfg_difficulty">
+                <option value="peaceful">peaceful</option>
+                <option value="easy">easy</option>
+                <option value="normal">normal</option>
+                <option value="hard">hard</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>Máximo de players</label>
+              <input id="cfg_maxplayers" type="number" />
+            </div>
+            <div class="form-row">
+              <label>PVP</label>
+              <select id="cfg_pvp">
+                <option value="true">true</option>
+                <option value="false">false</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>Online mode</label>
+              <select id="cfg_online_mode">
+                <option value="true">true</option>
+                <option value="false">false</option>
+              </select>
+            </div>
+          </div>
+
+          <button onclick="saveConfig()">Salvar configuração</button>
+        </div>
+      </section>
+
+      <section id="plugins" class="section">
+        <div class="card">
+          <h3>Upload de plugins</h3>
+          <input id="pluginFile" type="file" accept=".jar" />
+          <div style="margin-top:12px;">
+            <button onclick="uploadPlugin()">Enviar plugin</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <h3>Plugins instalados</h3>
+          <div id="pluginsList" class="file-list"></div>
+        </div>
+      </section>
+
+      <section id="files" class="section">
+        <div class="card">
+          <h3>Gerenciador de arquivos</h3>
+
+          <div class="path-box">
+            <input id="currentDir" type="text" placeholder="Caminho atual" />
+            <button class="secondary" onclick="loadFiles()">Abrir</button>
+            <button class="secondary" onclick="goUpFolder()">Voltar</button>
+          </div>
+
+          <div style="margin-top:14px;" class="grid-2">
+            <div>
+              <label>Novo arquivo</label>
+              <input id="newFileName" type="text" placeholder="ex: arquivo.txt" />
+              <button style="margin-top:10px;" onclick="createFile()">Criar arquivo</button>
+            </div>
+            <div>
+              <label>Nova pasta</label>
+              <input id="newFolderName" type="text" placeholder="ex: plugins-backup" />
+              <button style="margin-top:10px;" onclick="createFolder()">Criar pasta</button>
+            </div>
+          </div>
+
+          <div id="filesList" class="file-list"></div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <h3>Editor de arquivo</h3>
+          <div class="form-row">
+            <label>Caminho do arquivo</label>
+            <input id="editFilePath" type="text" readonly />
+          </div>
+          <textarea id="fileEditor" placeholder="Conteúdo do arquivo"></textarea>
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button onclick="saveFile()">Salvar arquivo</button>
+            <button class="secondary" onclick="renameCurrentFile()">Renomear</button>
+            <button class="danger" onclick="deleteCurrentFile()">Excluir</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="password" class="section">
+        <div class="card">
+          <h3>Alterar senha</h3>
+
+          <div class="form-row">
+            <label>Senha atual</label>
+            <input id="currentPassword" type="password" />
+          </div>
+
+          <div class="form-row">
+            <label>Nova senha</label>
+            <input id="newPassword" type="password" />
+          </div>
+
+          <button onclick="changePassword()">Alterar senha</button>
+        </div>
+      </section>
+    </main>
+  </div>
 
   <script>
-    const API_BASE = "https://SEU-NGROK-AQUI.ngrok-free.app";
-
     const token = localStorage.getItem("token");
-    if (!token) {
-      window.location.href = "login.html";
+
+    function normalizeBaseUrl(url) {
+      return String(url || "").trim().replace(/\/+$/, "");
     }
 
-    document.getElementById("apiBaseText").textContent = API_BASE;
+    function getApiBase() {
+      const saved = localStorage.getItem("apiBase");
+      if (saved) return normalizeBaseUrl(saved);
+      return normalizeBaseUrl(window.location.origin);
+    }
 
-    let loadingConsole = false;
-    let loadingStatus = false;
-    let loadingPlugins = false;
-    let loadingFiles = false;
-    let loadingConfig = false;
+    const API_BASE = getApiBase();
 
-    function showNotice(message, type = "info") {
-      const notice = document.getElementById("notice");
-      notice.className = `notice ${type}`;
-      notice.textContent = message;
+    if (!token) {
+      window.location = "login.html";
+    }
 
-      clearTimeout(showNotice._timer);
-      showNotice._timer = setTimeout(() => {
-        notice.className = "notice";
-        notice.textContent = "";
-      }, 3000);
+    function setMessage(text, type = "error") {
+      const box = document.getElementById("messageBox");
+      box.className = `message ${type}`;
+      box.textContent = text;
+    }
+
+    function clearMessage() {
+      const box = document.getElementById("messageBox");
+      box.className = "message";
+      box.textContent = "";
+    }
+
+    function escapeHtml(text) {
+      return String(text ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
     async function api(path, options = {}) {
@@ -385,210 +573,115 @@
         headers["Content-Type"] = "application/json";
       }
 
-      const response = await fetch(`${API_BASE}${path}`, {
+      const res = await fetch(`${API_BASE}${path}`, {
         ...options,
         headers
       });
 
-      let data = null;
-      try {
-        data = await response.json();
-      } catch {
-        data = null;
-      }
+      const data = await res.json().catch(() => ({}));
 
-      if (!response.ok) {
-        throw new Error(data?.error || `HTTP ${response.status}`);
+      if (!res.ok) {
+        throw new Error(data.error || "Erro na API.");
       }
 
       return data;
     }
 
-    async function loadStatus(showErrors = false) {
-      if (loadingStatus) return;
-      loadingStatus = true;
+    function showSection(sectionId, btn) {
+      document.querySelectorAll(".section").forEach((el) => {
+        el.classList.remove("active");
+      });
 
+      document.querySelectorAll(".nav-btn").forEach((el) => {
+        el.classList.remove("active");
+      });
+
+      document.getElementById(sectionId).classList.add("active");
+      if (btn) btn.classList.add("active");
+
+      clearMessage();
+    }
+
+    async function loadStatus() {
       try {
         const data = await api("/api/status");
 
-        document.getElementById("serverState").textContent = data.online ? "Online" : "Offline";
-        document.getElementById("serverState").className = data.online ? "status-online" : "status-offline";
-        document.getElementById("serverPid").textContent = data.pid ?? "-";
-        document.getElementById("panelUrl").textContent = data.panelUrl || "-";
-        document.getElementById("localPanelUrl").textContent = data.localPanelUrl || "-";
-        document.getElementById("localIp").textContent = data.localIp || "-";
-        document.getElementById("minecraftHost").textContent = data.minecraftHost || "-";
-        document.getElementById("minecraftPort").textContent = data.minecraftPort || "-";
+        const statusEl = document.getElementById("serverStatus");
+        statusEl.textContent = data.online ? "● Online" : "● Offline";
+        statusEl.className = data.online ? "status-online" : "status-offline";
+
+        document.getElementById("serverPid").textContent = data.pid || "-";
+        document.getElementById("serverIP").textContent = `${data.minecraftHost}:${data.minecraftPort}`;
+        document.getElementById("publicUrlBox").value = data.localPanelUrl || API_BASE;
       } catch (err) {
-        document.getElementById("serverState").textContent = "Erro ao conectar";
-        document.getElementById("serverState").className = "status-offline";
-        if (showErrors) showNotice(err.message, "error");
-        console.error(err);
-      } finally {
-        loadingStatus = false;
+        setMessage(err.message || "Erro ao carregar status.");
       }
     }
 
-    async function loadConsole(showErrors = false) {
-      if (loadingConsole) return;
-      loadingConsole = true;
+    async function fetchPublicUrl() {
+      try {
+        const data = await api("/api/public-url");
+        document.getElementById("publicUrlBox").value = data.localUrl || API_BASE;
+      } catch (err) {
+        setMessage(err.message || "Erro ao buscar URL.");
+      }
+    }
 
+    function copyPublicUrl() {
+      const box = document.getElementById("publicUrlBox");
+      box.select();
+      box.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      setMessage("Endereço copiado.", "success");
+    }
+
+    async function loadConsole() {
       try {
         const data = await api("/api/console");
-        const consoleDiv = document.getElementById("console");
-        const newText = Array.isArray(data.lines) ? data.lines.join("\n") : "";
-
-        if (consoleDiv.textContent !== newText) {
-          const wasNearBottom =
-            consoleDiv.scrollHeight - consoleDiv.scrollTop - consoleDiv.clientHeight < 30;
-
-          consoleDiv.textContent = newText;
-
-          if (wasNearBottom) {
-            consoleDiv.scrollTop = consoleDiv.scrollHeight;
-          }
-        }
+        const consoleDiv = document.getElementById("consoleArea");
+        consoleDiv.innerHTML = data.lines.map(escapeHtml).join("<br>");
+        consoleDiv.scrollTop = consoleDiv.scrollHeight;
       } catch (err) {
-        if (showErrors) showNotice(err.message, "error");
-        console.error(err);
-      } finally {
-        loadingConsole = false;
+        document.getElementById("consoleArea").textContent = "Erro ao carregar console.";
       }
-    }
-
-    async function loadPlugins(showErrors = false) {
-      if (loadingPlugins) return;
-      loadingPlugins = true;
-
-      const list = document.getElementById("pluginsList");
-
-      try {
-        const data = await api("/api/plugins");
-        const plugins = Array.isArray(data.plugins) ? data.plugins : [];
-
-        if (!plugins.length) {
-          list.innerHTML = `<li class="muted">Nenhum plugin encontrado.</li>`;
-        } else {
-          list.innerHTML = plugins.map(name => `<li>${escapeHtml(name)}</li>`).join("");
-        }
-      } catch (err) {
-        list.innerHTML = `<li class="status-offline">${escapeHtml(err.message)}</li>`;
-        if (showErrors) showNotice(err.message, "error");
-      } finally {
-        loadingPlugins = false;
-      }
-    }
-
-    async function loadFiles(showErrors = false) {
-      if (loadingFiles) return;
-      loadingFiles = true;
-
-      const dir = document.getElementById("filesDir").value.trim();
-      const box = document.getElementById("filesList");
-
-      try {
-        const data = await api(`/api/files?dir=${encodeURIComponent(dir)}`);
-        const items = Array.isArray(data.items) ? data.items : [];
-
-        if (!items.length) {
-          box.innerHTML = `<div class="muted">Nenhum item encontrado.</div>`;
-        } else {
-          box.innerHTML = items.map(item => `
-            <div class="file-item">
-              <div>
-                <div>${escapeHtml(item.name)}</div>
-                <div class="small mono muted">${escapeHtml(item.path)}</div>
-              </div>
-              <div>
-                <span class="tag">${item.type === "folder" ? "pasta" : "arquivo"}</span>
-              </div>
-            </div>
-          `).join("");
-        }
-      } catch (err) {
-        box.innerHTML = `<div class="status-offline">${escapeHtml(err.message)}</div>`;
-        if (showErrors) showNotice(err.message, "error");
-      } finally {
-        loadingFiles = false;
-      }
-    }
-
-    async function loadServerConfig(showErrors = false) {
-      if (loadingConfig) return;
-      loadingConfig = true;
-
-      const textarea = document.getElementById("serverConfigRaw");
-
-      try {
-        const data = await api("/api/server-config");
-        const raw = data.raw || "";
-
-        if (document.activeElement !== textarea) {
-          textarea.value = raw;
-        }
-      } catch (err) {
-        if (showErrors) showNotice("Erro ao carregar config: " + err.message, "error");
-        console.error(err);
-      } finally {
-        loadingConfig = false;
-      }
-    }
-
-    function parseProperties(raw) {
-      const result = {};
-      const lines = String(raw).split(/\r?\n/);
-
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith("#")) continue;
-
-        const index = trimmed.indexOf("=");
-        if (index === -1) continue;
-
-        const key = trimmed.slice(0, index).trim();
-        const value = trimmed.slice(index + 1).trim();
-        result[key] = value;
-      }
-
-      return result;
     }
 
     async function startServer() {
       try {
         const data = await api("/api/start", { method: "POST" });
-        showNotice(data.message || "Servidor iniciando.", "success");
-        await manualRefresh();
+        setMessage(data.message || "Servidor iniciando.", "success");
+        await loadStatus();
       } catch (err) {
-        showNotice(err.message, "error");
+        setMessage(err.message || "Erro ao iniciar servidor.");
       }
     }
 
     async function stopServer() {
       try {
         await api("/api/stop", { method: "POST" });
-        showNotice("Comando stop enviado.", "success");
-        await manualRefresh();
+        setMessage("Servidor parando.", "success");
+        await loadStatus();
       } catch (err) {
-        showNotice(err.message, "error");
+        setMessage(err.message || "Erro ao parar servidor.");
       }
     }
 
     async function restartServer() {
       try {
         const data = await api("/api/restart", { method: "POST" });
-        showNotice(data.message || "Servidor reiniciando.", "success");
-        await manualRefresh();
+        setMessage(data.message || "Servidor reiniciando.", "success");
+        await loadStatus();
       } catch (err) {
-        showNotice(err.message, "error");
+        setMessage(err.message || "Erro ao reiniciar servidor.");
       }
     }
 
     async function sendCommand() {
-      const commandInput = document.getElementById("cmd");
-      const command = commandInput.value.trim();
+      const input = document.getElementById("consoleCommand");
+      const command = input.value.trim();
 
       if (!command) {
-        showNotice("Digite um comando.", "error");
+        setMessage("Digite um comando.");
         return;
       }
 
@@ -598,71 +691,386 @@
           body: JSON.stringify({ command })
         });
 
-        commandInput.value = "";
-        showNotice("Comando enviado.", "success");
+        input.value = "";
         await loadConsole();
       } catch (err) {
-        showNotice(err.message, "error");
+        setMessage(err.message || "Erro ao enviar comando.");
       }
     }
 
-    async function saveServerConfig() {
-      const raw = document.getElementById("serverConfigRaw").value;
+    function handleConsoleEnter(event) {
+      if (event.key === "Enter") {
+        sendCommand();
+      }
+    }
 
+    async function loadConfig() {
       try {
-        const config = parseProperties(raw);
+        const data = await api("/api/server-config");
+        const c = data.config || {};
+
+        document.getElementById("cfg_motd").value = c["motd"] || "";
+        document.getElementById("cfg_gamemode").value = c["gamemode"] || "survival";
+        document.getElementById("cfg_difficulty").value = c["difficulty"] || "easy";
+        document.getElementById("cfg_maxplayers").value = c["max-players"] || 20;
+        document.getElementById("cfg_pvp").value = c["pvp"] || "true";
+        document.getElementById("cfg_online_mode").value = c["online-mode"] || "true";
+      } catch (err) {
+        setMessage(err.message || "Erro ao carregar configuração.");
+      }
+    }
+
+    async function saveConfig() {
+      try {
+        const config = {
+          "motd": document.getElementById("cfg_motd").value.trim(),
+          "gamemode": document.getElementById("cfg_gamemode").value,
+          "difficulty": document.getElementById("cfg_difficulty").value,
+          "max-players": document.getElementById("cfg_maxplayers").value,
+          "pvp": document.getElementById("cfg_pvp").value,
+          "online-mode": document.getElementById("cfg_online_mode").value
+        };
 
         await api("/api/server-config", {
           method: "POST",
           body: JSON.stringify({ config })
         });
 
-        showNotice("Configuração salva com sucesso.", "success");
+        setMessage("Configuração salva com sucesso.", "success");
       } catch (err) {
-        showNotice("Erro ao salvar config: " + err.message, "error");
+        setMessage(err.message || "Erro ao salvar configuração.");
+      }
+    }
+
+    async function uploadPlugin() {
+      const input = document.getElementById("pluginFile");
+      const file = input.files[0];
+
+      if (!file) {
+        setMessage("Selecione um plugin .jar.");
+        return;
+      }
+
+      const form = new FormData();
+      form.append("plugin", file);
+
+      try {
+        const data = await api("/api/upload-plugin", {
+          method: "POST",
+          body: form
+        });
+
+        input.value = "";
+        setMessage(`Plugin enviado: ${data.filename}`, "success");
+        await loadPlugins();
+      } catch (err) {
+        setMessage(err.message || "Erro ao enviar plugin.");
+      }
+    }
+
+    async function loadPlugins() {
+      try {
+        const data = await api("/api/plugins");
+        const list = document.getElementById("pluginsList");
+        list.innerHTML = "";
+
+        const plugins = data.plugins || [];
+
+        if (!plugins.length) {
+          list.innerHTML = '<div class="muted">Nenhum plugin instalado.</div>';
+          return;
+        }
+
+        plugins.forEach((name) => {
+          const item = document.createElement("div");
+          item.className = "file-item";
+          item.innerHTML = `
+            <div class="file-item-left">
+              <strong>${escapeHtml(name)}</strong>
+              <span class="tag">plugin</span>
+            </div>
+          `;
+          list.appendChild(item);
+        });
+      } catch (err) {
+        setMessage(err.message || "Erro ao carregar plugins.");
+      }
+    }
+
+    async function loadFiles() {
+      try {
+        const dir = document.getElementById("currentDir").value.trim();
+        const data = await api(`/api/files?dir=${encodeURIComponent(dir)}`);
+
+        document.getElementById("currentDir").value = data.currentPath || "";
+
+        const list = document.getElementById("filesList");
+        list.innerHTML = "";
+
+        const items = data.items || [];
+
+        if (!items.length) {
+          list.innerHTML = '<div class="muted">Nenhum item nesta pasta.</div>';
+          return;
+        }
+
+        items.forEach((item) => {
+          const row = document.createElement("div");
+          row.className = "file-item";
+
+          const left = document.createElement("div");
+          left.className = "file-item-left";
+          left.innerHTML = `
+            <strong>${escapeHtml(item.name)}</strong>
+            <span class="tag">${item.type === "folder" ? "pasta" : "arquivo"}</span>
+          `;
+
+          const right = document.createElement("div");
+          right.style.display = "flex";
+          right.style.gap = "8px";
+          right.style.flexWrap = "wrap";
+
+          if (item.type === "folder") {
+            const openBtn = document.createElement("button");
+            openBtn.className = "secondary";
+            openBtn.textContent = "Abrir";
+            openBtn.onclick = () => {
+              document.getElementById("currentDir").value = item.path;
+              loadFiles();
+            };
+            right.appendChild(openBtn);
+          } else {
+            const editBtn = document.createElement("button");
+            editBtn.className = "secondary";
+            editBtn.textContent = "Editar";
+            editBtn.onclick = () => openFile(item.path);
+            right.appendChild(editBtn);
+          }
+
+          const delBtn = document.createElement("button");
+          delBtn.className = "danger";
+          delBtn.textContent = "Excluir";
+          delBtn.onclick = () => deleteItem(item.path);
+          right.appendChild(delBtn);
+
+          row.appendChild(left);
+          row.appendChild(right);
+          list.appendChild(row);
+        });
+      } catch (err) {
+        setMessage(err.message || "Erro ao carregar arquivos.");
+      }
+    }
+
+    async function openFile(filePath) {
+      try {
+        const data = await api(`/api/file?path=${encodeURIComponent(filePath)}`);
+        document.getElementById("editFilePath").value = data.path || "";
+        document.getElementById("fileEditor").value = data.content || "";
+        setMessage(`Arquivo aberto: ${data.name}`, "success");
+      } catch (err) {
+        setMessage(err.message || "Erro ao abrir arquivo.");
+      }
+    }
+
+    async function saveFile() {
+      const filePath = document.getElementById("editFilePath").value.trim();
+      const content = document.getElementById("fileEditor").value;
+
+      if (!filePath) {
+        setMessage("Nenhum arquivo aberto.");
+        return;
+      }
+
+      try {
+        await api("/api/file", {
+          method: "POST",
+          body: JSON.stringify({
+            path: filePath,
+            content
+          })
+        });
+
+        setMessage("Arquivo salvo com sucesso.", "success");
+        await loadFiles();
+      } catch (err) {
+        setMessage(err.message || "Erro ao salvar arquivo.");
+      }
+    }
+
+    async function createFile() {
+      const dir = document.getElementById("currentDir").value.trim();
+      const name = document.getElementById("newFileName").value.trim();
+
+      if (!name) {
+        setMessage("Digite o nome do arquivo.");
+        return;
+      }
+
+      try {
+        const data = await api("/api/file/new", {
+          method: "POST",
+          body: JSON.stringify({ dir, name })
+        });
+
+        document.getElementById("newFileName").value = "";
+        setMessage(`Arquivo criado: ${data.path}`, "success");
+        await loadFiles();
+      } catch (err) {
+        setMessage(err.message || "Erro ao criar arquivo.");
+      }
+    }
+
+    async function createFolder() {
+      const dir = document.getElementById("currentDir").value.trim();
+      const name = document.getElementById("newFolderName").value.trim();
+
+      if (!name) {
+        setMessage("Digite o nome da pasta.");
+        return;
+      }
+
+      try {
+        const data = await api("/api/folder/new", {
+          method: "POST",
+          body: JSON.stringify({ dir, name })
+        });
+
+        document.getElementById("newFolderName").value = "";
+        setMessage(`Pasta criada: ${data.path}`, "success");
+        await loadFiles();
+      } catch (err) {
+        setMessage(err.message || "Erro ao criar pasta.");
+      }
+    }
+
+    async function deleteItem(itemPath) {
+      if (!confirm(`Deseja excluir "${itemPath}"?`)) {
+        return;
+      }
+
+      try {
+        await api(`/api/file?path=${encodeURIComponent(itemPath)}`, {
+          method: "DELETE"
+        });
+
+        if (document.getElementById("editFilePath").value === itemPath) {
+          document.getElementById("editFilePath").value = "";
+          document.getElementById("fileEditor").value = "";
+        }
+
+        setMessage("Item excluído com sucesso.", "success");
+        await loadFiles();
+      } catch (err) {
+        setMessage(err.message || "Erro ao excluir item.");
+      }
+    }
+
+    async function deleteCurrentFile() {
+      const filePath = document.getElementById("editFilePath").value.trim();
+
+      if (!filePath) {
+        setMessage("Nenhum arquivo aberto.");
+        return;
+      }
+
+      await deleteItem(filePath);
+    }
+
+    async function renameCurrentFile() {
+      const oldPath = document.getElementById("editFilePath").value.trim();
+
+      if (!oldPath) {
+        setMessage("Nenhum arquivo aberto.");
+        return;
+      }
+
+      const newName = prompt("Novo nome do arquivo:", oldPath.split("/").pop());
+      if (!newName) return;
+
+      try {
+        const data = await api("/api/file/rename", {
+          method: "PUT",
+          body: JSON.stringify({
+            oldPath,
+            newName
+          })
+        });
+
+        document.getElementById("editFilePath").value = data.newPath || "";
+        setMessage(`Arquivo renomeado para ${data.newPath}`, "success");
+        await loadFiles();
+      } catch (err) {
+        setMessage(err.message || "Erro ao renomear arquivo.");
+      }
+    }
+
+    function goUpFolder() {
+      const current = document.getElementById("currentDir").value.trim();
+      if (!current) return;
+
+      const parts = current.split("/").filter(Boolean);
+      parts.pop();
+      document.getElementById("currentDir").value = parts.join("/");
+      loadFiles();
+    }
+
+    async function changePassword() {
+      const currentPassword = document.getElementById("currentPassword").value.trim();
+      const newPassword = document.getElementById("newPassword").value.trim();
+
+      if (!currentPassword || !newPassword) {
+        setMessage("Preencha a senha atual e a nova senha.");
+        return;
+      }
+
+      try {
+        const data = await api("/api/change-password", {
+          method: "POST",
+          body: JSON.stringify({
+            currentPassword,
+            newPassword
+          })
+        });
+
+        document.getElementById("currentPassword").value = "";
+        document.getElementById("newPassword").value = "";
+        setMessage(data.message || "Senha alterada com sucesso.", "success");
+      } catch (err) {
+        setMessage(err.message || "Erro ao alterar senha.");
+      }
+    }
+
+    async function validateSession() {
+      try {
+        const data = await api("/api/me");
+        document.getElementById("userName").textContent = data.user?.username || localStorage.getItem("username") || "Usuário";
+      } catch (err) {
+        localStorage.removeItem("token");
+        window.location = "login.html";
       }
     }
 
     function logout() {
       localStorage.removeItem("token");
-      window.location.href = "login.html";
+      localStorage.removeItem("username");
+      window.location = "login.html";
     }
 
-    function escapeHtml(text) {
-      return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
+    window.addEventListener("load", async () => {
+      document.getElementById("apiBaseView").textContent = API_BASE;
 
-    async function manualRefresh() {
-      await loadStatus(true);
-      await loadConsole(false);
-      await loadPlugins(false);
-      await loadFiles(false);
-    }
+      await validateSession();
+      await loadStatus();
+      await fetchPublicUrl();
+      await loadConsole();
+      await loadConfig();
+      await loadPlugins();
+      await loadFiles();
 
-    document.getElementById("cmd").addEventListener("keydown", async (e) => {
-      if (e.key === "Enter") {
-        await sendCommand();
-      }
+      setInterval(loadConsole, 2000);
+      setInterval(loadStatus, 5000);
     });
-
-    loadStatus(false);
-    loadConsole(false);
-    loadPlugins(false);
-    loadFiles(false);
-    loadServerConfig(false);
-
-    setInterval(() => {
-      loadConsole(false);
-    }, 3000);
-
-    setInterval(() => {
-      loadStatus(false);
-    }, 8000);
   </script>
 </body>
 </html>
