@@ -1,10 +1,52 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel - Minecraft Host LORD</title>
   <style>
+    :root {
+      --bg: #0f172a;
+      --bg-soft: #111827;
+      --bg-card: #111827;
+      --bg-input: #0f172a;
+      --bg-hover: #1e293b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.08);
+      --input-border: #334155;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --danger: #dc2626;
+      --danger-hover: #b91c1c;
+      --success: #4ade80;
+      --error: #f87171;
+      --console-bg: #020617;
+      --console-text: #d1fae5;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    html[data-theme="light"] {
+      --bg: #eef2ff;
+      --bg-soft: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-input: #ffffff;
+      --bg-hover: #e2e8f0;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: rgba(15, 23, 42, 0.12);
+      --input-border: #cbd5e1;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --danger: #dc2626;
+      --danger-hover: #b91c1c;
+      --success: #16a34a;
+      --error: #dc2626;
+      --console-bg: #f8fafc;
+      --console-text: #0f172a;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -12,8 +54,8 @@
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: #0f172a;
-      color: #e2e8f0;
+      background: var(--bg);
+      color: var(--text);
     }
 
     .layout {
@@ -23,8 +65,8 @@
     }
 
     .sidebar {
-      background: #111827;
-      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--bg-soft);
+      border-right: 1px solid var(--border);
       padding: 20px;
     }
 
@@ -35,7 +77,7 @@
     }
 
     .subbrand {
-      color: #94a3b8;
+      color: var(--muted);
       font-size: 13px;
       margin-bottom: 24px;
     }
@@ -45,11 +87,39 @@
       border-radius: 14px;
       padding: 14px;
       margin-bottom: 18px;
+      border: 1px solid var(--border);
     }
 
-    .user-box strong {
-      display: block;
-      margin-bottom: 6px;
+    html[data-theme="light"] .user-box {
+      background: rgba(15, 23, 42, 0.03);
+    }
+
+    .sidebar-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sidebar-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--input-border);
+      background: var(--bg-input);
+    }
+
+    .sidebar-avatar-fallback {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-hover);
+      color: var(--text);
+      font-weight: bold;
+      border: 2px solid var(--input-border);
     }
 
     .nav-btn {
@@ -57,18 +127,19 @@
       text-align: left;
       padding: 12px 14px;
       margin-bottom: 10px;
-      border: 1px solid #334155;
+      border: 1px solid var(--input-border);
       border-radius: 12px;
-      background: #1e293b;
-      color: #fff;
+      background: var(--bg-hover);
+      color: var(--text);
       cursor: pointer;
       transition: 0.2s;
     }
 
     .nav-btn:hover,
     .nav-btn.active {
-      background: #2563eb;
-      border-color: #2563eb;
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
     }
 
     .main {
@@ -99,30 +170,33 @@
       padding: 10px 14px;
       border: none;
       border-radius: 12px;
-      background: #2563eb;
+      background: var(--primary);
       color: #fff;
       font-weight: bold;
       cursor: pointer;
     }
 
     button:hover {
-      background: #1d4ed8;
+      background: var(--primary-hover);
     }
 
     .danger {
-      background: #dc2626;
+      background: var(--danger);
     }
 
     .danger:hover {
-      background: #b91c1c;
+      background: var(--danger-hover);
     }
 
     .secondary {
-      background: #334155;
+      background: var(--bg-hover);
+      color: var(--text);
+      border: 1px solid var(--input-border);
     }
 
     .secondary:hover {
-      background: #475569;
+      background: var(--input-border);
+      color: #fff;
     }
 
     .cards {
@@ -133,11 +207,11 @@
     }
 
     .card {
-      background: #111827;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       border-radius: 16px;
       padding: 18px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+      box-shadow: var(--shadow);
     }
 
     .card h3 {
@@ -148,16 +222,16 @@
 
     .card p {
       margin: 6px 0;
-      color: #cbd5e1;
+      color: var(--text);
     }
 
     .status-online {
-      color: #4ade80;
+      color: var(--success);
       font-weight: bold;
     }
 
     .status-offline {
-      color: #f87171;
+      color: var(--error);
       font-weight: bold;
     }
 
@@ -170,9 +244,9 @@
     }
 
     .console-box {
-      background: #020617;
-      color: #d1fae5;
-      border: 1px solid #1e293b;
+      background: var(--console-bg);
+      color: var(--console-text);
+      border: 1px solid var(--input-border);
       border-radius: 14px;
       padding: 14px;
       min-height: 360px;
@@ -201,9 +275,9 @@
       width: 100%;
       padding: 11px 12px;
       border-radius: 10px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: white;
+      border: 1px solid var(--input-border);
+      background: var(--bg-input);
+      color: var(--text);
       outline: none;
       margin-top: 6px;
     }
@@ -226,7 +300,7 @@
     }
 
     .small-note {
-      color: #94a3b8;
+      color: var(--muted);
       font-size: 13px;
       line-height: 1.5;
     }
@@ -242,8 +316,8 @@
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      background: #0f172a;
-      border: 1px solid #334155;
+      background: var(--bg-input);
+      border: 1px solid var(--input-border);
       border-radius: 12px;
       padding: 12px 14px;
       flex-wrap: wrap;
@@ -258,8 +332,8 @@
     .tag {
       display: inline-block;
       font-size: 12px;
-      color: #cbd5e1;
-      background: #1e293b;
+      color: var(--text);
+      background: var(--bg-hover);
       border-radius: 999px;
       padding: 4px 8px;
     }
@@ -277,7 +351,7 @@
     }
 
     .muted {
-      color: #94a3b8;
+      color: var(--muted);
     }
 
     .message {
@@ -301,6 +375,43 @@
       color: #bbf7d0;
     }
 
+    .account-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+    }
+
+    .avatar-preview-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .avatar-preview {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--input-border);
+      background: var(--bg-input);
+    }
+
+    .avatar-fallback-big {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-hover);
+      color: var(--text);
+      font-size: 28px;
+      font-weight: bold;
+      border: 3px solid var(--input-border);
+    }
+
     @media (max-width: 900px) {
       .layout {
         grid-template-columns: 1fr;
@@ -308,10 +419,11 @@
 
       .sidebar {
         border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        border-bottom: 1px solid var(--border);
       }
 
-      .grid-2 {
+      .grid-2,
+      .account-layout {
         grid-template-columns: 1fr;
       }
 
@@ -328,8 +440,14 @@
       <div class="subbrand">Painel Minecraft local</div>
 
       <div class="user-box">
-        <strong id="userName">Usuário</strong>
-        <span class="muted" id="apiBaseView"></span>
+        <div class="sidebar-profile">
+          <img id="sidebarAvatar" class="sidebar-avatar" style="display:none;" alt="Avatar" />
+          <div id="sidebarAvatarFallback" class="sidebar-avatar-fallback">U</div>
+          <div>
+            <strong id="userName">Usuário</strong>
+            <div class="muted" id="apiBaseView"></div>
+          </div>
+        </div>
       </div>
 
       <button class="nav-btn active" onclick="showSection('dashboard', this)">Dashboard</button>
@@ -337,7 +455,8 @@
       <button class="nav-btn" onclick="showSection('config', this)">Configuração</button>
       <button class="nav-btn" onclick="showSection('plugins', this)">Plugins</button>
       <button class="nav-btn" onclick="showSection('files', this)">Arquivos</button>
-      <button class="nav-btn" onclick="showSection('password', this)">Senha</button>
+      <button class="nav-btn" onclick="showSection('tiktoklive', this)">TikTok LIVE</button>
+      <button class="nav-btn" onclick="showSection('account', this)">Conta</button>
 
       <div style="margin-top:20px;">
         <button class="danger" style="width:100%;" onclick="logout()">Sair</button>
@@ -503,21 +622,87 @@
         </div>
       </section>
 
-      <section id="password" class="section">
-        <div class="card">
-          <h3>Alterar senha</h3>
+      <section id="tiktoklive" class="section">
+        <div class="cards">
+          <div class="card">
+            <h3>Conectar TikTok LIVE</h3>
 
-          <div class="form-row">
-            <label>Senha atual</label>
-            <input id="currentPassword" type="password" />
+            <div class="form-row">
+              <label>@ do TikTok</label>
+              <input id="tiktokUniqueId" type="text" placeholder="ex: gabsgameplai" />
+            </div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button onclick="connectTikTokLive()">Conectar</button>
+              <button class="secondary" onclick="disconnectTikTokLive()">Desconectar</button>
+              <button class="secondary" onclick="loadTikTokStatus()">Atualizar</button>
+            </div>
+
+            <p style="margin-top:14px;">
+              Status:
+              <strong id="tiktokStatusText">Desconectado</strong>
+            </p>
+            <p>Sala: <span id="tiktokRoomId">-</span></p>
+            <p>Canal: <span id="tiktokCurrentUser">-</span></p>
+            <p>Último erro: <span id="tiktokLastError">-</span></p>
           </div>
 
-          <div class="form-row">
-            <label>Nova senha</label>
-            <input id="newPassword" type="password" />
+          <div class="card">
+            <h3>Eventos ao vivo</h3>
+            <div id="tiktokEvents" class="console-box">Aguardando eventos...</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="account" class="section">
+        <div class="account-layout">
+          <div class="card">
+            <h3>Perfil</h3>
+
+            <div class="avatar-preview-wrap">
+              <img id="accountAvatar" class="avatar-preview" style="display:none;" alt="Avatar" />
+              <div id="accountAvatarFallback" class="avatar-fallback-big">U</div>
+              <div>
+                <strong id="accountUsername">Usuário</strong>
+                <div class="small-note">Imagem de perfil da conta</div>
+              </div>
+            </div>
+
+            <input id="avatarFile" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,image/*" />
+            <div style="margin-top:12px;">
+              <button onclick="uploadAvatar()">Salvar imagem</button>
+            </div>
           </div>
 
-          <button onclick="changePassword()">Alterar senha</button>
+          <div>
+            <div class="card" style="margin-bottom:18px;">
+              <h3>Tema</h3>
+              <div class="form-row">
+                <label>Escolha o tema</label>
+                <select id="themeSelect">
+                  <option value="dark">Escuro</option>
+                  <option value="light">Claro</option>
+                </select>
+              </div>
+              <button onclick="saveTheme()">Salvar tema</button>
+            </div>
+
+            <div class="card">
+              <h3>Alterar senha</h3>
+
+              <div class="form-row">
+                <label>Senha atual</label>
+                <input id="currentPassword" type="password" />
+              </div>
+
+              <div class="form-row">
+                <label>Nova senha</label>
+                <input id="newPassword" type="password" />
+              </div>
+
+              <button onclick="changePassword()">Alterar senha</button>
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -525,6 +710,7 @@
 
   <script>
     const token = localStorage.getItem("token");
+    let tiktokEventSource = null;
 
     function normalizeBaseUrl(url) {
       return String(url || "").trim().replace(/\/+$/, "");
@@ -561,6 +747,62 @@
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+    }
+
+    function getUserInitial(username) {
+      return String(username || "U").trim().charAt(0).toUpperCase() || "U";
+    }
+
+    function resolveAssetUrl(url) {
+      if (!url) return "";
+      if (/^https?:\/\//i.test(url)) return url;
+      return `${API_BASE}${url.startsWith("/") ? url : "/" + url}`;
+    }
+
+    function setAvatarUI(avatarUrl, username) {
+      const sidebarImg = document.getElementById("sidebarAvatar");
+      const sidebarFallback = document.getElementById("sidebarAvatarFallback");
+      const accountImg = document.getElementById("accountAvatar");
+      const accountFallback = document.getElementById("accountAvatarFallback");
+      const initial = getUserInitial(username);
+
+      sidebarFallback.textContent = initial;
+      accountFallback.textContent = initial;
+
+      const fullUrl = resolveAssetUrl(avatarUrl);
+
+      if (fullUrl) {
+        sidebarImg.src = fullUrl;
+        accountImg.src = fullUrl;
+        sidebarImg.style.display = "block";
+        accountImg.style.display = "block";
+        sidebarFallback.style.display = "none";
+        accountFallback.style.display = "none";
+      } else {
+        sidebarImg.style.display = "none";
+        accountImg.style.display = "none";
+        sidebarFallback.style.display = "flex";
+        accountFallback.style.display = "flex";
+      }
+    }
+
+    function applyTheme(theme) {
+      const finalTheme = theme === "light" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", finalTheme);
+      const select = document.getElementById("themeSelect");
+      if (select) select.value = finalTheme;
+    }
+
+    function loadSavedTheme() {
+      const saved = localStorage.getItem("theme") || "dark";
+      applyTheme(saved);
+    }
+
+    function saveTheme() {
+      const theme = document.getElementById("themeSelect").value;
+      localStorage.setItem("theme", theme);
+      applyTheme(theme);
+      setMessage("Tema salvo com sucesso.", "success");
     }
 
     async function api(path, options = {}) {
@@ -1041,23 +1283,191 @@
       }
     }
 
+    async function uploadAvatar() {
+      const input = document.getElementById("avatarFile");
+      const file = input.files[0];
+
+      if (!file) {
+        setMessage("Selecione uma imagem.");
+        return;
+      }
+
+      const form = new FormData();
+      form.append("avatar", file);
+
+      try {
+        const data = await api("/api/account/avatar", {
+          method: "POST",
+          body: form
+        });
+
+        input.value = "";
+        setAvatarUI(data.avatarUrl, localStorage.getItem("username") || "Usuário");
+        setMessage(data.message || "Imagem atualizada com sucesso.", "success");
+      } catch (err) {
+        setMessage(err.message || "Erro ao enviar imagem.");
+      }
+    }
+
+    function formatTikTokEvent(event) {
+      const type = event.type || "event";
+      const data = event.data || {};
+      const hour = new Date(event.time || Date.now()).toLocaleTimeString("pt-BR");
+
+      switch (type) {
+        case "connected":
+          return `[${hour}] ✅ Conectado em @${data.uniqueId} (roomId: ${data.roomId || "-"})`;
+        case "disconnected":
+          return `[${hour}] ⚠️ Desconectado de @${data.uniqueId || "-"}`;
+        case "manualDisconnect":
+          return `[${hour}] ⛔ Desconectado manualmente`;
+        case "streamEnd":
+          return `[${hour}] 🛑 Live encerrada`;
+        case "chat":
+          return `[${hour}] 💬 ${data.nickname || "Usuário"}: ${data.comment || ""}`;
+        case "gift":
+          return `[${hour}] 🎁 ${data.nickname || "Usuário"} enviou ${data.giftName || "presente"} x${data.repeatCount || 1}`;
+        case "like":
+          return `[${hour}] ❤️ ${data.nickname || "Usuário"} curtiu (${data.likeCount || 0})`;
+        case "follow":
+          return `[${hour}] ➕ ${data.nickname || "Usuário"} começou a seguir`;
+        case "share":
+          return `[${hour}] 🔄 ${data.nickname || "Usuário"} compartilhou a live`;
+        case "member":
+          return `[${hour}] 👋 ${data.nickname || "Usuário"} entrou na live`;
+        case "roomUser":
+          return `[${hour}] 👀 Viewers: ${data.viewerCount || 0}`;
+        case "error":
+          return `[${hour}] ❌ Erro: ${data.message || "desconhecido"}`;
+        default:
+          return `[${hour}] ${type}: ${JSON.stringify(data)}`;
+      }
+    }
+
+    function appendTikTokEventLine(text) {
+      const box = document.getElementById("tiktokEvents");
+      const current = box.innerHTML && box.innerHTML !== "Aguardando eventos..."
+        ? box.innerHTML + "<br>"
+        : "";
+
+      box.innerHTML = current + escapeHtml(text);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function startTikTokStream() {
+      if (tiktokEventSource) {
+        tiktokEventSource.close();
+        tiktokEventSource = null;
+      }
+
+      const sseUrl = `${API_BASE}/api/tiktoklive/stream?token=${encodeURIComponent(token)}`;
+      tiktokEventSource = new EventSource(sseUrl);
+
+      tiktokEventSource.onmessage = (msg) => {
+        try {
+          const parsed = JSON.parse(msg.data);
+          if (parsed.type !== "hello") {
+            appendTikTokEventLine(formatTikTokEvent(parsed));
+          }
+        } catch (err) {}
+      };
+
+      tiktokEventSource.onerror = () => {};
+    }
+
+    async function loadTikTokStatus() {
+      try {
+        const data = await api("/api/tiktoklive/status");
+        const state = data.state || {};
+        const events = data.recentEvents || [];
+
+        document.getElementById("tiktokStatusText").textContent =
+          state.connected ? "Conectado" : "Desconectado";
+        document.getElementById("tiktokRoomId").textContent = state.roomId || "-";
+        document.getElementById("tiktokCurrentUser").textContent =
+          state.uniqueId ? `@${state.uniqueId}` : "-";
+        document.getElementById("tiktokLastError").textContent =
+          state.lastError || "-";
+
+        const box = document.getElementById("tiktokEvents");
+        box.innerHTML = "";
+
+        if (!events.length) {
+          box.innerHTML = "Aguardando eventos...";
+        } else {
+          for (const event of events) {
+            appendTikTokEventLine(formatTikTokEvent(event));
+          }
+        }
+      } catch (err) {
+        setMessage(err.message || "Erro ao carregar TikTok LIVE.");
+      }
+    }
+
+    async function connectTikTokLive() {
+      const uniqueId = document.getElementById("tiktokUniqueId").value.trim();
+
+      if (!uniqueId) {
+        setMessage("Digite o @ do TikTok.");
+        return;
+      }
+
+      try {
+        const data = await api("/api/tiktoklive/connect", {
+          method: "POST",
+          body: JSON.stringify({ uniqueId })
+        });
+
+        setMessage(data.message || "TikTok LIVE conectado.", "success");
+        await loadTikTokStatus();
+        startTikTokStream();
+      } catch (err) {
+        setMessage(err.message || "Erro ao conectar TikTok LIVE.");
+      }
+    }
+
+    async function disconnectTikTokLive() {
+      try {
+        const data = await api("/api/tiktoklive/disconnect", {
+          method: "POST"
+        });
+
+        setMessage(data.message || "TikTok LIVE desconectado.", "success");
+        await loadTikTokStatus();
+      } catch (err) {
+        setMessage(err.message || "Erro ao desconectar TikTok LIVE.");
+      }
+    }
+
     async function validateSession() {
       try {
         const data = await api("/api/me");
-        document.getElementById("userName").textContent = data.user?.username || localStorage.getItem("username") || "Usuário";
+        const username = data.user?.username || localStorage.getItem("username") || "Usuário";
+        const avatarUrl = data.user?.avatarUrl || "";
+
+        document.getElementById("userName").textContent = username;
+        document.getElementById("accountUsername").textContent = username;
+        localStorage.setItem("username", username);
+
+        setAvatarUI(avatarUrl, username);
       } catch (err) {
         localStorage.removeItem("token");
         window.location = "login.html";
       }
     }
 
-    function logout() {
+    async function logout() {
+      try {
+        await api("/api/logout", { method: "POST" });
+      } catch (err) {}
+
       localStorage.removeItem("token");
       localStorage.removeItem("username");
       window.location = "login.html";
     }
 
     window.addEventListener("load", async () => {
+      loadSavedTheme();
       document.getElementById("apiBaseView").textContent = API_BASE;
 
       await validateSession();
@@ -1067,6 +1477,9 @@
       await loadConfig();
       await loadPlugins();
       await loadFiles();
+      await loadTikTokStatus();
+
+      startTikTokStream();
 
       setInterval(loadConsole, 2000);
       setInterval(loadStatus, 5000);
