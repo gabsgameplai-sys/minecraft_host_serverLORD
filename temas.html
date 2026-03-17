@@ -1,377 +1,264 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
-
 <head>
-
 <meta charset="UTF-8">
-<title>Host LORD</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temas - Host LORD</title>
 
 <style>
-
 :root{
---bg:#0f172a;
---bg-soft:#020617;
---card:#020617;
---text:#ffffff;
---input:#020617;
---border:#334155;
---nav:#111827;
---nav-hover:#2563eb;
---primary:#2563eb;
---primary-hover:#1d4ed8;
+  --bg:#0f172a;
+  --bg-soft:#020617;
+  --card:#020617;
+  --text:#ffffff;
+  --input:#020617;
+  --border:#334155;
+  --nav:#111827;
+  --nav-hover:#2563eb;
+  --primary:#2563eb;
+  --primary-hover:#1d4ed8;
 }
 
 html[data-theme="light"]{
---bg:#eef2ff;
---bg-soft:#ffffff;
---card:#ffffff;
---text:#0f172a;
---input:#ffffff;
---border:#cbd5e1;
---nav:#e2e8f0;
---nav-hover:#2563eb;
---primary:#2563eb;
---primary-hover:#1d4ed8;
+  --bg:#eef2ff;
+  --bg-soft:#ffffff;
+  --card:#ffffff;
+  --text:#0f172a;
+  --input:#ffffff;
+  --border:#cbd5e1;
+  --nav:#e2e8f0;
+  --nav-hover:#2563eb;
+  --primary:#2563eb;
+  --primary-hover:#1d4ed8;
 }
 
 html[data-theme="lord"]{
---bg:#2b1d0e;
---bg-soft:#3b2613;
---card:#3a2612;
---text:#f5e6c8;
---input:#2a1b0c;
---border:#8b5e2b;
---nav:#4a3117;
---nav-hover:#ffd54a;
---primary:#ffd54a;
---primary-hover:#f5c518;
+  --bg:#2b1d0e;
+  --bg-soft:#3b2613;
+  --card:#3a2612;
+  --text:#f5e6c8;
+  --input:#2a1b0c;
+  --border:#8b5e2b;
+  --nav:#4a3117;
+  --nav-hover:#ffd54a;
+  --primary:#ffd54a;
+  --primary-hover:#f5c518;
 }
 
 html[data-theme="creeper"]{
---bg:#0f1f0f;
---bg-soft:#142814;
---card:#1b331b;
---text:#d8ffd8;
---input:#102510;
---border:#2e7d32;
---nav:#244424;
---nav-hover:#4caf50;
---primary:#4caf50;
---primary-hover:#43a047;
+  --bg:#0f1f0f;
+  --bg-soft:#142814;
+  --card:#1b331b;
+  --text:#d8ffd8;
+  --input:#102510;
+  --border:#2e7d32;
+  --nav:#244424;
+  --nav-hover:#4caf50;
+  --primary:#4caf50;
+  --primary-hover:#43a047;
+}
+
+*{
+  box-sizing:border-box;
 }
 
 body{
-margin:0;
-font-family:Arial;
-background:var(--bg);
-color:var(--text);
-display:flex;
-height:100vh;
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  min-height:100vh;
 }
 
 .sidebar{
-width:230px;
-background:var(--bg-soft);
-padding:20px;
+  width:230px;
+  background:var(--bg-soft);
+  padding:20px;
 }
 
 .sidebar h2{
-margin-bottom:20px;
+  margin-bottom:20px;
 }
 
 .nav-btn{
-width:100%;
-padding:12px;
-margin-bottom:10px;
-background:var(--nav);
-border:none;
-color:var(--text);
-cursor:pointer;
-border-radius:6px;
+  width:100%;
+  padding:12px;
+  margin-bottom:10px;
+  background:var(--nav);
+  border:none;
+  color:var(--text);
+  cursor:pointer;
+  border-radius:6px;
+  text-align:left;
 }
 
 .nav-btn:hover{
-background:var(--nav-hover);
-color:#fff;
+  background:var(--nav-hover);
+  color:#fff;
 }
 
 .main{
-flex:1;
-padding:30px;
-overflow:auto;
+  flex:1;
+  padding:30px;
+  overflow:auto;
 }
 
 .card{
-background:var(--card);
-padding:20px;
-border-radius:10px;
-margin-bottom:20px;
-border:1px solid var(--border);
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:24px;
+  border-radius:12px;
+  max-width:700px;
 }
 
-.console{
-background:black;
-height:350px;
-overflow:auto;
-padding:10px;
-font-family:monospace;
-font-size:13px;
+h1{
+  margin-top:0;
 }
 
-input{
-width:100%;
-padding:10px;
-margin-top:10px;
-margin-bottom:10px;
-background:var(--input);
-border:1px solid var(--border);
-color:var(--text);
+.theme-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:16px;
+  margin-top:20px;
 }
 
-button{
-padding:10px 16px;
-border:none;
-border-radius:6px;
-cursor:pointer;
+.theme-card{
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  background:var(--bg-soft);
+  cursor:pointer;
 }
 
-.green{background:#22c55e}
-.red{background:#dc2626}
-.blue{background:var(--primary); color:white}
-.blue:hover{background:var(--primary-hover)}
+.theme-card.active{
+  outline:2px solid var(--primary);
+}
 
+.preview{
+  height:90px;
+  border-radius:10px;
+  margin-bottom:12px;
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+.preview.dark{
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+}
+
+.preview.light{
+  background:linear-gradient(135deg,#ffffff,#e2e8f0);
+}
+
+.preview.lord{
+  background:linear-gradient(135deg,#2b1d0e,#8b5e2b);
+}
+
+.preview.creeper{
+  background:linear-gradient(135deg,#0f1f0f,#4caf50);
+}
+
+button.primary{
+  padding:12px 16px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:var(--primary);
+  color:white;
+  font-weight:bold;
+  margin-top:20px;
+}
+
+button.primary:hover{
+  background:var(--primary-hover);
+}
 </style>
-
 </head>
-
 <body>
 
 <div class="sidebar">
+  <h2>👑 Host LORD</h2>
 
-<h2>👑 Host LORD</h2>
-
-<button class="nav-btn" onclick="show('dashboard')">🏠 Dashboard</button>
-<button class="nav-btn" onclick="show('console')">🖥 Console</button>
-<button class="nav-btn" onclick="show('config')">⚙️ Config</button>
-<button class="nav-btn" onclick="show('plugins')">🧩 Plugins</button>
-<button class="nav-btn" onclick="show('files')">📁 Arquivos</button>
-
-<button class="nav-btn" onclick="window.location='tiktok.html'">
-🎵 TikTok LIVE
-</button>
-
-<button class="nav-btn" onclick="window.location='temas.html'">
-🎨 Temas
-</button>
-
-<button class="nav-btn" onclick="show('account')">👤 Conta</button>
-
-<button class="nav-btn" onclick="logout()">🚪 Sair</button>
-
+  <button class="nav-btn" onclick="window.location='panel.html'">🏠 Dashboard</button>
+  <button class="nav-btn" onclick="window.location='panel.html'">🖥 Console</button>
+  <button class="nav-btn" onclick="window.location='panel.html'">⚙️ Config</button>
+  <button class="nav-btn" onclick="window.location='panel.html'">🧩 Plugins</button>
+  <button class="nav-btn" onclick="window.location='panel.html'">📁 Arquivos</button>
+  <button class="nav-btn" onclick="window.location='tiktok.html'">🎵 TikTok LIVE</button>
+  <button class="nav-btn" onclick="window.location='temas.html'">🎨 Temas</button>
+  <button class="nav-btn" onclick="window.location='panel.html'">👤 Conta</button>
+  <button class="nav-btn" onclick="logout()">🚪 Sair</button>
 </div>
 
 <div class="main">
+  <div class="card">
+    <h1>🎨 Temas</h1>
+    <p>Escolha o visual do painel. O tema será aplicado também no TikTok LIVE e nas outras páginas.</p>
 
-<div id="dashboard" class="card">
+    <div class="theme-grid">
+      <div class="theme-card" id="card-dark" onclick="selectTheme('dark')">
+        <div class="preview dark"></div>
+        <strong>🌙 Escuro</strong>
+      </div>
 
-<h2>📡 Status do servidor</h2>
+      <div class="theme-card" id="card-light" onclick="selectTheme('light')">
+        <div class="preview light"></div>
+        <strong>☀️ Claro</strong>
+      </div>
 
-<p>Status: <span id="status">...</span></p>
-<p>IP: <span id="ip"></span></p>
+      <div class="theme-card" id="card-lord" onclick="selectTheme('lord')">
+        <div class="preview lord"></div>
+        <strong>👑 Lord</strong>
+      </div>
 
-<button class="green" onclick="start()">Iniciar</button>
-<button class="red" onclick="stop()">Parar</button>
-<button class="blue" onclick="restart()">Reiniciar</button>
+      <div class="theme-card" id="card-creeper" onclick="selectTheme('creeper')">
+        <div class="preview creeper"></div>
+        <strong>🟩 Creeper</strong>
+      </div>
+    </div>
 
-</div>
-
-<div id="console" class="card" style="display:none">
-
-<h2>🖥 Console</h2>
-
-<div id="consoleBox" class="console"></div>
-
-<input id="command" placeholder="digite comando">
-
-<button onclick="sendCommand()">Enviar</button>
-
-</div>
-
-<div id="config" class="card" style="display:none">
-
-<h2>⚙️ Configuração</h2>
-
-<label>MOTD</label>
-<input id="motd">
-
-<label>Max Players</label>
-<input id="players">
-
-<button onclick="saveConfig()">Salvar</button>
-
-</div>
-
-<div id="plugins" class="card" style="display:none">
-
-<h2>🧩 Plugins</h2>
-
-<input type="file" id="pluginFile">
-
-<button onclick="uploadPlugin()">Enviar</button>
-
-<div id="pluginList"></div>
-
-</div>
-
-<div id="files" class="card" style="display:none">
-
-<h2>📁 Arquivos</h2>
-
-<input id="path" placeholder="caminho">
-
-<button onclick="loadFiles()">Abrir</button>
-
-<div id="fileList"></div>
-
-</div>
-
-<div id="account" class="card" style="display:none">
-
-<h2>👤 Conta</h2>
-
-<p>Usuário: <span id="username"></span></p>
-
-<input type="password" id="oldpass" placeholder="senha atual">
-<input type="password" id="newpass" placeholder="nova senha">
-
-<button onclick="changePass()">Alterar senha</button>
-
-</div>
-
+    <button class="primary" onclick="saveTheme()">Salvar tema</button>
+  </div>
 </div>
 
 <script>
-
-const API=location.origin
-const token=localStorage.getItem("token")
+let selectedTheme = "dark";
 
 function applyTheme(theme){
-const allowed=["dark","light","lord","creeper"]
-const finalTheme=allowed.includes(theme)?theme:"dark"
-document.documentElement.setAttribute("data-theme",finalTheme)
+  const allowed = ["dark","light","lord","creeper"];
+  const finalTheme = allowed.includes(theme) ? theme : "dark";
+  document.documentElement.setAttribute("data-theme", finalTheme);
+  selectedTheme = finalTheme;
+
+  document.querySelectorAll(".theme-card").forEach(card => {
+    card.classList.remove("active");
+  });
+
+  const activeCard = document.getElementById("card-" + finalTheme);
+  if (activeCard) activeCard.classList.add("active");
+}
+
+function selectTheme(theme){
+  applyTheme(theme);
+}
+
+function saveTheme(){
+  localStorage.setItem("theme", selectedTheme);
+  alert("Tema salvo com sucesso.");
 }
 
 function loadSavedTheme(){
-const saved=localStorage.getItem("theme")||"dark"
-applyTheme(saved)
-}
-
-function show(id){
-document.querySelectorAll(".card").forEach(c=>c.style.display="none")
-document.getElementById(id).style.display="block"
-}
-
-async function api(path,options={}){
-
-options.headers={
-Authorization:"Bearer "+token,
-"Content-Type":"application/json"
-}
-
-const res=await fetch(API+path,options)
-
-return res.json()
-
-}
-
-async function loadStatus(){
-
-const data=await api("/api/status")
-
-document.getElementById("status").innerText=data.online?"Online":"Offline"
-
-document.getElementById("ip").innerText=data.minecraftHost+":"+data.minecraftPort
-
-}
-
-async function start(){
-await api("/api/start",{method:"POST"})
-loadStatus()
-}
-
-async function stop(){
-await api("/api/stop",{method:"POST"})
-loadStatus()
-}
-
-async function restart(){
-await api("/api/restart",{method:"POST"})
-}
-
-async function loadConsole(){
-
-const data=await api("/api/console")
-
-const box=document.getElementById("consoleBox")
-
-box.innerHTML=data.lines.join("<br>")
-
-box.scrollTop=box.scrollHeight
-
-}
-
-async function sendCommand(){
-
-const cmd=document.getElementById("command").value
-
-await api("/api/command",{
-method:"POST",
-body:JSON.stringify({command:cmd})
-})
-
-}
-
-async function uploadPlugin(){
-
-const file=document.getElementById("pluginFile").files[0]
-
-const form=new FormData()
-
-form.append("plugin",file)
-
-await fetch(API+"/api/upload-plugin",{
-method:"POST",
-headers:{Authorization:"Bearer "+token},
-body:form
-})
-
-}
-
-async function loadFiles(){
-
-const path=document.getElementById("path").value
-
-const res=await api("/api/files?dir="+path)
-
-const list=document.getElementById("fileList")
-
-list.innerHTML=""
-
-res.items.forEach(i=>{
-list.innerHTML+=i.name+"<br>"
-})
-
+  const saved = localStorage.getItem("theme") || "dark";
+  applyTheme(saved);
 }
 
 function logout(){
-localStorage.removeItem("token")
-location="login.html"
+  localStorage.removeItem("token");
+  localStorage.removeItem("username");
+  location = "login.html";
 }
 
-loadSavedTheme()
-loadStatus()
-setInterval(loadConsole,2000)
-
+window.addEventListener("load", loadSavedTheme);
 </script>
 
 </body>
