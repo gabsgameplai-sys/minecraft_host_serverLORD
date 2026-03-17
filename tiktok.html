@@ -1,287 +1,407 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TikTok LIVE - Host LORD</title>
 
 <style>
+:root{
+  --bg:#0f172a;
+  --bg-soft:#020617;
+  --card:#111827;
+  --text:#ffffff;
+  --input:#020617;
+  --border:#334155;
+  --primary:#2563eb;
+  --primary-hover:#1d4ed8;
+  --success:#22c55e;
+  --danger:#dc2626;
+  --console:#000000;
+}
+
+html[data-theme="light"]{
+  --bg:#eef2ff;
+  --bg-soft:#ffffff;
+  --card:#ffffff;
+  --text:#0f172a;
+  --input:#ffffff;
+  --border:#cbd5e1;
+  --primary:#2563eb;
+  --primary-hover:#1d4ed8;
+  --success:#22c55e;
+  --danger:#dc2626;
+  --console:#f8fafc;
+}
+
+html[data-theme="lord"]{
+  --bg:#2b1d0e;
+  --bg-soft:#3b2613;
+  --card:#3a2612;
+  --text:#f5e6c8;
+  --input:#2a1b0c;
+  --border:#8b5e2b;
+  --primary:#ffd54a;
+  --primary-hover:#f5c518;
+  --success:#8bc34a;
+  --danger:#c62828;
+  --console:#1a1207;
+}
+
+html[data-theme="creeper"]{
+  --bg:#0f1f0f;
+  --bg-soft:#142814;
+  --card:#1b331b;
+  --text:#d8ffd8;
+  --input:#102510;
+  --border:#2e7d32;
+  --primary:#4caf50;
+  --primary-hover:#43a047;
+  --success:#00e676;
+  --danger:#c62828;
+  --console:#071307;
+}
+
+*{
+  box-sizing:border-box;
+}
 
 body{
-font-family:Arial;
-background:#0f172a;
-color:white;
-margin:0;
-padding:40px;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  margin:0;
+  padding:40px 20px;
 }
 
 .container{
-max-width:900px;
-margin:auto;
+  max-width:950px;
+  margin:auto;
 }
 
 h1{
-margin-bottom:20px;
+  margin-bottom:20px;
 }
 
 .card{
-background:#111827;
-padding:20px;
-border-radius:10px;
-margin-bottom:20px;
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:20px;
+  border-radius:12px;
+  margin-bottom:20px;
 }
 
-input{
-width:100%;
-padding:10px;
-margin-top:10px;
-margin-bottom:15px;
-background:#020617;
-border:1px solid #334155;
-color:white;
-border-radius:6px;
+input,select{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  margin-bottom:14px;
+  background:var(--input);
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:8px;
 }
 
 button{
-padding:10px 16px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-margin-right:10px;
+  padding:10px 16px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  margin-right:10px;
+  margin-top:6px;
+  font-weight:bold;
 }
 
 .connect{
-background:#22c55e;
+  background:var(--success);
+  color:white;
 }
 
 .disconnect{
-background:#dc2626;
+  background:var(--danger);
+  color:white;
 }
 
 .secondary{
-background:#2563eb;
+  background:var(--primary);
+  color:white;
 }
 
 .console{
-background:#020617;
-padding:15px;
-border-radius:6px;
-height:350px;
-overflow:auto;
-font-family:monospace;
-font-size:13px;
+  background:var(--console);
+  border:1px solid var(--border);
+  padding:15px;
+  border-radius:8px;
+  height:350px;
+  overflow:auto;
+  font-family:monospace;
+  font-size:13px;
+  white-space:pre-wrap;
 }
 
 .rule{
-background:#020617;
-padding:10px;
-margin-top:10px;
-border-radius:6px;
+  background:var(--input);
+  border:1px solid var(--border);
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
 }
-
 </style>
-
 </head>
-
 <body>
 
 <div class="container">
+  <h1>🎵 TikTok LIVE</h1>
 
-<h1>🎵 TikTok LIVE</h1>
+  <div class="card">
+    <h3>🎵 Conectar LIVE</h3>
 
-<div class="card">
+    <input id="tiktokUser" placeholder="@usuario">
 
-<h3>Conectar LIVE</h3>
+    <button class="connect" onclick="connect()">Conectar</button>
+    <button class="disconnect" onclick="disconnect()">Desconectar</button>
+    <button class="secondary" onclick="window.location='panel.html'">⬅ Voltar</button>
 
-<input id="tiktokUser" placeholder="@usuario">
+    <p>Status: <span id="status">desconectado</span></p>
+  </div>
 
-<button class="connect" onclick="connect()">Conectar</button>
-<button class="disconnect" onclick="disconnect()">Desconectar</button>
-<button class="secondary" onclick="window.location='panel.html'">⬅ Voltar</button>
+  <div class="card">
+    <h3>🎵 Eventos da LIVE</h3>
+    <div id="events" class="console">Aguardando eventos...</div>
+  </div>
 
-<p>Status: <span id="status">desconectado</span></p>
+  <div class="card">
+    <h3>🎵 Automações TikTok → Minecraft</h3>
 
-</div>
+    <label>Evento</label>
+    <select id="eventType">
+      <option value="follow">Follow</option>
+      <option value="gift">Gift</option>
+      <option value="like">Like</option>
+      <option value="share">Share</option>
+      <option value="member">Member</option>
+    </select>
 
-<div class="card">
+    <label>A cada quantos</label>
+    <input id="eventCount" type="number" value="1" min="1">
 
-<h3>Eventos da LIVE</h3>
+    <label>Comando Minecraft</label>
+    <input id="mcCommand" placeholder="/summon zombie" value="/summon zombie">
 
-<div id="events" class="console">
-Aguardando eventos...
-</div>
+    <button class="secondary" onclick="addRule()">Adicionar regra</button>
+    <button class="secondary" onclick="loadRules()">Atualizar regras</button>
 
-</div>
-
-<div class="card">
-
-<h3>Automações TikTok → Minecraft</h3>
-
-<label>Evento</label>
-<select id="eventType">
-<option value="follow">Follow</option>
-<option value="gift">Gift</option>
-<option value="like">Like</option>
-<option value="share">Share</option>
-<option value="member">Member</option>
-</select>
-
-<label>A cada quantos</label>
-<input id="eventCount" type="number" value="1">
-
-<label>Comando Minecraft</label>
-<input id="mcCommand" placeholder="/summon zombie">
-
-<button onclick="addRule()">Adicionar regra</button>
-
-<div id="rules"></div>
-
-</div>
-
+    <div id="rules"></div>
+  </div>
 </div>
 
 <script>
+const token=localStorage.getItem("token");
+const API=location.origin;
+let eventSource=null;
 
-const token=localStorage.getItem("token")
+function applyTheme(theme){
+  const allowed=["dark","light","lord","creeper"];
+  const finalTheme=allowed.includes(theme)?theme:"dark";
+  document.documentElement.setAttribute("data-theme",finalTheme);
+}
 
-const API=location.origin
-
-let eventSource=null
+function loadSavedTheme(){
+  const saved=localStorage.getItem("theme")||"dark";
+  applyTheme(saved);
+}
 
 function log(text){
-
-const box=document.getElementById("events")
-
-box.innerHTML+=text+"<br>"
-
-box.scrollTop=box.scrollHeight
-
+  const box=document.getElementById("events");
+  const current=box.innerHTML==="Aguardando eventos..."?"":box.innerHTML+"<br>";
+  box.innerHTML=current+text;
+  box.scrollTop=box.scrollHeight;
 }
 
 async function connect(){
+  const user=document.getElementById("tiktokUser").value.trim();
 
-const user=document.getElementById("tiktokUser").value
+  const res=await fetch(API+"/api/tiktoklive/connect",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization":"Bearer "+token
+    },
+    body:JSON.stringify({uniqueId:user})
+  });
 
-const res=await fetch(API+"/api/tiktoklive/connect",{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Authorization":"Bearer "+token
-},
-body:JSON.stringify({uniqueId:user})
-})
+  const data=await res.json();
 
-const data=await res.json()
+  if(data.error) return alert(data.error);
 
-if(data.error) return alert(data.error)
-
-document.getElementById("status").innerText="conectado"
-
-startStream()
-
+  document.getElementById("status").innerText="conectado";
+  startStream();
 }
 
 async function disconnect(){
+  await fetch(API+"/api/tiktoklive/disconnect",{
+    method:"POST",
+    headers:{
+      "Authorization":"Bearer "+token
+    }
+  });
 
-await fetch(API+"/api/tiktoklive/disconnect",{
-method:"POST",
-headers:{
-"Authorization":"Bearer "+token
-}
-})
+  document.getElementById("status").innerText="desconectado";
 
-document.getElementById("status").innerText="desconectado"
-
-if(eventSource) eventSource.close()
-
+  if(eventSource) eventSource.close();
 }
 
 function startStream(){
+  if(eventSource) eventSource.close();
 
-eventSource=new EventSource(API+"/api/tiktoklive/stream?token="+token)
+  eventSource=new EventSource(API+"/api/tiktoklive/stream?token="+encodeURIComponent(token));
 
-eventSource.onmessage=(msg)=>{
+  eventSource.onmessage=(msg)=>{
+    const event=JSON.parse(msg.data);
 
-const event=JSON.parse(msg.data)
-
-if(event.type==="chat") log("💬 "+event.data.nickname+": "+event.data.comment)
-
-if(event.type==="follow") log("➕ "+event.data.nickname+" seguiu")
-
-if(event.type==="gift") log("🎁 "+event.data.nickname+" enviou "+event.data.giftName)
-
-if(event.type==="like") log("❤️ "+event.data.nickname+" curtiu")
-
-}
-
+    if(event.type==="hello") return;
+    if(event.type==="chat") log("💬 "+(event.data.nickname||"Usuário")+": "+(event.data.comment||""));
+    if(event.type==="follow") log("➕ "+(event.data.nickname||"Usuário")+" seguiu");
+    if(event.type==="gift") log("🎁 "+(event.data.nickname||"Usuário")+" enviou "+(event.data.giftName||"presente"));
+    if(event.type==="like") log("❤️ "+(event.data.nickname||"Usuário")+" curtiu");
+    if(event.type==="share") log("🔄 "+(event.data.nickname||"Usuário")+" compartilhou");
+    if(event.type==="member") log("👋 "+(event.data.nickname||"Usuário")+" entrou");
+    if(event.type==="error") log("❌ Erro: "+(event.data.message||"desconhecido"));
+  };
 }
 
 async function addRule(){
+  const eventType=document.getElementById("eventType").value;
+  const everyCount=document.getElementById("eventCount").value;
+  const command=document.getElementById("mcCommand").value.trim();
 
-const eventType=document.getElementById("eventType").value
-const everyCount=document.getElementById("eventCount").value
-const command=document.getElementById("mcCommand").value
+  const res=await fetch(API+"/api/tiktoklive/rules",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization":"Bearer "+token
+    },
+    body:JSON.stringify({
+      eventType,
+      everyCount,
+      command
+    })
+  });
 
-const res=await fetch(API+"/api/tiktoklive/rules",{
+  const data=await res.json();
+  alert(data.message||data.error||"Regra criada");
+  loadRules();
+}
 
-method:"POST",
+async function deleteRule(id){
+  const res=await fetch(API+"/api/tiktoklive/rules/"+encodeURIComponent(id),{
+    method:"DELETE",
+    headers:{
+      "Authorization":"Bearer "+token
+    }
+  });
 
-headers:{
-"Content-Type":"application/json",
-"Authorization":"Bearer "+token
-},
+  const data=await res.json();
+  alert(data.message||data.error||"Regra removida");
+  loadRules();
+}
 
-body:JSON.stringify({
+async function toggleRule(rule){
+  const res=await fetch(API+"/api/tiktoklive/rules/"+encodeURIComponent(rule.id),{
+    method:"PUT",
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization":"Bearer "+token
+    },
+    body:JSON.stringify({
+      enabled:!rule.enabled
+    })
+  });
 
-eventType,
-everyCount,
-command
+  const data=await res.json();
+  alert(data.message||data.error||"Regra atualizada");
+  loadRules();
+}
 
-})
+async function editRule(rule){
+  const newEventType=prompt("Evento (follow, like, gift, share, member):",rule.eventType);
+  if(!newEventType) return;
 
-})
+  const newEveryCount=prompt("Executar a cada quantos eventos?",rule.everyCount);
+  if(!newEveryCount) return;
 
-const data=await res.json()
+  const newCommand=prompt("Comando do Minecraft:",rule.command);
+  if(!newCommand) return;
 
-alert(data.message||"Regra criada")
+  const res=await fetch(API+"/api/tiktoklive/rules/"+encodeURIComponent(rule.id),{
+    method:"PUT",
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization":"Bearer "+token
+    },
+    body:JSON.stringify({
+      eventType:newEventType.trim(),
+      everyCount:Number(newEveryCount),
+      command:newCommand.trim()
+    })
+  });
 
-loadRules()
-
+  const data=await res.json();
+  alert(data.message||data.error||"Regra atualizada");
+  loadRules();
 }
 
 async function loadRules(){
+  const res=await fetch(API+"/api/tiktoklive/rules",{
+    headers:{Authorization:"Bearer "+token}
+  });
 
-const res=await fetch(API+"/api/tiktoklive/rules",{
-headers:{Authorization:"Bearer "+token}
-})
+  const data=await res.json();
 
-const data=await res.json()
+  const list=document.getElementById("rules");
+  list.innerHTML="";
 
-const list=document.getElementById("rules")
+  if(!data.rules || !data.rules.length){
+    list.innerHTML='<div class="rule">Nenhuma regra criada.</div>';
+    return;
+  }
 
-list.innerHTML=""
+  data.rules.forEach(rule=>{
+    const div=document.createElement("div");
+    div.className="rule";
 
-data.rules.forEach(rule=>{
+    div.innerHTML=`
+      <b>${rule.eventType}</b> — a cada ${rule.everyCount}<br>
+      ${rule.command}<br><br>
+    `;
 
-const div=document.createElement("div")
+    const editBtn=document.createElement("button");
+    editBtn.className="secondary";
+    editBtn.textContent="Editar";
+    editBtn.onclick=()=>editRule(rule);
 
-div.className="rule"
+    const toggleBtn=document.createElement("button");
+    toggleBtn.className="secondary";
+    toggleBtn.textContent=rule.enabled?"Desativar":"Ativar";
+    toggleBtn.onclick=()=>toggleRule(rule);
 
-div.innerHTML=`
-<b>${rule.eventType}</b>
-a cada ${rule.everyCount}
-<br>
-${rule.command}
-`
+    const delBtn=document.createElement("button");
+    delBtn.className="disconnect";
+    delBtn.textContent="Excluir";
+    delBtn.onclick=()=>deleteRule(rule.id);
 
-list.appendChild(div)
+    div.appendChild(editBtn);
+    div.appendChild(toggleBtn);
+    div.appendChild(delBtn);
 
-})
-
+    list.appendChild(div);
+  });
 }
 
-loadRules()
-
+window.addEventListener("load",()=>{
+  loadSavedTheme();
+  loadRules();
+});
 </script>
 
 </body>
