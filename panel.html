@@ -8,18 +8,70 @@
 
 <style>
 
+:root{
+--bg:#0f172a;
+--bg-soft:#020617;
+--card:#020617;
+--text:#ffffff;
+--input:#020617;
+--border:#334155;
+--nav:#111827;
+--nav-hover:#2563eb;
+--primary:#2563eb;
+--primary-hover:#1d4ed8;
+}
+
+html[data-theme="light"]{
+--bg:#eef2ff;
+--bg-soft:#ffffff;
+--card:#ffffff;
+--text:#0f172a;
+--input:#ffffff;
+--border:#cbd5e1;
+--nav:#e2e8f0;
+--nav-hover:#2563eb;
+--primary:#2563eb;
+--primary-hover:#1d4ed8;
+}
+
+html[data-theme="lord"]{
+--bg:#2b1d0e;
+--bg-soft:#3b2613;
+--card:#3a2612;
+--text:#f5e6c8;
+--input:#2a1b0c;
+--border:#8b5e2b;
+--nav:#4a3117;
+--nav-hover:#ffd54a;
+--primary:#ffd54a;
+--primary-hover:#f5c518;
+}
+
+html[data-theme="creeper"]{
+--bg:#0f1f0f;
+--bg-soft:#142814;
+--card:#1b331b;
+--text:#d8ffd8;
+--input:#102510;
+--border:#2e7d32;
+--nav:#244424;
+--nav-hover:#4caf50;
+--primary:#4caf50;
+--primary-hover:#43a047;
+}
+
 body{
 margin:0;
 font-family:Arial;
-background:#0f172a;
-color:white;
+background:var(--bg);
+color:var(--text);
 display:flex;
 height:100vh;
 }
 
 .sidebar{
 width:230px;
-background:#020617;
+background:var(--bg-soft);
 padding:20px;
 }
 
@@ -31,27 +83,30 @@ margin-bottom:20px;
 width:100%;
 padding:12px;
 margin-bottom:10px;
-background:#111827;
+background:var(--nav);
 border:none;
-color:white;
+color:var(--text);
 cursor:pointer;
 border-radius:6px;
 }
 
 .nav-btn:hover{
-background:#2563eb;
+background:var(--nav-hover);
+color:#fff;
 }
 
 .main{
 flex:1;
 padding:30px;
+overflow:auto;
 }
 
 .card{
-background:#020617;
+background:var(--card);
 padding:20px;
 border-radius:10px;
 margin-bottom:20px;
+border:1px solid var(--border);
 }
 
 .console{
@@ -68,9 +123,9 @@ width:100%;
 padding:10px;
 margin-top:10px;
 margin-bottom:10px;
-background:#020617;
-border:1px solid #334155;
-color:white;
+background:var(--input);
+border:1px solid var(--border);
+color:var(--text);
 }
 
 button{
@@ -82,7 +137,8 @@ cursor:pointer;
 
 .green{background:#22c55e}
 .red{background:#dc2626}
-.blue{background:#2563eb}
+.blue{background:var(--primary); color:white}
+.blue:hover{background:var(--primary-hover)}
 
 </style>
 
@@ -95,13 +151,9 @@ cursor:pointer;
 <h2>👑 Host LORD</h2>
 
 <button class="nav-btn" onclick="show('dashboard')">🏠 Dashboard</button>
-
-<button class="nav-btn" onclick="show('console')">🖥️ Console</button>
-
-<button class="nav-btn" onclick="show('config')">⚙️ Configuração</button>
-
+<button class="nav-btn" onclick="show('console')">🖥 Console</button>
+<button class="nav-btn" onclick="show('config')">⚙️ Config</button>
 <button class="nav-btn" onclick="show('plugins')">🧩 Plugins</button>
-
 <button class="nav-btn" onclick="show('files')">📁 Arquivos</button>
 
 <button class="nav-btn" onclick="window.location='tiktok.html'">
@@ -124,8 +176,7 @@ cursor:pointer;
 
 <h2>📡 Status do servidor</h2>
 
-<p>Status: <span id="status">carregando...</span></p>
-
+<p>Status: <span id="status">...</span></p>
 <p>IP: <span id="ip"></span></p>
 
 <button class="green" onclick="start()">Iniciar</button>
@@ -136,11 +187,11 @@ cursor:pointer;
 
 <div id="console" class="card" style="display:none">
 
-<h2>🖥️ Console</h2>
+<h2>🖥 Console</h2>
 
 <div id="consoleBox" class="console"></div>
 
-<input id="command" placeholder="digite um comando">
+<input id="command" placeholder="digite comando">
 
 <button onclick="sendCommand()">Enviar</button>
 
@@ -166,7 +217,7 @@ cursor:pointer;
 
 <input type="file" id="pluginFile">
 
-<button onclick="uploadPlugin()">Enviar plugin</button>
+<button onclick="uploadPlugin()">Enviar</button>
 
 <div id="pluginList"></div>
 
@@ -191,7 +242,6 @@ cursor:pointer;
 <p>Usuário: <span id="username"></span></p>
 
 <input type="password" id="oldpass" placeholder="senha atual">
-
 <input type="password" id="newpass" placeholder="nova senha">
 
 <button onclick="changePass()">Alterar senha</button>
@@ -205,12 +255,20 @@ cursor:pointer;
 const API=location.origin
 const token=localStorage.getItem("token")
 
+function applyTheme(theme){
+const allowed=["dark","light","lord","creeper"]
+const finalTheme=allowed.includes(theme)?theme:"dark"
+document.documentElement.setAttribute("data-theme",finalTheme)
+}
+
+function loadSavedTheme(){
+const saved=localStorage.getItem("theme")||"dark"
+applyTheme(saved)
+}
+
 function show(id){
-
 document.querySelectorAll(".card").forEach(c=>c.style.display="none")
-
 document.getElementById(id).style.display="block"
-
 }
 
 async function api(path,options={}){
@@ -237,25 +295,17 @@ document.getElementById("ip").innerText=data.minecraftHost+":"+data.minecraftPor
 }
 
 async function start(){
-
 await api("/api/start",{method:"POST"})
-
 loadStatus()
-
 }
 
 async function stop(){
-
 await api("/api/stop",{method:"POST"})
-
 loadStatus()
-
 }
 
 async function restart(){
-
 await api("/api/restart",{method:"POST"})
-
 }
 
 async function loadConsole(){
@@ -275,11 +325,8 @@ async function sendCommand(){
 const cmd=document.getElementById("command").value
 
 await api("/api/command",{
-
 method:"POST",
-
 body:JSON.stringify({command:cmd})
-
 })
 
 }
@@ -293,13 +340,9 @@ const form=new FormData()
 form.append("plugin",file)
 
 await fetch(API+"/api/upload-plugin",{
-
 method:"POST",
-
 headers:{Authorization:"Bearer "+token},
-
 body:form
-
 })
 
 }
@@ -315,23 +358,18 @@ const list=document.getElementById("fileList")
 list.innerHTML=""
 
 res.items.forEach(i=>{
-
 list.innerHTML+=i.name+"<br>"
-
 })
 
 }
 
 function logout(){
-
 localStorage.removeItem("token")
-
 location="login.html"
-
 }
 
+loadSavedTheme()
 loadStatus()
-
 setInterval(loadConsole,2000)
 
 </script>
