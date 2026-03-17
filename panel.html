@@ -1,189 +1,571 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minecraft Host Panel</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<meta charset="UTF-8">
-<title>Minecraft Host Panel</title>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #081633;
+      color: #fff;
+    }
 
-<style>
+    header {
+      background: #1f2b44;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-body{
-background:#0f172a;
-font-family:Arial;
-color:white;
-margin:0;
-}
+    header h1 {
+      margin: 0;
+      font-size: 18px;
+    }
 
-header{
-background:#1e293b;
-padding:15px;
-}
+    .logout-btn {
+      background: #22c55e;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: bold;
+    }
 
-main{
-padding:20px;
-}
+    .logout-btn:hover,
+    button:hover {
+      opacity: 0.92;
+    }
 
-button{
-padding:10px;
-margin:5px;
-border:none;
-background:#22c55e;
-color:white;
-cursor:pointer;
-}
+    main {
+      padding: 20px;
+    }
 
-button:hover{
-background:#16a34a;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
 
-.console{
-background:black;
-padding:10px;
-height:300px;
-overflow:auto;
-font-family:monospace;
-}
+    .card {
+      background: #0d1d42;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 16px;
+    }
 
-</style>
+    .card h2 {
+      margin-top: 0;
+      font-size: 18px;
+      margin-bottom: 14px;
+    }
 
+    .status-line {
+      margin: 8px 0;
+      font-size: 14px;
+    }
+
+    .status-online {
+      color: #4ade80;
+      font-weight: bold;
+    }
+
+    .status-offline {
+      color: #f87171;
+      font-weight: bold;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    button {
+      background: #22c55e;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .secondary {
+      background: #3b82f6;
+    }
+
+    .danger {
+      background: #ef4444;
+    }
+
+    .warning {
+      background: #f59e0b;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: #081633;
+      color: white;
+      margin-top: 8px;
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      min-height: 220px;
+      resize: vertical;
+      font-family: Consolas, monospace;
+    }
+
+    .console {
+      background: black;
+      color: #e5e7eb;
+      height: 340px;
+      overflow-y: auto;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.35;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .row input {
+      margin: 0;
+      flex: 1;
+    }
+
+    ul {
+      padding-left: 18px;
+      margin: 10px 0 0;
+    }
+
+    li {
+      margin: 6px 0;
+      font-size: 14px;
+    }
+
+    .small {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .mono {
+      font-family: Consolas, monospace;
+      word-break: break-all;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .muted {
+      opacity: 0.8;
+    }
+
+    .file-list {
+      max-height: 240px;
+      overflow-y: auto;
+      background: #081633;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .file-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 14px;
+    }
+
+    .file-item:last-child {
+      border-bottom: none;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.1);
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <header>
+    <h1>Minecraft Host Panel</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </header>
 
-<header>
+  <main>
+    <div class="grid">
+      <section class="card">
+        <h2>Status do servidor</h2>
+        <div class="status-line">
+          Estado:
+          <span id="serverState" class="muted">Carregando...</span>
+        </div>
+        <div class="status-line">PID: <span id="serverPid">-</span></div>
+        <div class="status-line">Painel público: <span id="panelUrl" class="mono">-</span></div>
+        <div class="status-line">Painel local: <span id="localPanelUrl" class="mono">-</span></div>
+        <div class="status-line">IP local: <span id="localIp" class="mono">-</span></div>
+        <div class="status-line">Minecraft host: <span id="minecraftHost" class="mono">-</span></div>
+        <div class="status-line">Minecraft porta: <span id="minecraftPort" class="mono">-</span></div>
 
-<h2>Minecraft Host Panel</h2>
+        <div class="actions">
+          <button onclick="startServer()">Start</button>
+          <button class="danger" onclick="stopServer()">Stop</button>
+          <button class="warning" onclick="restartServer()">Restart</button>
+          <button class="secondary" onclick="refreshAll()">Atualizar</button>
+        </div>
+      </section>
 
-<button onclick="logout()">Logout</button>
+      <section class="card">
+        <h2>Informações rápidas</h2>
+        <div class="status-line small">
+          O painel usa o backend público configurado em <span class="mono" id="apiBaseText"></span>
+        </div>
+        <div class="status-line small">
+          O link do painel via ngrok é para o <b>site/API</b>, não necessariamente para entrada TCP do Minecraft.
+        </div>
+        <div class="status-line small">
+          Para entrar no servidor Minecraft fora da rede local, você ainda precisa expor a porta 25565 com TCP.
+        </div>
+      </section>
 
-</header>
+      <section class="card full">
+        <h2>Console</h2>
+        <div id="console" class="console"></div>
 
-<main>
+        <div class="row" style="margin-top: 12px;">
+          <input id="cmd" type="text" placeholder="Digite um comando, ex: say Olá" />
+          <button onclick="sendCommand()">Enviar</button>
+          <button class="secondary" onclick="loadConsole()">Recarregar console</button>
+        </div>
+      </section>
 
-<h3>Status do servidor</h3>
+      <section class="card">
+        <h2>Plugins</h2>
+        <div class="actions" style="margin-top: 0;">
+          <button class="secondary" onclick="loadPlugins()">Atualizar plugins</button>
+        </div>
+        <ul id="pluginsList">
+          <li class="muted">Carregando plugins...</li>
+        </ul>
+      </section>
 
-<div id="status">Carregando...</div>
+      <section class="card">
+        <h2>Arquivos</h2>
+        <label for="filesDir">Pasta</label>
+        <input id="filesDir" type="text" value="" placeholder="Ex: plugins" />
+        <div class="actions" style="margin-top: 0;">
+          <button class="secondary" onclick="loadFiles()">Listar arquivos</button>
+        </div>
+        <div id="filesList" class="file-list">
+          <div class="muted">Carregando arquivos...</div>
+        </div>
+      </section>
 
-<br>
+      <section class="card full">
+        <h2>Configuração do servidor</h2>
+        <div class="small muted">
+          Edita as propriedades lidas do <span class="mono">server.properties</span>.
+        </div>
 
-<button onclick="startServer()">Start</button>
-<button onclick="stopServer()">Stop</button>
-<button onclick="restartServer()">Restart</button>
+        <textarea id="serverConfigRaw" placeholder="Carregando configurações..."></textarea>
 
-<h3>Console</h3>
+        <div class="actions">
+          <button class="secondary" onclick="loadServerConfig()">Recarregar config</button>
+          <button onclick="saveServerConfig()">Salvar config</button>
+        </div>
+      </section>
+    </div>
+  </main>
 
-<div class="console" id="console"></div>
+  <script>
+    const API_BASE = "https://SEU-NGROK-AQUI.ngrok-free.app";
 
-<input id="cmd" placeholder="comando">
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "login.html";
+    }
 
-<button onclick="sendCommand()">Enviar</button>
+    document.getElementById("apiBaseText").textContent = API_BASE;
 
-</main>
+    async function api(path, options = {}) {
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        ...(options.headers || {})
+      };
 
-<script>
+      if (!(options.body instanceof FormData)) {
+        headers["Content-Type"] = "application/json";
+      }
 
-const API_BASE="https://unvictimized-vincenzo-expurgatorial.ngrok-free.dev";
+      const response = await fetch(`${API_BASE}${path}`, {
+        ...options,
+        headers
+      });
 
-const token=localStorage.getItem("token");
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
+      }
 
-if(!token){
+      if (!response.ok) {
+        throw new Error(data?.error || `HTTP ${response.status}`);
+      }
 
-window.location="login.html";
+      return data;
+    }
 
-}
+    async function loadStatus() {
+      try {
+        const data = await api("/api/status");
 
-async function api(path,options={}){
+        document.getElementById("serverState").textContent = data.online ? "Online" : "Offline";
+        document.getElementById("serverState").className = data.online ? "status-online" : "status-offline";
 
-options.headers={
-"Content-Type":"application/json",
-Authorization:`Bearer ${token}`,
-...(options.headers||{})
-};
+        document.getElementById("serverPid").textContent = data.pid ?? "-";
+        document.getElementById("panelUrl").textContent = data.panelUrl || "-";
+        document.getElementById("localPanelUrl").textContent = data.localPanelUrl || "-";
+        document.getElementById("localIp").textContent = data.localIp || "-";
+        document.getElementById("minecraftHost").textContent = data.minecraftHost || "-";
+        document.getElementById("minecraftPort").textContent = data.minecraftPort || "-";
+      } catch (err) {
+        document.getElementById("serverState").textContent = "Erro ao conectar";
+        document.getElementById("serverState").className = "status-offline";
+        console.error(err);
+      }
+    }
 
-const res=await fetch(`${API_BASE}${path}`,options);
+    async function loadConsole() {
+      try {
+        const data = await api("/api/console");
+        const consoleDiv = document.getElementById("console");
+        consoleDiv.textContent = Array.isArray(data.lines) ? data.lines.join("\n") : "";
+        consoleDiv.scrollTop = consoleDiv.scrollHeight;
+      } catch (err) {
+        console.error(err);
+      }
+    }
 
-return res.json();
+    async function startServer() {
+      try {
+        const data = await api("/api/start", { method: "POST" });
+        alert(data.message || "Servidor iniciando.");
+        await refreshAll();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
 
-}
+    async function stopServer() {
+      try {
+        await api("/api/stop", { method: "POST" });
+        alert("Comando stop enviado.");
+        await refreshAll();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
 
-async function loadStatus(){
+    async function restartServer() {
+      try {
+        const data = await api("/api/restart", { method: "POST" });
+        alert(data.message || "Servidor reiniciando.");
+        await refreshAll();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
 
-try{
+    async function sendCommand() {
+      const commandInput = document.getElementById("cmd");
+      const command = commandInput.value.trim();
 
-const data=await api("/api/status");
+      if (!command) {
+        alert("Digite um comando.");
+        return;
+      }
 
-document.getElementById("status").innerText=
-data.online ? "Servidor Online" : "Servidor Offline";
+      try {
+        await api("/api/command", {
+          method: "POST",
+          body: JSON.stringify({ command })
+        });
 
-}catch{
+        commandInput.value = "";
+        await loadConsole();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
 
-alert("Erro ao conectar com o backend.");
+    async function loadPlugins() {
+      const list = document.getElementById("pluginsList");
 
-}
+      try {
+        const data = await api("/api/plugins");
+        const plugins = Array.isArray(data.plugins) ? data.plugins : [];
 
-}
+        if (!plugins.length) {
+          list.innerHTML = `<li class="muted">Nenhum plugin encontrado.</li>`;
+          return;
+        }
 
-async function loadConsole(){
+        list.innerHTML = plugins.map(name => `<li>${escapeHtml(name)}</li>`).join("");
+      } catch (err) {
+        list.innerHTML = `<li class="status-offline">${escapeHtml(err.message)}</li>`;
+      }
+    }
 
-try{
+    async function loadFiles() {
+      const dir = document.getElementById("filesDir").value.trim();
+      const box = document.getElementById("filesList");
 
-const data=await api("/api/console");
+      try {
+        const data = await api(`/api/files?dir=${encodeURIComponent(dir)}`);
+        const items = Array.isArray(data.items) ? data.items : [];
 
-const consoleDiv=document.getElementById("console");
+        if (!items.length) {
+          box.innerHTML = `<div class="muted">Nenhum item encontrado.</div>`;
+          return;
+        }
 
-consoleDiv.innerHTML=data.lines.join("<br>");
+        box.innerHTML = items.map(item => `
+          <div class="file-item">
+            <div>
+              <div>${escapeHtml(item.name)}</div>
+              <div class="small mono muted">${escapeHtml(item.path)}</div>
+            </div>
+            <div>
+              <span class="tag">${item.type === "folder" ? "pasta" : "arquivo"}</span>
+            </div>
+          </div>
+        `).join("");
+      } catch (err) {
+        box.innerHTML = `<div class="status-offline">${escapeHtml(err.message)}</div>`;
+      }
+    }
 
-consoleDiv.scrollTop=consoleDiv.scrollHeight;
+    async function loadServerConfig() {
+      const textarea = document.getElementById("serverConfigRaw");
 
-}catch{}
+      try {
+        const data = await api("/api/server-config");
+        textarea.value = data.raw || "";
+      } catch (err) {
+        textarea.value = "";
+        alert("Erro ao carregar config: " + err.message);
+      }
+    }
 
-}
+    function parseProperties(raw) {
+      const result = {};
+      const lines = String(raw).split(/\r?\n/);
 
-async function startServer(){
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith("#")) continue;
 
-await api("/api/start",{method:"POST"});
+        const index = trimmed.indexOf("=");
+        if (index === -1) continue;
 
-}
+        const key = trimmed.slice(0, index).trim();
+        const value = trimmed.slice(index + 1).trim();
+        result[key] = value;
+      }
 
-async function stopServer(){
+      return result;
+    }
 
-await api("/api/stop",{method:"POST"});
+    async function saveServerConfig() {
+      const raw = document.getElementById("serverConfigRaw").value;
 
-}
+      try {
+        const config = parseProperties(raw);
 
-async function restartServer(){
+        await api("/api/server-config", {
+          method: "POST",
+          body: JSON.stringify({ config })
+        });
 
-await api("/api/restart",{method:"POST"});
+        alert("Configuração salva com sucesso.");
+      } catch (err) {
+        alert("Erro ao salvar config: " + err.message);
+      }
+    }
 
-}
+    function logout() {
+      localStorage.removeItem("token");
+      window.location.href = "login.html";
+    }
 
-async function sendCommand(){
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
 
-const cmd=document.getElementById("cmd").value;
+    async function refreshAll() {
+      await Promise.allSettled([
+        loadStatus(),
+        loadConsole(),
+        loadPlugins(),
+        loadFiles(),
+        loadServerConfig()
+      ]);
+    }
 
-await api("/api/command",{
-method:"POST",
-body:JSON.stringify({command:cmd})
-});
+    document.getElementById("cmd").addEventListener("keydown", async (e) => {
+      if (e.key === "Enter") {
+        await sendCommand();
+      }
+    });
 
-document.getElementById("cmd").value="";
-
-}
-
-function logout(){
-
-localStorage.removeItem("token");
-
-window.location="login.html";
-
-}
-
-setInterval(loadConsole,2000);
-
-loadStatus();
-loadConsole();
-
-</script>
-
+    refreshAll();
+    setInterval(loadConsole, 2000);
+    setInterval(loadStatus, 5000);
+  </script>
 </body>
 </html>
