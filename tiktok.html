@@ -1,769 +1,348 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TikTok LIVE - Host LORD</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Host LORD - TikTok Live</title>
+  <style>
+    :root{
+      --bg:#0b1120;
+      --card:#0f172a;
+      --border:#1f2937;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --primary:#2563eb;
+      --primary-hover:#1d4ed8;
+      --success:#16a34a;
+      --danger:#dc2626;
+      --shadow:0 10px 30px rgba(0,0,0,.25);
+      --radius:18px;
+    }
 
-<style>
-:root{
-  --bg:#0f172a;
-  --bg-soft:#020617;
-  --card:#020617;
-  --text:#ffffff;
-  --input:#020617;
-  --border:#334155;
-  --nav:#111827;
-  --nav-hover:#2563eb;
-  --primary:#2563eb;
-  --primary-hover:#1d4ed8;
-  --success:#22c55e;
-  --danger:#dc2626;
-  --warning:#f59e0b;
-  --console:#000000;
-}
+    *{box-sizing:border-box}
 
-html[data-theme="light"]{
-  --bg:#eef2ff;
-  --bg-soft:#ffffff;
-  --card:#ffffff;
-  --text:#0f172a;
-  --input:#ffffff;
-  --border:#cbd5e1;
-  --nav:#e2e8f0;
-  --nav-hover:#2563eb;
-  --primary:#2563eb;
-  --primary-hover:#1d4ed8;
-  --success:#22c55e;
-  --danger:#dc2626;
-  --warning:#d97706;
-  --console:#f8fafc;
-}
+    html,body{
+      margin:0;
+      padding:0;
+      min-height:100%;
+      background:linear-gradient(180deg,#0b1120 0%,#0a0f1d 100%);
+      color:var(--text);
+      font-family:Inter,Arial,Helvetica,sans-serif;
+    }
 
-html[data-theme="lord"]{
-  --bg:#2b1d0e;
-  --bg-soft:#3b2613;
-  --card:#3a2612;
-  --text:#f5e6c8;
-  --input:#2a1b0c;
-  --border:#8b5e2b;
-  --nav:#4a3117;
-  --nav-hover:#ffd54a;
-  --primary:#ffd54a;
-  --primary-hover:#f5c518;
-  --success:#8bc34a;
-  --danger:#c62828;
-  --warning:#ffb300;
-  --console:#1a1207;
-}
+    .container{
+      max-width:1100px;
+      margin:0 auto;
+      padding:24px;
+    }
 
-html[data-theme="creeper"]{
-  --bg:#0f1f0f;
-  --bg-soft:#142814;
-  --card:#1b331b;
-  --text:#d8ffd8;
-  --input:#102510;
-  --border:#2e7d32;
-  --nav:#244424;
-  --nav-hover:#4caf50;
-  --primary:#4caf50;
-  --primary-hover:#43a047;
-  --success:#00e676;
-  --danger:#c62828;
-  --warning:#ffca28;
-  --console:#071307;
-}
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-bottom:24px;
+    }
 
-*{
-  box-sizing:border-box;
-}
+    .title h1{
+      margin:0;
+      font-size:30px;
+    }
 
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  display:flex;
-  min-height:100vh;
-}
+    .title p{
+      margin:6px 0 0;
+      color:var(--muted);
+    }
 
-.sidebar{
-  width:230px;
-  background:var(--bg-soft);
-  padding:20px;
-  border-right:1px solid var(--border);
-}
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
 
-.sidebar h2{
-  margin-bottom:20px;
-}
+    .btn{
+      border:none;
+      border-radius:12px;
+      padding:11px 16px;
+      font-weight:600;
+      cursor:pointer;
+      transition:.2s ease;
+      color:#fff;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
 
-.nav-btn{
-  width:100%;
-  padding:12px;
-  margin-bottom:10px;
-  background:var(--nav);
-  border:none;
-  color:var(--text);
-  cursor:pointer;
-  border-radius:6px;
-  text-align:left;
-}
+    .btn-primary{background:var(--primary)}
+    .btn-primary:hover{background:var(--primary-hover)}
+    .btn-secondary{background:#334155}
+    .btn-secondary:hover{background:#475569}
+    .btn-success{background:var(--success)}
+    .btn-success:hover{filter:brightness(.95)}
+    .btn-danger{background:var(--danger)}
+    .btn-danger:hover{filter:brightness(.95)}
 
-.nav-btn:hover{
-  background:var(--nav-hover);
-  color:#fff;
-}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:18px;
+    }
 
-.main{
-  flex:1;
-  padding:30px;
-  overflow:auto;
-}
+    .card{
+      background:linear-gradient(180deg,rgba(15,23,42,.96),rgba(17,24,39,.96));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
 
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  padding:20px;
-  border-radius:12px;
-  margin-bottom:20px;
-}
+    .card h3{
+      margin:0 0 14px;
+      font-size:20px;
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2, 1fr);
-  gap:20px;
-}
+    .field{
+      margin-bottom:14px;
+    }
 
-input,select,textarea{
-  width:100%;
-  padding:10px;
-  margin-top:8px;
-  margin-bottom:14px;
-  background:var(--input);
-  border:1px solid var(--border);
-  color:var(--text);
-  border-radius:8px;
-  font:inherit;
-}
+    label{
+      display:block;
+      margin-bottom:8px;
+      color:#cbd5e1;
+      font-size:14px;
+    }
 
-textarea{
-  resize:vertical;
-  min-height:90px;
-}
+    input,select,textarea{
+      width:100%;
+      background:#020617;
+      border:1px solid var(--border);
+      color:var(--text);
+      border-radius:12px;
+      padding:12px 14px;
+      outline:none;
+    }
 
-button{
-  padding:10px 16px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  margin-right:10px;
-  margin-top:6px;
-  font-weight:bold;
-}
+    input:focus,select:focus,textarea:focus{
+      border-color:#3b82f6;
+      box-shadow:0 0 0 3px rgba(59,130,246,.15);
+    }
 
-.connect{
-  background:var(--success);
-  color:white;
-}
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.5;
+    }
 
-.disconnect{
-  background:var(--danger);
-  color:white;
-}
+    .status{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(2,6,23,.5);
+      border:1px solid var(--border);
+      margin-bottom:14px;
+    }
 
-.secondary{
-  background:var(--primary);
-  color:white;
-}
+    .dot{
+      width:11px;
+      height:11px;
+      border-radius:999px;
+      background:#64748b;
+    }
 
-.warning{
-  background:var(--warning);
-  color:#111;
-}
+    .dot.online{
+      background:#22c55e;
+      box-shadow:0 0 12px rgba(34,197,94,.8);
+    }
 
-.console{
-  background:var(--console);
-  border:1px solid var(--border);
-  padding:15px;
-  border-radius:8px;
-  height:350px;
-  overflow:auto;
-  font-family:monospace;
-  font-size:13px;
-  white-space:pre-wrap;
-}
+    .list{
+      display:grid;
+      gap:10px;
+    }
 
-.rule{
-  background:var(--input);
-  border:1px solid var(--border);
-  padding:14px;
-  margin-top:12px;
-  border-radius:8px;
-}
+    .list-item{
+      padding:12px 14px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:rgba(2,6,23,.45);
+      color:var(--muted);
+    }
 
-.rule-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:10px;
-}
+    .full{
+      grid-column:1 / -1;
+    }
 
-.rule-title{
-  font-weight:bold;
-  font-size:15px;
-}
+    code{
+      background:rgba(255,255,255,.06);
+      padding:2px 6px;
+      border-radius:8px;
+    }
 
-.rule-meta{
-  font-size:13px;
-  opacity:0.9;
-  margin-bottom:8px;
-}
-
-.rule-command{
-  display:block;
-  background:rgba(0,0,0,0.18);
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:10px;
-  margin-top:8px;
-  margin-bottom:12px;
-  font-family:monospace;
-  word-break:break-word;
-}
-
-.badge{
-  display:inline-block;
-  padding:4px 8px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:bold;
-  background:var(--primary);
-  color:white;
-}
-
-.badge.off{
-  background:var(--danger);
-}
-
-.help{
-  font-size:13px;
-  opacity:0.9;
-  line-height:1.5;
-  padding:10px 12px;
-  border:1px solid var(--border);
-  border-radius:8px;
-  background:rgba(255,255,255,0.04);
-}
-
-.hidden{
-  display:none;
-}
-
-.row-2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-}
-
-.row-3{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:14px;
-}
-
-@media (max-width: 980px){
-  body{
-    flex-direction:column;
-  }
-
-  .sidebar{
-    width:100%;
-  }
-
-  .grid,
-  .row-2,
-  .row-3{
-    grid-template-columns:1fr;
-  }
-
-  .main{
-    padding:18px;
-  }
-}
-</style>
+    @media (max-width: 900px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <div class="topbar">
+      <div class="title">
+        <h1>📱 TikTok Live</h1>
+        <p>Gerencie a integração da live com o Host LORD.</p>
+      </div>
 
-<div class="sidebar">
-  <h2>👑 Host LORD</h2>
-
-  <button class="nav-btn" onclick="window.location='index.html'">🏠 Dashboard</button>
-  <button class="nav-btn" onclick="window.location='index.html'">🖥 Console</button>
-  <button class="nav-btn" onclick="window.location='index.html'">⚙️ Config</button>
-  <button class="nav-btn" onclick="window.location='index.html'">🧩 Plugins</button>
-  <button class="nav-btn" onclick="window.location='index.html'">📁 Arquivos</button>
-  <button class="nav-btn" onclick="window.location='tiktok.html'">🎵 TikTok LIVE</button>
-  <button class="nav-btn" onclick="window.location='temas.html'">🎨 Temas</button>
-  <button class="nav-btn" onclick="window.location='index.html'">👤 Conta</button>
-  <button class="nav-btn" onclick="logout()">🚪 Sair</button>
-</div>
-
-<div class="main">
-  <div class="card">
-    <h1>🎵 TikTok LIVE</h1>
-
-    <label>@ do TikTok</label>
-    <input id="tiktokUser" placeholder="@usuario">
-
-    <button class="connect" onclick="connect()">Conectar</button>
-    <button class="disconnect" onclick="disconnect()">Desconectar</button>
-
-    <p>Status: <span id="status">desconectado</span></p>
-  </div>
-
-  <div class="grid">
-    <div class="card">
-      <h3>🎵 Eventos da LIVE</h3>
-      <div id="events" class="console">Aguardando eventos...</div>
+      <div class="actions">
+        <a class="btn btn-secondary" href="panel.html">⬅ Voltar ao painel</a>
+      </div>
     </div>
 
-    <div class="card">
-      <h3>⚙️ Nova automação TikTok → Minecraft</h3>
-
-      <label>Tipo da regra</label>
-      <select id="ruleType" onchange="updateRuleTypeFields()">
-        <option value="event">Evento normal</option>
-        <option value="giftName">Nome do presente</option>
-        <option value="giftCoins">Valor em moedas</option>
-      </select>
-
-      <div id="eventFields">
-        <label>Evento</label>
-        <select id="eventType">
-          <option value="follow">Follow</option>
-          <option value="gift">Gift</option>
-          <option value="like">Like</option>
-          <option value="share">Share</option>
-          <option value="member">Member</option>
-          <option value="chat">Chat</option>
-        </select>
-
-        <label>A cada quantos eventos</label>
-        <input id="eventCount" type="number" value="1" min="1">
-      </div>
-
-      <div id="giftNameFields" class="hidden">
-        <label>Nome do presente</label>
-        <input id="giftName" type="text" placeholder="Ex.: Rose, Galaxy">
-
-        <label>Quantidade mínima do presente</label>
-        <input id="giftAmount" type="number" value="1" min="1">
-      </div>
-
-      <div id="giftCoinsFields" class="hidden">
-        <label>Moedas mínimas</label>
-        <input id="giftCoins" type="number" value="1" min="1">
-      </div>
-
-      <label>Comando Minecraft</label>
-      <textarea id="mcCommand" placeholder="/summon zombie">/summon zombie</textarea>
-
-      <div class="help">
-        Variáveis que você pode usar no comando:
-        <br>{player} = jogador do Minecraft
-        <br>{user} = usuário do TikTok
-        <br>{gift} = nome do presente
-        <br>{amount} = quantidade do presente
-        <br>{coins} = valor em moedas
-      </div>
-
-      <button class="secondary" onclick="addRule()">Adicionar regra</button>
-      <button class="secondary" onclick="loadRules()">Atualizar regras</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>📜 Regras cadastradas</h3>
-    <div id="rules"></div>
-  </div>
-</div>
-
-<script>
-const token = localStorage.getItem("token");
-const API = location.origin;
-let eventSource = null;
-
-function applyTheme(theme){
-  const allowed = ["dark","light","lord","creeper"];
-  const finalTheme = allowed.includes(theme) ? theme : "dark";
-  document.documentElement.setAttribute("data-theme", finalTheme);
-}
-
-function loadSavedTheme(){
-  const saved = localStorage.getItem("theme") || "dark";
-  applyTheme(saved);
-}
-
-function logout(){
-  localStorage.removeItem("token");
-  localStorage.removeItem("username");
-  location = "login.html";
-}
-
-function escapeHtml(text){
-  return String(text || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function log(text){
-  const box = document.getElementById("events");
-  if (box.innerHTML === "Aguardando eventos...") {
-    box.innerHTML = "";
-  }
-
-  const line = document.createElement("div");
-  line.textContent = text;
-  box.appendChild(line);
-  box.scrollTop = box.scrollHeight;
-}
-
-function updateRuleTypeFields(){
-  const ruleType = document.getElementById("ruleType").value;
-
-  document.getElementById("eventFields").classList.toggle("hidden", ruleType !== "event");
-  document.getElementById("giftNameFields").classList.toggle("hidden", ruleType !== "giftName");
-  document.getElementById("giftCoinsFields").classList.toggle("hidden", ruleType !== "giftCoins");
-}
-
-async function connect(){
-  try {
-    const user = document.getElementById("tiktokUser").value.trim().replace(/^@+/, "");
-
-    if (!user) {
-      alert("Digite o usuário do TikTok.");
-      return;
-    }
-
-    const res = await fetch(API + "/api/tiktoklive/connect", {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization":"Bearer " + token
-      },
-      body:JSON.stringify({ uniqueId:user })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok || data.error) {
-      alert(data.error || "Erro ao conectar.");
-      return;
-    }
-
-    document.getElementById("status").innerText = "conectado";
-    startStream();
-  } catch (err) {
-    alert("Erro ao conectar: " + err.message);
-  }
-}
-
-async function disconnect(){
-  try {
-    await fetch(API + "/api/tiktoklive/disconnect", {
-      method:"POST",
-      headers:{
-        "Authorization":"Bearer " + token
-      }
-    });
-  } catch (err) {
-    console.error(err);
-  }
-
-  document.getElementById("status").innerText = "desconectado";
-
-  if (eventSource) {
-    eventSource.close();
-    eventSource = null;
-  }
-}
-
-function startStream(){
-  if (eventSource) eventSource.close();
-
-  eventSource = new EventSource(API + "/api/tiktoklive/stream?token=" + encodeURIComponent(token));
-
-  eventSource.onmessage = (msg) => {
-    try {
-      const event = JSON.parse(msg.data);
-
-      if (event.type === "hello") return;
-      if (event.type === "chat") log("💬 " + (event.data.nickname || "Usuário") + ": " + (event.data.comment || ""));
-      if (event.type === "follow") log("➕ " + (event.data.nickname || "Usuário") + " seguiu");
-      if (event.type === "gift") {
-        const giftName = event.data.giftName || "presente";
-        const amount = event.data.repeatCount || event.data.amount || 1;
-        const coins = event.data.diamondCount || event.data.coins || 0;
-        log("🎁 " + (event.data.nickname || "Usuário") + " enviou " + giftName + " x" + amount + " (" + coins + " moedas)");
-      }
-      if (event.type === "like") log("❤️ " + (event.data.nickname || "Usuário") + " curtiu");
-      if (event.type === "share") log("🔄 " + (event.data.nickname || "Usuário") + " compartilhou");
-      if (event.type === "member") log("👋 " + (event.data.nickname || "Usuário") + " entrou");
-      if (event.type === "error") log("❌ Erro: " + (event.data.message || "desconhecido"));
-    } catch (err) {
-      console.error("Erro no stream:", err);
-    }
-  };
-
-  eventSource.onerror = () => {
-    log("❌ Conexão do stream encerrada.");
-  };
-}
-
-async function addRule(){
-  try {
-    const ruleType = document.getElementById("ruleType").value;
-    const command = document.getElementById("mcCommand").value.trim();
-
-    if (!command) {
-      alert("Digite o comando do Minecraft.");
-      return;
-    }
-
-    const payload = {
-      ruleType,
-      command
-    };
-
-    if (ruleType === "event") {
-      payload.eventType = document.getElementById("eventType").value;
-      payload.everyCount = Number(document.getElementById("eventCount").value || 1);
-    }
-
-    if (ruleType === "giftName") {
-      payload.giftName = document.getElementById("giftName").value.trim();
-      payload.giftAmount = Number(document.getElementById("giftAmount").value || 1);
-
-      if (!payload.giftName) {
-        alert("Digite o nome do presente.");
-        return;
-      }
-    }
-
-    if (ruleType === "giftCoins") {
-      payload.giftCoins = Number(document.getElementById("giftCoins").value || 1);
-
-      if (payload.giftCoins < 1) {
-        alert("Digite um valor válido de moedas.");
-        return;
-      }
-    }
-
-    const res = await fetch(API + "/api/tiktoklive/rules", {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization":"Bearer " + token
-      },
-      body:JSON.stringify(payload)
-    });
-
-    const data = await res.json();
-    alert(data.message || data.error || "Regra criada");
-    loadRules();
-  } catch (err) {
-    alert("Erro ao criar regra: " + err.message);
-  }
-}
-
-async function deleteRule(id){
-  try {
-    const res = await fetch(API + "/api/tiktoklive/rules/" + encodeURIComponent(id), {
-      method:"DELETE",
-      headers:{
-        "Authorization":"Bearer " + token
-      }
-    });
-
-    const data = await res.json();
-    alert(data.message || data.error || "Regra removida");
-    loadRules();
-  } catch (err) {
-    alert("Erro ao remover regra: " + err.message);
-  }
-}
-
-async function toggleRule(rule){
-  try {
-    const res = await fetch(API + "/api/tiktoklive/rules/" + encodeURIComponent(rule.id), {
-      method:"PUT",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization":"Bearer " + token
-      },
-      body:JSON.stringify({
-        enabled: !rule.enabled
-      })
-    });
-
-    const data = await res.json();
-    alert(data.message || data.error || "Regra atualizada");
-    loadRules();
-  } catch (err) {
-    alert("Erro ao atualizar regra: " + err.message);
-  }
-}
-
-async function editRule(rule){
-  try {
-    const newRuleType = prompt("Tipo da regra (event, giftName, giftCoins):", rule.ruleType || "event");
-    if (!newRuleType) return;
-
-    const trimmedType = newRuleType.trim();
-
-    const payload = {
-      ruleType: trimmedType
-    };
-
-    if (trimmedType === "event") {
-      const newEventType = prompt("Evento (follow, like, gift, share, member, chat):", rule.eventType || "follow");
-      if (!newEventType) return;
-
-      const newEveryCount = prompt("Executar a cada quantos eventos?", rule.everyCount || 1);
-      if (!newEveryCount) return;
-
-      payload.eventType = newEventType.trim();
-      payload.everyCount = Number(newEveryCount);
-    } else if (trimmedType === "giftName") {
-      const newGiftName = prompt("Nome do presente:", rule.giftName || "");
-      if (!newGiftName) return;
-
-      const newGiftAmount = prompt("Quantidade mínima do presente:", rule.giftAmount || 1);
-      if (!newGiftAmount) return;
-
-      payload.giftName = newGiftName.trim();
-      payload.giftAmount = Number(newGiftAmount);
-    } else if (trimmedType === "giftCoins") {
-      const newGiftCoins = prompt("Moedas mínimas:", rule.giftCoins || 1);
-      if (!newGiftCoins) return;
-
-      payload.giftCoins = Number(newGiftCoins);
-    } else {
-      alert("Tipo inválido.");
-      return;
-    }
-
-    const newCommand = prompt("Comando do Minecraft:", rule.command || "");
-    if (!newCommand) return;
-
-    payload.command = newCommand.trim();
-
-    const res = await fetch(API + "/api/tiktoklive/rules/" + encodeURIComponent(rule.id), {
-      method:"PUT",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization":"Bearer " + token
-      },
-      body:JSON.stringify(payload)
-    });
-
-    const data = await res.json();
-    alert(data.message || data.error || "Regra atualizada");
-    loadRules();
-  } catch (err) {
-    alert("Erro ao editar regra: " + err.message);
-  }
-}
-
-function getRuleDescription(rule){
-  if ((rule.ruleType || "event") === "giftName") {
-    return "Quando presente = " + (rule.giftName || "-") + " | quantidade mínima = " + (rule.giftAmount || 1);
-  }
-
-  if (rule.ruleType === "giftCoins") {
-    return "Quando valor em moedas >= " + (rule.giftCoins || 1);
-  }
-
-  return "Evento: " + (rule.eventType || "follow") + " | a cada " + (rule.everyCount || 1);
-}
-
-function getRuleLabel(rule){
-  if ((rule.ruleType || "event") === "giftName") return "Presente";
-  if (rule.ruleType === "giftCoins") return "Moedas";
-  return "Evento";
-}
-
-async function loadRules(){
-  try {
-    const res = await fetch(API + "/api/tiktoklive/rules", {
-      headers:{ Authorization:"Bearer " + token }
-    });
-
-    const data = await res.json();
-
-    const list = document.getElementById("rules");
-    list.innerHTML = "";
-
-    if (!data.rules || !data.rules.length){
-      list.innerHTML = '<div class="rule">Nenhuma regra criada.</div>';
-      return;
-    }
-
-    data.rules.forEach(rule => {
-      const div = document.createElement("div");
-      div.className = "rule";
-
-      div.innerHTML = `
-        <div class="rule-header">
-          <div class="rule-title">${escapeHtml(getRuleLabel(rule))}</div>
-          <div>
-            <span class="badge ${rule.enabled ? "" : "off"}">${rule.enabled ? "ATIVA" : "DESATIVADA"}</span>
-          </div>
+    <div class="grid">
+      <div class="card">
+        <h3>Configuração da integração</h3>
+
+        <div class="status">
+          <span id="liveDot" class="dot"></span>
+          <span id="liveStatusText">Desconectado</span>
         </div>
 
-        <div class="rule-meta">${escapeHtml(getRuleDescription(rule))}</div>
-        <div class="rule-command">${escapeHtml(rule.command || "")}</div>
-      `;
+        <div class="field">
+          <label for="tiktokUsername">Usuário do TikTok</label>
+          <input id="tiktokUsername" type="text" placeholder="@seuusuario ou seuusuario" />
+        </div>
 
-      const editBtn = document.createElement("button");
-      editBtn.className = "secondary";
-      editBtn.textContent = "Editar";
-      editBtn.onclick = () => editRule(rule);
+        <div class="field">
+          <label for="giftAction">Ação ao receber presente</label>
+          <select id="giftAction">
+            <option value="say">Mandar mensagem no chat</option>
+            <option value="give">Dar item ao jogador</option>
+            <option value="effect">Aplicar efeito</option>
+            <option value="command">Executar comando customizado</option>
+          </select>
+        </div>
 
-      const toggleBtn = document.createElement("button");
-      toggleBtn.className = "warning";
-      toggleBtn.textContent = rule.enabled ? "Desativar" : "Ativar";
-      toggleBtn.onclick = () => toggleRule(rule);
+        <div class="field">
+          <label for="giftCommand">Comando / modelo</label>
+          <input id="giftCommand" type="text" placeholder='Ex: say Obrigado {user} pelo presente!' />
+        </div>
 
-      const delBtn = document.createElement("button");
-      delBtn.className = "disconnect";
-      delBtn.textContent = "Excluir";
-      delBtn.onclick = () => deleteRule(rule.id);
+        <div class="actions">
+          <button class="btn btn-primary" type="button" onclick="saveTikTokConfig()">Salvar</button>
+          <button class="btn btn-success" type="button" onclick="toggleLiveConnection()">Conectar / Desconectar</button>
+        </div>
 
-      div.appendChild(editBtn);
-      div.appendChild(toggleBtn);
-      div.appendChild(delBtn);
+        <p class="small" style="margin-top:14px;">
+          Você pode usar variáveis como <code>{user}</code>, <code>{gift}</code> e <code>{count}</code> no comando.
+        </p>
+      </div>
 
-      list.appendChild(div);
-    });
-  } catch (err) {
-    document.getElementById("rules").innerHTML = '<div class="rule">Erro ao carregar regras.</div>';
-    console.error(err);
-  }
-}
+      <div class="card">
+        <h3>Resumo atual</h3>
+        <div class="list">
+          <div class="list-item"><strong>Usuário:</strong> <span id="summaryUsername">--</span></div>
+          <div class="list-item"><strong>Status:</strong> <span id="summaryStatus">Desconectado</span></div>
+          <div class="list-item"><strong>Ação:</strong> <span id="summaryAction">--</span></div>
+          <div class="list-item"><strong>Comando:</strong> <span id="summaryCommand">--</span></div>
+        </div>
+      </div>
 
-window.addEventListener("load", () => {
-  loadSavedTheme();
-  updateRuleTypeFields();
-  loadRules();
-});
-</script>
+      <div class="card full">
+        <h3>Exemplos de comandos</h3>
+        <div class="list">
+          <div class="list-item"><code>say Obrigado {user} pelo presente {gift} x{count}!</code></div>
+          <div class="list-item"><code>give NomeDoPlayer diamond 1</code></div>
+          <div class="list-item"><code>effect give NomeDoPlayer speed 10 1 true</code></div>
+          <div class="list-item"><code>summon lightning_bolt ~ ~ ~</code></div>
+        </div>
 
+        <p class="small" style="margin-top:14px;">
+          Esta página salva as preferências no navegador. A conexão real com TikTok Live depende do seu backend ter as rotas e o sistema da live configurados.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "hostlord_tiktok_config";
+
+    function getDefaultConfig() {
+      return {
+        username: "",
+        action: "say",
+        command: "say Obrigado {user} pelo presente {gift} x{count}!",
+        connected: false
+      };
+    }
+
+    function loadTikTokConfig() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return getDefaultConfig();
+
+        const parsed = JSON.parse(raw);
+        return {
+          ...getDefaultConfig(),
+          ...parsed
+        };
+      } catch {
+        return getDefaultConfig();
+      }
+    }
+
+    function saveTikTokConfig() {
+      const config = {
+        username: document.getElementById("tiktokUsername").value.trim().replace(/^@/, ""),
+        action: document.getElementById("giftAction").value,
+        command: document.getElementById("giftCommand").value.trim(),
+        connected: loadTikTokConfig().connected
+      };
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+      renderTikTokConfig(config);
+      alert("Configuração do TikTok salva com sucesso.");
+    }
+
+    function toggleLiveConnection() {
+      const current = loadTikTokConfig();
+
+      if (!current.username) {
+        alert("Preencha o usuário do TikTok antes de conectar.");
+        return;
+      }
+
+      const updated = {
+        ...current,
+        connected: !current.connected
+      };
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      renderTikTokConfig(updated);
+
+      alert(updated.connected ? "TikTok Live conectada." : "TikTok Live desconectada.");
+    }
+
+    function renderTikTokConfig(config) {
+      document.getElementById("tiktokUsername").value = config.username || "";
+      document.getElementById("giftAction").value = config.action || "say";
+      document.getElementById("giftCommand").value = config.command || "";
+
+      document.getElementById("summaryUsername").textContent = config.username || "--";
+      document.getElementById("summaryStatus").textContent = config.connected ? "Conectado" : "Desconectado";
+      document.getElementById("summaryAction").textContent = config.action || "--";
+      document.getElementById("summaryCommand").textContent = config.command || "--";
+
+      const dot = document.getElementById("liveDot");
+      const text = document.getElementById("liveStatusText");
+
+      dot.classList.toggle("online", !!config.connected);
+      text.textContent = config.connected ? "Conectado" : "Desconectado";
+    }
+
+    renderTikTokConfig(loadTikTokConfig());
+  </script>
 </body>
 </html>
