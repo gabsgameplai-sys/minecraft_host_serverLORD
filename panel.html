@@ -213,6 +213,35 @@
       background: rgba(255,255,255,0.1);
     }
 
+    .notice {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .notice.success {
+      display: block;
+      background: rgba(34, 197, 94, 0.18);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      color: #bbf7d0;
+    }
+
+    .notice.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.18);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fecaca;
+    }
+
+    .notice.info {
+      display: block;
+      background: rgba(59, 130, 246, 0.18);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #bfdbfe;
+    }
+
     @media (max-width: 900px) {
       .grid {
         grid-template-columns: 1fr;
@@ -232,6 +261,8 @@
   </header>
 
   <main>
+    <div id="notice" class="notice"></div>
+
     <div class="grid">
       <section class="card">
         <h2>Status do servidor</h2>
@@ -250,20 +281,20 @@
           <button onclick="startServer()">Start</button>
           <button class="danger" onclick="stopServer()">Stop</button>
           <button class="warning" onclick="restartServer()">Restart</button>
-          <button class="secondary" onclick="refreshAll()">Atualizar</button>
+          <button class="secondary" onclick="manualRefresh()">Atualizar</button>
         </div>
       </section>
 
       <section class="card">
         <h2>Informações rápidas</h2>
         <div class="status-line small">
-          O painel usa o backend público configurado em <span class="mono" id="apiBaseText"></span>
+          Backend atual: <span class="mono" id="apiBaseText"></span>
         </div>
         <div class="status-line small">
-          O link do painel via ngrok é para o <b>site/API</b>, não necessariamente para entrada TCP do Minecraft.
+          O link público do painel é só para o site/API.
         </div>
         <div class="status-line small">
-          Para entrar no servidor Minecraft fora da rede local, você ainda precisa expor a porta 25565 com TCP.
+          Para conectar no Minecraft fora da rede local, ainda precisa expor a porta TCP 25565.
         </div>
       </section>
 
@@ -274,14 +305,14 @@
         <div class="row" style="margin-top: 12px;">
           <input id="cmd" type="text" placeholder="Digite um comando, ex: say Olá" />
           <button onclick="sendCommand()">Enviar</button>
-          <button class="secondary" onclick="loadConsole()">Recarregar console</button>
+          <button class="secondary" onclick="loadConsole(true)">Recarregar console</button>
         </div>
       </section>
 
       <section class="card">
         <h2>Plugins</h2>
         <div class="actions" style="margin-top: 0;">
-          <button class="secondary" onclick="loadPlugins()">Atualizar plugins</button>
+          <button class="secondary" onclick="loadPlugins(true)">Atualizar plugins</button>
         </div>
         <ul id="pluginsList">
           <li class="muted">Carregando plugins...</li>
@@ -293,7 +324,7 @@
         <label for="filesDir">Pasta</label>
         <input id="filesDir" type="text" value="" placeholder="Ex: plugins" />
         <div class="actions" style="margin-top: 0;">
-          <button class="secondary" onclick="loadFiles()">Listar arquivos</button>
+          <button class="secondary" onclick="loadFiles(true)">Listar arquivos</button>
         </div>
         <div id="filesList" class="file-list">
           <div class="muted">Carregando arquivos...</div>
@@ -303,13 +334,13 @@
       <section class="card full">
         <h2>Configuração do servidor</h2>
         <div class="small muted">
-          Edita as propriedades lidas do <span class="mono">server.properties</span>.
+          Edita as propriedades do <span class="mono">server.properties</span>.
         </div>
 
         <textarea id="serverConfigRaw" placeholder="Carregando configurações..."></textarea>
 
         <div class="actions">
-          <button class="secondary" onclick="loadServerConfig()">Recarregar config</button>
+          <button class="secondary" onclick="loadServerConfig(true)">Recarregar config</button>
           <button onclick="saveServerConfig()">Salvar config</button>
         </div>
       </section>
@@ -325,6 +356,24 @@
     }
 
     document.getElementById("apiBaseText").textContent = API_BASE;
+
+    let loadingConsole = false;
+    let loadingStatus = false;
+    let loadingPlugins = false;
+    let loadingFiles = false;
+    let loadingConfig = false;
+
+    function showNotice(message, type = "info") {
+      const notice = document.getElementById("notice");
+      notice.className = `notice ${type}`;
+      notice.textContent = message;
+
+      clearTimeout(showNotice._timer);
+      showNotice._timer = setTimeout(() => {
+        notice.className = "notice";
+        notice.textContent = "";
+      }, 3000);
+    }
 
     async function api(path, options = {}) {
       const headers = {
@@ -355,13 +404,15 @@
       return data;
     }
 
-    async function loadStatus() {
+    async function loadStatus(showErrors = false) {
+      if (loadingStatus) return;
+      loadingStatus = true;
+
       try {
         const data = await api("/api/status");
 
         document.getElementById("serverState").textContent = data.online ? "Online" : "Offline";
         document.getElementById("serverState").className = data.online ? "status-online" : "status-offline";
-
         document.getElementById("serverPid").textContent = data.pid ?? "-";
         document.getElementById("panelUrl").textContent = data.panelUrl || "-";
         document.getElementById("localPanelUrl").textContent = data.localPanelUrl || "-";
@@ -371,74 +422,44 @@
       } catch (err) {
         document.getElementById("serverState").textContent = "Erro ao conectar";
         document.getElementById("serverState").className = "status-offline";
+        if (showErrors) showNotice(err.message, "error");
         console.error(err);
+      } finally {
+        loadingStatus = false;
       }
     }
 
-    async function loadConsole() {
+    async function loadConsole(showErrors = false) {
+      if (loadingConsole) return;
+      loadingConsole = true;
+
       try {
         const data = await api("/api/console");
         const consoleDiv = document.getElementById("console");
-        consoleDiv.textContent = Array.isArray(data.lines) ? data.lines.join("\n") : "";
-        consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        const newText = Array.isArray(data.lines) ? data.lines.join("\n") : "";
+
+        if (consoleDiv.textContent !== newText) {
+          const wasNearBottom =
+            consoleDiv.scrollHeight - consoleDiv.scrollTop - consoleDiv.clientHeight < 30;
+
+          consoleDiv.textContent = newText;
+
+          if (wasNearBottom) {
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+          }
+        }
       } catch (err) {
+        if (showErrors) showNotice(err.message, "error");
         console.error(err);
+      } finally {
+        loadingConsole = false;
       }
     }
 
-    async function startServer() {
-      try {
-        const data = await api("/api/start", { method: "POST" });
-        alert(data.message || "Servidor iniciando.");
-        await refreshAll();
-      } catch (err) {
-        alert(err.message);
-      }
-    }
+    async function loadPlugins(showErrors = false) {
+      if (loadingPlugins) return;
+      loadingPlugins = true;
 
-    async function stopServer() {
-      try {
-        await api("/api/stop", { method: "POST" });
-        alert("Comando stop enviado.");
-        await refreshAll();
-      } catch (err) {
-        alert(err.message);
-      }
-    }
-
-    async function restartServer() {
-      try {
-        const data = await api("/api/restart", { method: "POST" });
-        alert(data.message || "Servidor reiniciando.");
-        await refreshAll();
-      } catch (err) {
-        alert(err.message);
-      }
-    }
-
-    async function sendCommand() {
-      const commandInput = document.getElementById("cmd");
-      const command = commandInput.value.trim();
-
-      if (!command) {
-        alert("Digite um comando.");
-        return;
-      }
-
-      try {
-        await api("/api/command", {
-          method: "POST",
-          body: JSON.stringify({ command })
-        });
-
-        commandInput.value = "";
-        await loadConsole();
-      } catch (err) {
-        alert(err.message);
-      }
-    }
-
-    async function loadPlugins() {
       const list = document.getElementById("pluginsList");
 
       try {
@@ -447,16 +468,21 @@
 
         if (!plugins.length) {
           list.innerHTML = `<li class="muted">Nenhum plugin encontrado.</li>`;
-          return;
+        } else {
+          list.innerHTML = plugins.map(name => `<li>${escapeHtml(name)}</li>`).join("");
         }
-
-        list.innerHTML = plugins.map(name => `<li>${escapeHtml(name)}</li>`).join("");
       } catch (err) {
         list.innerHTML = `<li class="status-offline">${escapeHtml(err.message)}</li>`;
+        if (showErrors) showNotice(err.message, "error");
+      } finally {
+        loadingPlugins = false;
       }
     }
 
-    async function loadFiles() {
+    async function loadFiles(showErrors = false) {
+      if (loadingFiles) return;
+      loadingFiles = true;
+
       const dir = document.getElementById("filesDir").value.trim();
       const box = document.getElementById("filesList");
 
@@ -466,34 +492,45 @@
 
         if (!items.length) {
           box.innerHTML = `<div class="muted">Nenhum item encontrado.</div>`;
-          return;
+        } else {
+          box.innerHTML = items.map(item => `
+            <div class="file-item">
+              <div>
+                <div>${escapeHtml(item.name)}</div>
+                <div class="small mono muted">${escapeHtml(item.path)}</div>
+              </div>
+              <div>
+                <span class="tag">${item.type === "folder" ? "pasta" : "arquivo"}</span>
+              </div>
+            </div>
+          `).join("");
         }
-
-        box.innerHTML = items.map(item => `
-          <div class="file-item">
-            <div>
-              <div>${escapeHtml(item.name)}</div>
-              <div class="small mono muted">${escapeHtml(item.path)}</div>
-            </div>
-            <div>
-              <span class="tag">${item.type === "folder" ? "pasta" : "arquivo"}</span>
-            </div>
-          </div>
-        `).join("");
       } catch (err) {
         box.innerHTML = `<div class="status-offline">${escapeHtml(err.message)}</div>`;
+        if (showErrors) showNotice(err.message, "error");
+      } finally {
+        loadingFiles = false;
       }
     }
 
-    async function loadServerConfig() {
+    async function loadServerConfig(showErrors = false) {
+      if (loadingConfig) return;
+      loadingConfig = true;
+
       const textarea = document.getElementById("serverConfigRaw");
 
       try {
         const data = await api("/api/server-config");
-        textarea.value = data.raw || "";
+        const raw = data.raw || "";
+
+        if (document.activeElement !== textarea) {
+          textarea.value = raw;
+        }
       } catch (err) {
-        textarea.value = "";
-        alert("Erro ao carregar config: " + err.message);
+        if (showErrors) showNotice("Erro ao carregar config: " + err.message, "error");
+        console.error(err);
+      } finally {
+        loadingConfig = false;
       }
     }
 
@@ -516,6 +553,59 @@
       return result;
     }
 
+    async function startServer() {
+      try {
+        const data = await api("/api/start", { method: "POST" });
+        showNotice(data.message || "Servidor iniciando.", "success");
+        await manualRefresh();
+      } catch (err) {
+        showNotice(err.message, "error");
+      }
+    }
+
+    async function stopServer() {
+      try {
+        await api("/api/stop", { method: "POST" });
+        showNotice("Comando stop enviado.", "success");
+        await manualRefresh();
+      } catch (err) {
+        showNotice(err.message, "error");
+      }
+    }
+
+    async function restartServer() {
+      try {
+        const data = await api("/api/restart", { method: "POST" });
+        showNotice(data.message || "Servidor reiniciando.", "success");
+        await manualRefresh();
+      } catch (err) {
+        showNotice(err.message, "error");
+      }
+    }
+
+    async function sendCommand() {
+      const commandInput = document.getElementById("cmd");
+      const command = commandInput.value.trim();
+
+      if (!command) {
+        showNotice("Digite um comando.", "error");
+        return;
+      }
+
+      try {
+        await api("/api/command", {
+          method: "POST",
+          body: JSON.stringify({ command })
+        });
+
+        commandInput.value = "";
+        showNotice("Comando enviado.", "success");
+        await loadConsole();
+      } catch (err) {
+        showNotice(err.message, "error");
+      }
+    }
+
     async function saveServerConfig() {
       const raw = document.getElementById("serverConfigRaw").value;
 
@@ -527,9 +617,9 @@
           body: JSON.stringify({ config })
         });
 
-        alert("Configuração salva com sucesso.");
+        showNotice("Configuração salva com sucesso.", "success");
       } catch (err) {
-        alert("Erro ao salvar config: " + err.message);
+        showNotice("Erro ao salvar config: " + err.message, "error");
       }
     }
 
@@ -547,14 +637,11 @@
         .replaceAll("'", "&#039;");
     }
 
-    async function refreshAll() {
-      await Promise.allSettled([
-        loadStatus(),
-        loadConsole(),
-        loadPlugins(),
-        loadFiles(),
-        loadServerConfig()
-      ]);
+    async function manualRefresh() {
+      await loadStatus(true);
+      await loadConsole(false);
+      await loadPlugins(false);
+      await loadFiles(false);
     }
 
     document.getElementById("cmd").addEventListener("keydown", async (e) => {
@@ -563,9 +650,19 @@
       }
     });
 
-    refreshAll();
-    setInterval(loadConsole, 2000);
-    setInterval(loadStatus, 5000);
+    loadStatus(false);
+    loadConsole(false);
+    loadPlugins(false);
+    loadFiles(false);
+    loadServerConfig(false);
+
+    setInterval(() => {
+      loadConsole(false);
+    }, 3000);
+
+    setInterval(() => {
+      loadStatus(false);
+    }, 8000);
   </script>
 </body>
 </html>
