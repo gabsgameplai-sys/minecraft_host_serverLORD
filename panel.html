@@ -119,6 +119,7 @@
       border-radius:16px;
       font-size:13px;
       color:var(--muted);
+      word-break:break-word;
     }
 
     .main{
@@ -208,6 +209,7 @@
     .stat .value{
       font-size:28px;
       font-weight:700;
+      word-break:break-word;
     }
 
     .actions{
@@ -237,6 +239,11 @@
     button.danger:hover{background:var(--danger-hover)}
     button.success{background:var(--success)}
     button.success:hover{filter:brightness(.95)}
+
+    button:disabled{
+      opacity:.65;
+      cursor:not-allowed;
+    }
 
     input,select,textarea{
       width:100%;
@@ -306,6 +313,7 @@
     .file-meta{
       color:var(--muted);
       font-size:13px;
+      word-break:break-word;
     }
 
     .muted{
@@ -334,6 +342,12 @@
       color:var(--muted);
     }
 
+    code{
+      background:rgba(255,255,255,.06);
+      padding:2px 6px;
+      border-radius:8px;
+    }
+
     @media (max-width: 1100px){
       .grid-3,.grid-2,.config-grid{
         grid-template-columns:1fr;
@@ -360,6 +374,10 @@
       .main{
         padding:16px;
       }
+
+      .command-row{
+        grid-template-columns:1fr;
+      }
     }
   </style>
 </head>
@@ -375,11 +393,11 @@
       </div>
 
       <div class="menu">
-        <button class="tab-btn active" data-tab="dashboard">🏠 Dashboard</button>
-        <button class="tab-btn" data-tab="console">🖥️ Console</button>
-        <button class="tab-btn" data-tab="config">⚙️ Configurações</button>
-        <button class="tab-btn" data-tab="files">📁 Arquivos</button>
-        <button class="tab-btn" data-tab="plugins">🔌 Plugins</button>
+        <button type="button" class="tab-btn active" data-tab="dashboard">🏠 Dashboard</button>
+        <button type="button" class="tab-btn" data-tab="console">🖥️ Console</button>
+        <button type="button" class="tab-btn" data-tab="config">⚙️ Configurações</button>
+        <button type="button" class="tab-btn" data-tab="files">📁 Arquivos</button>
+        <button type="button" class="tab-btn" data-tab="plugins">🔌 Plugins</button>
       </div>
 
       <div class="sidebar-footer">
@@ -420,10 +438,10 @@
         <div class="card" style="margin-top:18px;">
           <h3>Controles rápidos</h3>
           <div class="actions">
-            <button class="success" onclick="startServer()">Iniciar</button>
-            <button class="secondary" onclick="restartServer()">Reiniciar</button>
-            <button class="danger" onclick="stopServer()">Parar</button>
-            <button class="primary" onclick="refreshAll()">Atualizar</button>
+            <button type="button" class="success" onclick="startServer()">Iniciar</button>
+            <button type="button" class="secondary" onclick="restartServer()">Reiniciar</button>
+            <button type="button" class="danger" onclick="stopServer()">Parar</button>
+            <button type="button" class="primary" onclick="refreshAll()">Atualizar</button>
           </div>
         </div>
 
@@ -450,7 +468,7 @@
           <textarea id="consoleBox" class="console-box" readonly></textarea>
           <div class="command-row">
             <input id="commandInput" placeholder="Digite um comando, ex: say Olá mundo" />
-            <button class="primary" onclick="sendCommand()">Enviar</button>
+            <button type="button" class="primary" onclick="sendCommand()">Enviar</button>
           </div>
         </div>
       </section>
@@ -570,8 +588,8 @@
           </div>
 
           <div class="actions" style="margin-top:10px;">
-            <button class="primary" onclick="saveConfig()">Salvar configurações</button>
-            <button class="secondary" onclick="loadConfig()">Recarregar</button>
+            <button type="button" class="primary" onclick="saveConfig()">Salvar configurações</button>
+            <button type="button" class="secondary" onclick="loadConfig()">Recarregar</button>
           </div>
         </div>
       </section>
@@ -580,7 +598,7 @@
         <div class="card">
           <h3>Arquivos do servidor</h3>
           <div class="actions" style="margin-bottom:14px;">
-            <button class="primary" onclick="loadFiles()">Atualizar arquivos</button>
+            <button type="button" class="primary" onclick="loadFiles()">Atualizar arquivos</button>
           </div>
           <div id="filesList" class="files-list">
             <div class="muted">Nenhum arquivo carregado.</div>
@@ -594,10 +612,10 @@
           <div class="upload-box">
             <div class="field">
               <label for="pluginFile">Selecione um arquivo .jar</label>
-              <input id="pluginFile" type="file" />
+              <input id="pluginFile" type="file" accept=".jar,application/java-archive" />
             </div>
             <div class="actions">
-              <button class="primary" onclick="uploadPlugin()">Enviar plugin</button>
+              <button type="button" class="primary" onclick="uploadPlugin()">Enviar plugin</button>
             </div>
             <p class="small">O arquivo será enviado para a pasta <code>plugins/</code> do servidor.</p>
           </div>
@@ -607,53 +625,68 @@
   </div>
 
   <script>
-    const token = localStorage.getItem("token");
-    const API = localStorage.getItem("backend_url") || "http://localhost:3000";
+    const API = (localStorage.getItem("backend_url") || "http://localhost:3000").replace(/\/+$/, "");
 
-    if (!token) {
-      alert("Você precisa fazer login primeiro.");
+    function redirectToLogin() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
       window.location.href = "login.html";
     }
 
-    document.getElementById("backendLabel").textContent = API;
+    if (!localStorage.getItem("token")) {
+      alert("Você precisa fazer login primeiro.");
+      redirectToLogin();
+    }
+
+    document.getElementById("backendLabel").textContent = API || "não definido";
 
     async function api(path, options = {}) {
       const currentToken = localStorage.getItem("token");
+
+      if (!currentToken) {
+        redirectToLogin();
+        throw new Error("Token ausente.");
+      }
 
       const headers = {
         Authorization: "Bearer " + currentToken,
         ...(options.headers || {})
       };
 
-      if (!(options.body instanceof FormData)) {
+      if (!(options.body instanceof FormData) && options.body !== undefined) {
         headers["Content-Type"] = "application/json";
       }
 
-      const res = await fetch(API + path, {
-        ...options,
-        headers
-      });
+      let res;
+      try {
+        res = await fetch(API + path, {
+          ...options,
+          headers
+        });
+      } catch (err) {
+        throw new Error("Não foi possível conectar ao backend.");
+      }
 
-      let data;
+      let data = null;
       try {
         data = await res.json();
       } catch {
-        throw new Error("Resposta inválida do backend.");
+        if (!res.ok) {
+          throw new Error("Resposta inválida do backend.");
+        }
       }
 
       if (!res.ok) {
         if (res.status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
           alert("Sessão expirada ou login inválido. Faça login novamente.");
-          window.location.href = "login.html";
+          redirectToLogin();
           throw new Error("Não autenticado.");
         }
 
-        throw new Error(data.error || "Erro na API.");
+        throw new Error((data && data.error) || "Erro na API.");
       }
 
-      return data;
+      return data || {};
     }
 
     function setActiveTab(tabName) {
@@ -680,13 +713,13 @@
     }
 
     document.querySelectorAll(".tab-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
         const tab = btn.dataset.tab;
         setActiveTab(tab);
 
-        if (tab === "config") loadConfig();
-        if (tab === "files") loadFiles();
-        if (tab === "console") loadConsole();
+        if (tab === "config") await loadConfig();
+        if (tab === "files") await loadFiles();
+        if (tab === "console") await loadConsole();
       });
     });
 
@@ -707,7 +740,16 @@
       } catch (err) {
         document.getElementById("statusText").textContent = "Erro de conexão";
         document.getElementById("statusDot").classList.remove("online");
-        console.error(err);
+
+        document.getElementById("dashOnline").textContent = "ERRO";
+        document.getElementById("dashHost").textContent = "--";
+        document.getElementById("dashPort").textContent = "--";
+        document.getElementById("dashPid").textContent = "--";
+        document.getElementById("dashJar").textContent = "--";
+        document.getElementById("dashDir").textContent = "--";
+        document.getElementById("dashPanelUrl").textContent = "--";
+
+        console.error("Erro ao carregar status:", err);
       }
     }
 
@@ -745,10 +787,20 @@
       try {
         const data = await api("/api/console");
         const box = document.getElementById("consoleBox");
-        box.value = (data.log || []).join("\n");
+
+        let content = "";
+        if (Array.isArray(data.log)) {
+          content = data.log.join("\n");
+        } else if (typeof data.log === "string") {
+          content = data.log;
+        } else if (typeof data.console === "string") {
+          content = data.console;
+        }
+
+        box.value = content;
         box.scrollTop = box.scrollHeight;
       } catch (err) {
-        console.error(err);
+        console.error("Erro ao carregar console:", err);
       }
     }
 
@@ -840,7 +892,7 @@
 
       try {
         const data = await api("/api/files");
-        const files = data.files || [];
+        const files = Array.isArray(data.files) ? data.files : [];
 
         if (!files.length) {
           list.innerHTML = '<div class="muted">Nenhum arquivo encontrado.</div>';
@@ -850,8 +902,12 @@
         list.innerHTML = files.map(file => `
           <div class="file-item">
             <div>
-              <div><strong>${escapeHtml(file.name)}</strong></div>
-              <div class="file-meta">${escapeHtml(file.path)} • ${file.type}${file.size ? ` • ${formatBytes(file.size)}` : ""}</div>
+              <div><strong>${escapeHtml(file.name || "Sem nome")}</strong></div>
+              <div class="file-meta">
+                ${escapeHtml(file.path || "")}
+                ${file.type ? ` • ${escapeHtml(file.type)}` : ""}
+                ${typeof file.size === "number" ? ` • ${formatBytes(file.size)}` : ""}
+              </div>
             </div>
           </div>
         `).join("");
@@ -862,10 +918,15 @@
 
     async function uploadPlugin() {
       const input = document.getElementById("pluginFile");
-      const file = input.files[0];
+      const file = input.files && input.files[0];
 
       if (!file) {
         alert("Selecione um plugin.");
+        return;
+      }
+
+      if (!file.name.toLowerCase().endsWith(".jar")) {
+        alert("Selecione um arquivo .jar válido.");
         return;
       }
 
@@ -878,7 +939,7 @@
           body: formData
         });
 
-        alert("Plugin enviado: " + (data.file?.name || file.name));
+        alert("Plugin enviado: " + ((data.file && data.file.name) || file.name));
         input.value = "";
         await loadFiles();
       } catch (err) {
@@ -887,14 +948,16 @@
     }
 
     async function refreshAll() {
-      await loadStatus();
-      await loadConsole();
+      await Promise.allSettled([
+        loadStatus(),
+        loadConsole()
+      ]);
     }
 
     function formatBytes(bytes) {
-      const sizes = ["B", "KB", "MB", "GB"];
-      if (!bytes) return "0 B";
-      const i = Math.floor(Math.log(bytes) / Math.log(1024));
+      const sizes = ["B", "KB", "MB", "GB", "TB"];
+      if (!bytes || bytes <= 0) return "0 B";
+      const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), sizes.length - 1);
       return (bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1) + " " + sizes[i];
     }
 
@@ -908,16 +971,26 @@
     }
 
     document.getElementById("commandInput").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") sendCommand();
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendCommand();
+      }
     });
 
     setActiveTab("dashboard");
-    loadStatus();
-    loadConsole();
+    refreshAll();
     loadConfig();
 
-    setInterval(loadStatus, 5000);
-    setInterval(loadConsole, 2500);
+    setInterval(() => {
+      loadStatus().catch(() => {});
+    }, 5000);
+
+    setInterval(() => {
+      const consoleTabVisible = !document.getElementById("tab-console").classList.contains("hidden");
+      if (consoleTabVisible) {
+        loadConsole().catch(() => {});
+      }
+    }, 2500);
   </script>
 </body>
 </html>
