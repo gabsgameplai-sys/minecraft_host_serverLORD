@@ -1,33 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Painel Minecraft</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+margin:0;
+}
+
+header{
+background:#111827;
+padding:15px;
+font-size:20px;
+}
+
+.container{
+padding:20px;
+}
+
+button{
+padding:10px 15px;
+margin:5px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+background:#2563eb;
+color:white;
+}
+
+input,select{
+padding:8px;
+margin:5px;
+border-radius:6px;
+border:none;
+}
+
+textarea{
+width:100%;
+height:250px;
+background:black;
+color:#0f0;
+padding:10px;
+}
+
+.card{
+background:#020617;
+padding:15px;
+border-radius:8px;
+margin-bottom:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+Painel Minecraft
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>Status</h3>
+
+<p id="status">carregando...</p>
+
+<button onclick="startServer()">Iniciar</button>
+<button onclick="stopServer()">Parar</button>
+<button onclick="restartServer()">Reiniciar</button>
+
+</div>
+
+<div class="card">
+
+<h3>Console</h3>
+
+<textarea id="console"></textarea>
+
+<br>
+
+<input id="command" placeholder="comando">
+
+<button onclick="sendCommand()">Enviar</button>
+
+</div>
+
+<div class="card">
+
+<h3>Configurações</h3>
+
+<label>MOTD</label>
+<br>
+<input id="cfg_motd">
+
+<br>
+
+<label>Gamemode</label>
+<br>
+
+<select id="cfg_gamemode">
+<option value="survival">survival</option>
+<option value="creative">creative</option>
+<option value="adventure">adventure</option>
+</select>
+
+<br>
+
+<label>Dificuldade</label>
+<br>
+
+<select id="cfg_difficulty">
+<option value="easy">easy</option>
+<option value="normal">normal</option>
+<option value="hard">hard</option>
+</select>
+
+<br>
+
+<label>Max Players</label>
+<br>
+<input id="cfg_maxplayers">
+
+<br>
+
+<label>Server Port</label>
+<br>
+<input id="cfg_serverport">
+
+<br><br>
+
+<button onclick="saveConfig()">Salvar Config</button>
+
+</div>
+
+</div>
+
 <script>
-const token = localStorage.getItem("token");
+
+const token = localStorage.getItem("token") || "dev";
 const API = localStorage.getItem("backend_url") || "http://localhost:3000";
 
-async function api(path, options = {}) {
-  const headers = {
-    Authorization: "Bearer " + token,
-    ...(options.headers || {})
-  };
+async function api(path, options={}){
 
-  if (!(options.body instanceof FormData)) {
-    headers["Content-Type"] = "application/json";
-  }
+const headers = {
+Authorization:"Bearer "+token,
+...(options.headers || {})
+};
 
-  const res = await fetch(API + path, {
-    ...options,
-    headers
-  });
-
-  let data;
-  try {
-    data = await res.json();
-  } catch {
-    throw new Error("Resposta inválida do backend.");
-  }
-
-  if (!res.ok) {
-    throw new Error(data.error || "Erro na API.");
-  }
-
-  return data;
+if(!(options.body instanceof FormData)){
+headers["Content-Type"]="application/json";
 }
+
+const res = await fetch(API+path,{
+...options,
+headers
+});
+
+const data = await res.json();
+
+if(!res.ok){
+throw new Error(data.error || "erro");
+}
+
+return data;
+
+}
+
+async function loadStatus(){
+
+try{
+
+const data = await api("/api/status");
+
+document.getElementById("status").innerText =
+data.online ? "Servidor ONLINE" : "Servidor OFFLINE";
+
+}catch(err){
+
+document.getElementById("status").innerText="erro";
+
+}
+
+}
+
+async function startServer(){
+await api("/api/start",{method:"POST"});
+}
+
+async function stopServer(){
+await api("/api/stop",{method:"POST"});
+}
+
+async function restartServer(){
+await api("/api/restart",{method:"POST"});
+}
+
+async function loadConsole(){
+
+try{
+
+const data = await api("/api/console");
+
+document.getElementById("console").value =
+data.log.join("\n");
+
+}catch{}
+
+}
+
+async function sendCommand(){
+
+const cmd = document.getElementById("command").value;
+
+await api("/api/command",{
+method:"POST",
+body:JSON.stringify({command:cmd})
+});
+
+document.getElementById("command").value="";
+
+}
+
+async function loadConfig(){
+
+try{
+
+const data = await api("/api/server-config");
+
+const cfg = data.config || {};
+
+document.getElementById("cfg_motd").value = cfg["motd"] || "";
+document.getElementById("cfg_gamemode").value = cfg["gamemode"] || "survival";
+document.getElementById("cfg_difficulty").value = cfg["difficulty"] || "easy";
+document.getElementById("cfg_maxplayers").value = cfg["max-players"] || "20";
+document.getElementById("cfg_serverport").value = cfg["server-port"] || "25565";
+
+}catch(err){
+
+alert("Erro ao carregar configurações.");
+
+}
+
+}
+
+async function saveConfig(){
+
+try{
+
+const config = {
+
+"motd":document.getElementById("cfg_motd").value,
+
+"gamemode":document.getElementById("cfg_gamemode").value,
+
+"difficulty":document.getElementById("cfg_difficulty").value,
+
+"max-players":document.getElementById("cfg_maxplayers").value,
+
+"server-port":document.getElementById("cfg_serverport").value
+
+};
+
+await api("/api/server-config",{
+method:"POST",
+body:JSON.stringify({config})
+});
+
+alert("Config salva");
+
+loadConfig();
+
+}catch(err){
+
+alert("Erro ao salvar config");
+
+}
+
+}
+
+setInterval(loadConsole,2000);
+setInterval(loadStatus,5000);
+
+loadConsole();
+loadStatus();
+loadConfig();
+
 </script>
+
+</body>
+</html>
