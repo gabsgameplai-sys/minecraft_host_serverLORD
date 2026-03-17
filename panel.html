@@ -505,7 +505,44 @@ loadSavedTheme()
 loadStatus()
 setInterval(loadConsole,2000)
 
+  async function saveConfig(){
+  try{
+    const config = {
+      "motd": document.getElementById("cfg_motd").value.trim(),
+      "gamemode": document.getElementById("cfg_gamemode").value,
+      "difficulty": document.getElementById("cfg_difficulty").value,
+      "max-players": document.getElementById("cfg_maxplayers").value,
+      "pvp": document.getElementById("cfg_pvp").value,
+      "online-mode": document.getElementById("cfg_online_mode").value,
+      "white-list": document.getElementById("cfg_whitelist").value,
+      "enable-command-block": document.getElementById("cfg_commandblocks").value,
+      "hardcore": document.getElementById("cfg_hardcore").value,
+      "allow-nether": document.getElementById("cfg_nether").value,
+      "view-distance": document.getElementById("cfg_viewdistance").value,
+      "simulation-distance": document.getElementById("cfg_simdistance").value,
+      "spawn-protection": document.getElementById("cfg_spawnprotection").value,
+      "level-seed": document.getElementById("cfg_seed").value.trim(),
+      "level-name": document.getElementById("cfg_levelname").value.trim(),
+      "server-port": document.getElementById("cfg_serverport").value
+    };
+
+    const data = await api("/api/server-config", {
+      method:"POST",
+      body:JSON.stringify({ config })
+    });
+
+    if(data.error){
+      alert(data.error);
+      return;
+    }
+
+    alert("Configuração salva com sucesso.");
+  }catch(err){
+    alert("Erro ao salvar configurações.");
+  }
+}
 </script>
 
 </body>
 </html>
+
