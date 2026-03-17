@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<title>TikTok LIVE - Host LORD</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+margin:0;
+padding:40px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+}
+
+h1{
+margin-bottom:20px;
+}
+
+.card{
+background:#111827;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+margin-bottom:15px;
+background:#020617;
+border:1px solid #334155;
+color:white;
+border-radius:6px;
+}
+
+button{
+padding:10px 16px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+margin-right:10px;
+}
+
+.connect{
+background:#22c55e;
+}
+
+.disconnect{
+background:#dc2626;
+}
+
+.secondary{
+background:#2563eb;
+}
+
+.console{
+background:#020617;
+padding:15px;
+border-radius:6px;
+height:350px;
+overflow:auto;
+font-family:monospace;
+font-size:13px;
+}
+
+.rule{
+background:#020617;
+padding:10px;
+margin-top:10px;
+border-radius:6px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎵 TikTok LIVE</h1>
+
+<div class="card">
+
+<h3>Conectar LIVE</h3>
+
+<input id="tiktokUser" placeholder="@usuario">
+
+<button class="connect" onclick="connect()">Conectar</button>
+<button class="disconnect" onclick="disconnect()">Desconectar</button>
+<button class="secondary" onclick="window.location='panel.html'">⬅ Voltar</button>
+
+<p>Status: <span id="status">desconectado</span></p>
+
+</div>
+
+<div class="card">
+
+<h3>Eventos da LIVE</h3>
+
+<div id="events" class="console">
+Aguardando eventos...
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Automações TikTok → Minecraft</h3>
+
+<label>Evento</label>
+<select id="eventType">
+<option value="follow">Follow</option>
+<option value="gift">Gift</option>
+<option value="like">Like</option>
+<option value="share">Share</option>
+<option value="member">Member</option>
+</select>
+
+<label>A cada quantos</label>
+<input id="eventCount" type="number" value="1">
+
+<label>Comando Minecraft</label>
+<input id="mcCommand" placeholder="/summon zombie">
+
+<button onclick="addRule()">Adicionar regra</button>
+
+<div id="rules"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const token=localStorage.getItem("token")
+
+const API=location.origin
+
+let eventSource=null
+
+function log(text){
+
+const box=document.getElementById("events")
+
+box.innerHTML+=text+"<br>"
+
+box.scrollTop=box.scrollHeight
+
+}
+
+async function connect(){
+
+const user=document.getElementById("tiktokUser").value
+
+const res=await fetch(API+"/api/tiktoklive/connect",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer "+token
+},
+body:JSON.stringify({uniqueId:user})
+})
+
+const data=await res.json()
+
+if(data.error) return alert(data.error)
+
+document.getElementById("status").innerText="conectado"
+
+startStream()
+
+}
+
+async function disconnect(){
+
+await fetch(API+"/api/tiktoklive/disconnect",{
+method:"POST",
+headers:{
+"Authorization":"Bearer "+token
+}
+})
+
+document.getElementById("status").innerText="desconectado"
+
+if(eventSource) eventSource.close()
+
+}
+
+function startStream(){
+
+eventSource=new EventSource(API+"/api/tiktoklive/stream?token="+token)
+
+eventSource.onmessage=(msg)=>{
+
+const event=JSON.parse(msg.data)
+
+if(event.type==="chat") log("💬 "+event.data.nickname+": "+event.data.comment)
+
+if(event.type==="follow") log("➕ "+event.data.nickname+" seguiu")
+
+if(event.type==="gift") log("🎁 "+event.data.nickname+" enviou "+event.data.giftName)
+
+if(event.type==="like") log("❤️ "+event.data.nickname+" curtiu")
+
+}
+
+}
+
+async function addRule(){
+
+const eventType=document.getElementById("eventType").value
+const everyCount=document.getElementById("eventCount").value
+const command=document.getElementById("mcCommand").value
+
+const res=await fetch(API+"/api/tiktoklive/rules",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer "+token
+},
+
+body:JSON.stringify({
+
+eventType,
+everyCount,
+command
+
+})
+
+})
+
+const data=await res.json()
+
+alert(data.message||"Regra criada")
+
+loadRules()
+
+}
+
+async function loadRules(){
+
+const res=await fetch(API+"/api/tiktoklive/rules",{
+headers:{Authorization:"Bearer "+token}
+})
+
+const data=await res.json()
+
+const list=document.getElementById("rules")
+
+list.innerHTML=""
+
+data.rules.forEach(rule=>{
+
+const div=document.createElement("div")
+
+div.className="rule"
+
+div.innerHTML=`
+<b>${rule.eventType}</b>
+a cada ${rule.everyCount}
+<br>
+${rule.command}
+`
+
+list.appendChild(div)
+
+})
+
+}
+
+loadRules()
+
+</script>
+
+</body>
+</html>
