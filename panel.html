@@ -457,7 +457,7 @@ input[type="password"]{
   gap:10px;
 }
 
-.tiktok-input, .tiktok-select{
+.tiktok-input{
   width:100%;
   background:#0f172a;
   color:#fff;
@@ -467,7 +467,7 @@ input[type="password"]{
   outline:none;
 }
 
-.tiktok-input:focus, .tiktok-select:focus{
+.tiktok-input:focus{
   border-color:#ec4899;
   box-shadow:0 0 0 3px rgba(236,72,153,.15);
 }
@@ -699,6 +699,16 @@ input[type="password"]{
         <button class="btn" onclick="startServer()">Iniciar</button>
         <button class="btn gray" onclick="stopServer()">Parar</button>
         <button class="btn" onclick="restartServer()">Reiniciar</button>
+      </div>
+
+      <div class="card" style="margin-top:18px;background:#0f172a;">
+        <h3 style="margin-top:0;">Compartilhar painel</h3>
+        <p class="small-note">Use o link abaixo para abrir o dashboard fora da sua rede local.</p>
+        <input id="publicUrlBox" type="text" readonly value="Carregando link público..." style="background:#020617;color:#fff;border:1px solid #334155;border-radius:10px;padding:12px;width:100%;">
+        <div class="server-actions">
+          <button class="btn" onclick="copyPublicUrl()">Copiar link</button>
+          <button class="btn gray" onclick="fetchPublicUrl()">Atualizar link</button>
+        </div>
       </div>
     </section>
 
@@ -1334,6 +1344,41 @@ async function fetchStatus(){
   }
 }
 
+async function fetchPublicUrl(){
+  try{
+    const res = await apiFetch(`${API_BASE}/public-url`);
+    const data = await res.json();
+
+    const box = document.getElementById("publicUrlBox");
+    if(!box) return;
+
+    if(data.publicUrl){
+      box.value = data.publicUrl;
+    }else{
+      box.value = "Ngrok não iniciado ou token não configurado.";
+    }
+  }catch(err){
+    const box = document.getElementById("publicUrlBox");
+    if(box){
+      box.value = "Não foi possível carregar o link público.";
+    }
+  }
+}
+
+async function copyPublicUrl(){
+  const box = document.getElementById("publicUrlBox");
+  if(!box || !box.value) return;
+
+  try{
+    await navigator.clipboard.writeText(box.value);
+    alert("Link copiado.");
+  }catch(err){
+    box.select();
+    document.execCommand("copy");
+    alert("Link copiado.");
+  }
+}
+
 async function uploadPlugin(){
   const input = document.getElementById("pluginUpload");
   const file = input.files[0];
@@ -1767,11 +1812,13 @@ fetchMe();
 fetchFiles();
 fetchStatus();
 fetchConsole();
+fetchPublicUrl();
 updateTikTokUI();
 
 setInterval(fetchStatus, 3000);
 setInterval(fetchConsole, 2000);
 setInterval(() => fetchFiles(currentDir), 3000);
+setInterval(fetchPublicUrl, 15000);
 </script>
 </body>
 </html>
