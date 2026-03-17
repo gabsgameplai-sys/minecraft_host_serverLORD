@@ -1,104 +1,187 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+
 <meta charset="UTF-8">
-<title>Minecraft Host Login</title>
+<title>Minecraft Host Panel</title>
 
 <style>
+
 body{
-font-family:Arial;
 background:#0f172a;
+font-family:Arial;
 color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
+margin:0;
 }
 
-.login{
+header{
 background:#1e293b;
-padding:40px;
-border-radius:10px;
-width:300px;
+padding:15px;
 }
 
-input{
-width:100%;
-padding:10px;
-margin-top:10px;
-border:none;
-border-radius:5px;
+main{
+padding:20px;
 }
 
 button{
-margin-top:15px;
-width:100%;
 padding:10px;
+margin:5px;
 border:none;
 background:#22c55e;
 color:white;
-font-weight:bold;
 cursor:pointer;
 }
 
 button:hover{
 background:#16a34a;
 }
+
+.console{
+background:black;
+padding:10px;
+height:300px;
+overflow:auto;
+font-family:monospace;
+}
+
 </style>
+
 </head>
 
 <body>
 
-<div class="login">
+<header>
 
-<h2>Login</h2>
+<h2>Minecraft Host Panel</h2>
 
-<input id="username" placeholder="Usuário">
-<input id="password" type="password" placeholder="Senha">
+<button onclick="logout()">Logout</button>
 
-<button onclick="login()">Entrar</button>
+</header>
 
-</div>
+<main>
+
+<h3>Status do servidor</h3>
+
+<div id="status">Carregando...</div>
+
+<br>
+
+<button onclick="startServer()">Start</button>
+<button onclick="stopServer()">Stop</button>
+<button onclick="restartServer()">Restart</button>
+
+<h3>Console</h3>
+
+<div class="console" id="console"></div>
+
+<input id="cmd" placeholder="comando">
+
+<button onclick="sendCommand()">Enviar</button>
+
+</main>
 
 <script>
 
 const API_BASE="https://SEU-NGROK-AQUI.ngrok-free.app";
 
-async function login(){
+const token=localStorage.getItem("token");
 
-const username=document.getElementById("username").value;
-const password=document.getElementById("password").value;
+if(!token){
 
-try{
-
-const res=await fetch(`${API_BASE}/api/login`,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({username,password})
-});
-
-const data=await res.json();
-
-if(!data.ok){
-
-alert(data.error || "Erro ao fazer login");
-return;
+window.location="login.html";
 
 }
 
-localStorage.setItem("token",data.token);
+async function api(path,options={}){
 
-window.location="panel.html";
+options.headers={
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`,
+...(options.headers||{})
+};
 
-}catch(e){
+const res=await fetch(`${API_BASE}${path}`,options);
+
+return res.json();
+
+}
+
+async function loadStatus(){
+
+try{
+
+const data=await api("/api/status");
+
+document.getElementById("status").innerText=
+data.online ? "Servidor Online" : "Servidor Offline";
+
+}catch{
 
 alert("Erro ao conectar com o backend.");
 
 }
 
 }
+
+async function loadConsole(){
+
+try{
+
+const data=await api("/api/console");
+
+const consoleDiv=document.getElementById("console");
+
+consoleDiv.innerHTML=data.lines.join("<br>");
+
+consoleDiv.scrollTop=consoleDiv.scrollHeight;
+
+}catch{}
+
+}
+
+async function startServer(){
+
+await api("/api/start",{method:"POST"});
+
+}
+
+async function stopServer(){
+
+await api("/api/stop",{method:"POST"});
+
+}
+
+async function restartServer(){
+
+await api("/api/restart",{method:"POST"});
+
+}
+
+async function sendCommand(){
+
+const cmd=document.getElementById("cmd").value;
+
+await api("/api/command",{
+method:"POST",
+body:JSON.stringify({command:cmd})
+});
+
+document.getElementById("cmd").value="";
+
+}
+
+function logout(){
+
+localStorage.removeItem("token");
+
+window.location="login.html";
+
+}
+
+setInterval(loadConsole,2000);
+
+loadStatus();
+loadConsole();
 
 </script>
 
