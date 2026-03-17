@@ -607,14 +607,21 @@
   </div>
 
   <script>
-    const token = localStorage.getItem("token") || "dev";
+    const token = localStorage.getItem("token");
     const API = localStorage.getItem("backend_url") || "http://localhost:3000";
+
+    if (!token) {
+      alert("Você precisa fazer login primeiro.");
+      window.location.href = "login.html";
+    }
 
     document.getElementById("backendLabel").textContent = API;
 
     async function api(path, options = {}) {
+      const currentToken = localStorage.getItem("token");
+
       const headers = {
-        Authorization: "Bearer " + token,
+        Authorization: "Bearer " + currentToken,
         ...(options.headers || {})
       };
 
@@ -635,6 +642,14 @@
       }
 
       if (!res.ok) {
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          alert("Sessão expirada ou login inválido. Faça login novamente.");
+          window.location.href = "login.html";
+          throw new Error("Não autenticado.");
+        }
+
         throw new Error(data.error || "Erro na API.");
       }
 
