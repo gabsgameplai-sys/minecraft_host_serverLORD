@@ -1,508 +1,809 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Host LORD - Painel</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Host LORD - Painel</title>
+  <style>
+    :root{
+      --bg:#0b1120;
+      --bg-soft:#111827;
+      --card:#0f172a;
+      --card-2:#111827;
+      --border:#1f2937;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --primary:#2563eb;
+      --primary-hover:#1d4ed8;
+      --danger:#dc2626;
+      --danger-hover:#b91c1c;
+      --success:#16a34a;
+      --warning:#d97706;
+      --shadow:0 10px 30px rgba(0,0,0,.25);
+      --radius:18px;
+    }
 
-<style>
+    *{box-sizing:border-box}
 
-:root{
---bg:#0b1120;
---card:#0f172a;
---border:#1f2937;
---text:#e5e7eb;
---muted:#94a3b8;
---primary:#2563eb;
---danger:#dc2626;
---success:#16a34a;
---radius:16px;
-}
+    html,body{
+      margin:0;
+      padding:0;
+      background:linear-gradient(180deg,#0b1120 0%,#0a0f1d 100%);
+      color:var(--text);
+      font-family:Inter,Arial,Helvetica,sans-serif;
+      min-height:100%;
+    }
 
-*{box-sizing:border-box}
+    .app{
+      display:grid;
+      grid-template-columns:280px 1fr;
+      min-height:100vh;
+    }
 
-body{
-margin:0;
-font-family:Inter,Arial;
-background:var(--bg);
-color:var(--text);
-}
+    .sidebar{
+      background:rgba(15,23,42,.95);
+      border-right:1px solid var(--border);
+      padding:22px 18px;
+      position:sticky;
+      top:0;
+      height:100vh;
+    }
 
-.app{
-display:grid;
-grid-template-columns:260px 1fr;
-min-height:100vh;
-}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:24px;
+      padding:8px;
+    }
 
-/* SIDEBAR */
+    .brand-logo{
+      width:48px;
+      height:48px;
+      border-radius:14px;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#000;
+      box-shadow:var(--shadow);
+      flex-shrink:0;
+    }
 
-.sidebar{
-background:#0f172a;
-border-right:1px solid var(--border);
-padding:20px;
-}
+    .brand-logo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
 
-.brand{
-display:flex;
-align-items:center;
-gap:10px;
-margin-bottom:20px;
-}
+    .brand h1{
+      font-size:18px;
+      margin:0;
+    }
 
-.brand-logo{
-width:44px;
-height:44px;
-border-radius:12px;
-overflow:hidden;
-display:flex;
-align-items:center;
-justify-content:center;
-background:#000;
-}
+    .brand p{
+      margin:2px 0 0;
+      color:var(--muted);
+      font-size:12px;
+    }
 
-.brand-logo img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
+    .menu{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
 
-.brand h1{
-margin:0;
-font-size:18px;
-}
+    .menu button{
+      width:100%;
+      text-align:left;
+      border:1px solid transparent;
+      background:transparent;
+      color:var(--text);
+      padding:14px 14px;
+      border-radius:14px;
+      cursor:pointer;
+      transition:.2s ease;
+      font-size:14px;
+    }
 
-.brand p{
-margin:0;
-font-size:12px;
-color:var(--muted);
-}
+    .menu button:hover{
+      background:#111827;
+      border-color:var(--border);
+    }
 
-.menu{
-display:flex;
-flex-direction:column;
-gap:8px;
-}
+    .menu button.active{
+      background:linear-gradient(135deg,rgba(37,99,235,.22),rgba(37,99,235,.12));
+      border-color:rgba(59,130,246,.35);
+    }
 
-.menu button{
-background:none;
-border:none;
-color:var(--text);
-padding:12px;
-text-align:left;
-border-radius:10px;
-cursor:pointer;
-}
+    .sidebar-footer{
+      position:absolute;
+      left:18px;
+      right:18px;
+      bottom:18px;
+      padding:14px;
+      background:rgba(17,24,39,.7);
+      border:1px solid var(--border);
+      border-radius:16px;
+      font-size:13px;
+      color:var(--muted);
+      word-break:break-word;
+    }
 
-.menu button:hover{
-background:#111827;
-}
+    .main{
+      padding:24px;
+    }
 
-.menu button.active{
-background:#1f2937;
-}
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:22px;
+      flex-wrap:wrap;
+    }
 
-/* MAIN */
+    .topbar h2{
+      margin:0;
+      font-size:28px;
+    }
 
-.main{
-padding:20px;
-}
+    .topbar p{
+      margin:6px 0 0;
+      color:var(--muted);
+    }
 
-.topbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:20px;
-}
+    .server-badge{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:rgba(15,23,42,.9);
+      border:1px solid var(--border);
+      padding:12px 16px;
+      border-radius:999px;
+      box-shadow:var(--shadow);
+    }
 
-.status{
-display:flex;
-align-items:center;
-gap:8px;
-background:#111827;
-padding:8px 14px;
-border-radius:999px;
-}
+    .dot{
+      width:11px;
+      height:11px;
+      border-radius:999px;
+      background:#64748b;
+      box-shadow:0 0 12px rgba(100,116,139,.5);
+    }
 
-.dot{
-width:10px;
-height:10px;
-border-radius:50%;
-background:#64748b;
-}
+    .dot.online{
+      background:#22c55e;
+      box-shadow:0 0 14px rgba(34,197,94,.8);
+    }
 
-.dot.online{
-background:#22c55e;
-}
+    .grid{
+      display:grid;
+      gap:18px;
+    }
 
-.card{
-background:var(--card);
-border:1px solid var(--border);
-border-radius:var(--radius);
-padding:18px;
-margin-bottom:18px;
-}
+    .grid-3{
+      grid-template-columns:repeat(3, minmax(0,1fr));
+    }
 
-.actions{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-}
+    .grid-2{
+      grid-template-columns:repeat(2, minmax(0,1fr));
+    }
 
-button.primary{background:var(--primary);color:white}
-button.success{background:var(--success);color:white}
-button.danger{background:var(--danger);color:white}
-button.secondary{background:#334155;color:white}
+    .card{
+      background:linear-gradient(180deg,rgba(15,23,42,.96),rgba(17,24,39,.96));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
 
-button.primary,
-button.success,
-button.danger,
-button.secondary{
-border:none;
-padding:10px 14px;
-border-radius:10px;
-cursor:pointer;
-}
+    .card h3{
+      margin:0 0 14px;
+      font-size:18px;
+    }
 
-.console{
-width:100%;
-height:350px;
-background:#020617;
-color:#93c5fd;
-border:1px solid var(--border);
-border-radius:10px;
-padding:10px;
-font-family:monospace;
-}
+    .stat{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
 
-input{
-width:100%;
-padding:10px;
-border-radius:10px;
-border:1px solid var(--border);
-background:#020617;
-color:white;
-}
+    .stat .label{
+      color:var(--muted);
+      font-size:13px;
+    }
 
-.hidden{
-display:none;
-}
+    .stat .value{
+      font-size:28px;
+      font-weight:700;
+      word-break:break-word;
+    }
 
-</style>
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    button.primary,
+    button.secondary,
+    button.danger,
+    button.success{
+      border:none;
+      padding:11px 16px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+      transition:.2s ease;
+      color:white;
+    }
+
+    button.primary{background:var(--primary)}
+    button.primary:hover{background:var(--primary-hover)}
+    button.secondary{background:#334155}
+    button.secondary:hover{background:#475569}
+    button.danger{background:var(--danger)}
+    button.danger:hover{background:var(--danger-hover)}
+    button.success{background:var(--success)}
+    button.success:hover{filter:brightness(.95)}
+
+    input,select,textarea{
+      width:100%;
+      background:#020617;
+      border:1px solid var(--border);
+      color:var(--text);
+      border-radius:12px;
+      padding:12px 14px;
+      outline:none;
+    }
+
+    input:focus,select:focus,textarea:focus{
+      border-color:#3b82f6;
+      box-shadow:0 0 0 3px rgba(59,130,246,.15);
+    }
+
+    .console-box{
+      width:100%;
+      min-height:360px;
+      resize:vertical;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      line-height:1.45;
+      background:#020617;
+      color:#93c5fd;
+    }
+
+    .command-row{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
+    .files-list{
+      display:grid;
+      gap:10px;
+      max-height:420px;
+      overflow:auto;
+    }
+
+    .file-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:12px 14px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:rgba(2,6,23,.6);
+    }
+
+    .file-meta{
+      color:var(--muted);
+      font-size:13px;
+      word-break:break-word;
+    }
+
+    .muted{
+      color:var(--muted);
+    }
+
+    .upload-box{
+      border:1px dashed #334155;
+      border-radius:16px;
+      padding:16px;
+      background:rgba(2,6,23,.4);
+    }
+
+    .small{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    code{
+      background:rgba(255,255,255,.06);
+      padding:2px 6px;
+      border-radius:8px;
+    }
+
+    @media (max-width: 1100px){
+      .grid-3,.grid-2{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width: 860px){
+      .app{
+        grid-template-columns:1fr;
+      }
+
+      .sidebar{
+        position:relative;
+        height:auto;
+        border-right:none;
+        border-bottom:1px solid var(--border);
+      }
+
+      .sidebar-footer{
+        position:static;
+        margin-top:16px;
+      }
+
+      .main{
+        padding:16px;
+      }
+
+      .command-row{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
 </head>
-
 <body>
-
-<div class="app">
-
-<!-- SIDEBAR -->
-
-<aside class="sidebar">
-
-<div class="brand">
-<div class="brand-logo">
-<img src="logo.png">
-</div>
-<div>
-<h1>Host LORD</h1>
-<p>Painel Minecraft</p>
-</div>
-</div>
-
-<div class="menu">
-
-<button class="tab-btn active" data-tab="dashboard">🏠 Dashboard</button>
-<button class="tab-btn" data-tab="console">🖥 Console</button>
-<button class="tab-btn" data-tab="files">📁 Arquivos</button>
-<button class="tab-btn" data-tab="plugins">🔌 Plugins</button>
-
-<button onclick="window.location.href='temas.html'">🎨 Temas</button>
-<button onclick="window.location.href='tiktok.html'">📱 TikTok</button>
-
-</div>
-
-</aside>
-
-<!-- MAIN -->
-
-<main class="main">
-
-<div class="topbar">
-<h2 id="pageTitle">Dashboard</h2>
-
-<div class="status">
-<div id="statusDot" class="dot"></div>
-<span id="statusText">Carregando...</span>
-</div>
-
-</div>
-
-<!-- DASHBOARD -->
-
-<section id="tab-dashboard">
-
-<div class="card">
-
-<h3>Controles do servidor</h3>
-
-<div class="actions">
-
-<button class="success" onclick="startServer()">Iniciar</button>
-<button class="secondary" onclick="restartServer()">Reiniciar</button>
-<button class="danger" onclick="stopServer()">Parar</button>
-<button class="primary" onclick="refreshAll()">Atualizar</button>
-
-</div>
-
-</div>
-
-<div class="card">
-
-<p><strong>Host:</strong> <span id="dashHost">--</span></p>
-<p><strong>Porta:</strong> <span id="dashPort">--</span></p>
-<p><strong>PID:</strong> <span id="dashPid">--</span></p>
-
-</div>
-
-</section>
-
-<!-- CONSOLE -->
-
-<section id="tab-console" class="hidden">
-
-<div class="card">
-
-<textarea id="consoleBox" class="console" readonly></textarea>
-
-<div style="margin-top:10px">
-<input id="commandInput" placeholder="Digite comando">
-</div>
-
-<div style="margin-top:10px">
-
-<button class="primary" onclick="sendCommand()">Enviar</button>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- FILES -->
-
-<section id="tab-files" class="hidden">
-
-<div class="card">
-
-<h3>Arquivos</h3>
-
-<button class="primary" onclick="loadFiles()">Atualizar</button>
-
-<div id="filesList" style="margin-top:10px"></div>
-
-</div>
-
-</section>
-
-<!-- PLUGINS -->
-
-<section id="tab-plugins" class="hidden">
-
-<div class="card">
-
-<h3>Upload Plugin</h3>
-
-<input type="file" id="pluginFile">
-
-<div style="margin-top:10px">
-
-<button class="primary" onclick="uploadPlugin()">Enviar Plugin</button>
-
-</div>
-
-</div>
-
-</section>
-
-</main>
-
-</div>
-
-<script>
-
-/* BACKEND */
-
-const API = localStorage.getItem("backend_url") || "http://localhost:3000"
-
-/* TABS */
-
-document.querySelectorAll(".tab-btn").forEach(btn=>{
-btn.onclick=()=>{
-document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"))
-btn.classList.add("active")
-
-document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"))
-
-document.getElementById("tab-"+btn.dataset.tab).classList.remove("hidden")
-
-document.getElementById("pageTitle").innerText=btn.innerText
-}
-})
-
-/* API */
-
-async function api(path,options={}){
-
-const res=await fetch(API+path,options)
-
-const data=await res.json()
-
-return data
-}
-
-/* STATUS */
-
-async function loadStatus(){
-
-try{
-
-const data=await api("/api/status")
-
-document.getElementById("statusText").innerText=data.online?"Online":"Offline"
-
-document.getElementById("statusDot").classList.toggle("online",data.online)
-
-document.getElementById("dashHost").innerText=data.minecraftHost||"--"
-document.getElementById("dashPort").innerText=data.minecraftPort||"--"
-document.getElementById("dashPid").innerText=data.pid||"--"
-
-}catch(e){
-
-document.getElementById("statusText").innerText="Erro conexão"
-
-}
-
-}
-
-/* SERVER */
-
-async function startServer(){
-
-await api("/api/start",{method:"POST"})
-
-alert("Servidor iniciado")
-
-}
-
-async function stopServer(){
-
-await api("/api/stop",{method:"POST"})
-
-alert("Servidor parado")
-
-}
-
-async function restartServer(){
-
-await api("/api/restart",{method:"POST"})
-
-alert("Servidor reiniciando")
-
-}
-
-/* CONSOLE */
-
-async function loadConsole(){
-
-const data=await api("/api/console")
-
-const box=document.getElementById("consoleBox")
-
-box.value=(data.log||[]).join("\n")
-
-box.scrollTop=box.scrollHeight
-
-}
-
-async function sendCommand(){
-
-const cmd=document.getElementById("commandInput").value
-
-await api("/api/command",{
-
-method:"POST",
-
-headers:{"Content-Type":"application/json"},
-
-body:JSON.stringify({command:cmd})
-
-})
-
-document.getElementById("commandInput").value=""
-
-loadConsole()
-
-}
-
-/* FILES */
-
-async function loadFiles(){
-
-const data=await api("/api/files")
-
-const list=document.getElementById("filesList")
-
-list.innerHTML=""
-
-data.files.forEach(f=>{
-
-const div=document.createElement("div")
-
-div.innerText=f.name
-
-list.appendChild(div)
-
-})
-
-}
-
-/* PLUGIN */
-
-async function uploadPlugin(){
-
-const file=document.getElementById("pluginFile").files[0]
-
-const form=new FormData()
-
-form.append("plugin",file)
-
-await fetch(API+"/api/upload-plugin",{
-
-method:"POST",
-
-body:form
-
-})
-
-alert("Plugin enviado")
-
-}
-
-/* REFRESH */
-
-function refreshAll(){
-
-loadStatus()
-loadConsole()
-
-}
-
-loadStatus()
-
-setInterval(loadStatus,5000)
-setInterval(loadConsole,2500)
-
-</script>
-
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <img src="logo.png" alt="Host LORD Logo">
+        </div>
+        <div>
+          <h1>Host LORD</h1>
+          <p>Painel Minecraft</p>
+        </div>
+      </div>
+
+      <div class="menu">
+        <button type="button" class="tab-btn active" data-tab="dashboard">🏠 Dashboard</button>
+        <button type="button" class="tab-btn" data-tab="console">🖥️ Console</button>
+        <button type="button" class="tab-btn" data-tab="files">📁 Arquivos</button>
+        <button type="button" class="tab-btn" data-tab="plugins">🔌 Plugins</button>
+        <button type="button" onclick="window.location.href='temas.html'">🎨 Temas</button>
+        <button type="button" onclick="window.location.href='tiktok.html'">📱 TikTok</button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div><strong>Backend:</strong> <span id="backendLabel">não definido</span></div>
+        <div class="small" style="margin-top:6px;">Defina com <code>localStorage.setItem("backend_url","http://SEU_IP:3000")</code></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h2 id="pageTitle">Dashboard</h2>
+          <p>Gerencie seu servidor Minecraft em um só lugar.</p>
+        </div>
+
+        <div class="server-badge">
+          <span id="statusDot" class="dot"></span>
+          <span id="statusText">Carregando status...</span>
+        </div>
+      </div>
+
+      <section id="tab-dashboard" class="tab-content">
+        <div class="grid grid-3">
+          <div class="card stat">
+            <span class="label">Servidor</span>
+            <span class="value" id="dashOnline">--</span>
+          </div>
+          <div class="card stat">
+            <span class="label">Host</span>
+            <span class="value" id="dashHost" style="font-size:18px;">--</span>
+          </div>
+          <div class="card stat">
+            <span class="label">Porta</span>
+            <span class="value" id="dashPort">--</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <h3>Controles rápidos</h3>
+          <div class="actions">
+            <button type="button" class="success" onclick="startServer()">Iniciar</button>
+            <button type="button" class="secondary" onclick="restartServer()">Reiniciar</button>
+            <button type="button" class="danger" onclick="stopServer()">Parar</button>
+            <button type="button" class="primary" onclick="refreshAll()">Atualizar</button>
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="margin-top:18px;">
+          <div class="card">
+            <h3>Informações</h3>
+            <p><strong>PID:</strong> <span id="dashPid">--</span></p>
+            <p><strong>JAR:</strong> <span id="dashJar">--</span></p>
+            <p><strong>Pasta:</strong> <span id="dashDir">--</span></p>
+            <p><strong>Painel local:</strong> <span id="dashPanelUrl">--</span></p>
+          </div>
+
+          <div class="card">
+            <h3>Dicas</h3>
+            <p class="muted">Se o console estiver vazio, veja no backend se a rota <code>/api/console</code> está retornando logs.</p>
+            <p class="muted">Se o painel estiver no GitHub Pages, o backend precisa estar rodando em outro lugar, como PC, Render, VPS ou Railway.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-console" class="tab-content hidden">
+        <div class="card">
+          <h3>Console do servidor</h3>
+          <textarea id="consoleBox" class="console-box" readonly></textarea>
+          <div class="command-row">
+            <input id="commandInput" placeholder="Digite um comando, ex: say Olá mundo" />
+            <button type="button" class="primary" onclick="sendCommand()">Enviar</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-files" class="tab-content hidden">
+        <div class="card">
+          <h3>Arquivos do servidor</h3>
+          <div class="actions" style="margin-bottom:14px;">
+            <button type="button" class="primary" onclick="loadFiles()">Atualizar arquivos</button>
+          </div>
+          <div id="filesList" class="files-list">
+            <div class="muted">Nenhum arquivo carregado.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-plugins" class="tab-content hidden">
+        <div class="card">
+          <h3>Upload de plugins</h3>
+          <div class="upload-box">
+            <input id="pluginFile" type="file" accept=".jar,application/java-archive" />
+            <div class="actions" style="margin-top:12px;">
+              <button type="button" class="primary" onclick="uploadPlugin()">Enviar plugin</button>
+            </div>
+            <p class="small">O arquivo será enviado para a pasta <code>plugins/</code>.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const API = (localStorage.getItem("backend_url") || "http://localhost:3000").replace(/\/+$/, "");
+
+    function getToken() {
+      return localStorage.getItem("token");
+    }
+
+    function logoutAndRedirect() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
+
+    if (!getToken()) {
+      alert("Você precisa fazer login primeiro.");
+      logoutAndRedirect();
+    }
+
+    document.getElementById("backendLabel").textContent = API;
+
+    async function api(path, options = {}) {
+      const token = getToken();
+
+      if (!token) {
+        logoutAndRedirect();
+        throw new Error("Sessão inválida.");
+      }
+
+      const headers = {
+        Authorization: "Bearer " + token,
+        ...(options.headers || {})
+      };
+
+      if (!(options.body instanceof FormData) && options.body !== undefined) {
+        headers["Content-Type"] = "application/json";
+      }
+
+      let res;
+      try {
+        res = await fetch(API + path, {
+          ...options,
+          headers
+        });
+      } catch (e) {
+        throw new Error("Não foi possível conectar ao backend.");
+      }
+
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = null;
+      }
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          alert("Sessão expirada. Faça login novamente.");
+          logoutAndRedirect();
+          throw new Error("Não autenticado.");
+        }
+        throw new Error((data && data.error) || "Erro na API.");
+      }
+
+      return data || {};
+    }
+
+    function setActiveTab(tabName) {
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tab === tabName);
+      });
+
+      document.querySelectorAll(".tab-content").forEach(section => {
+        section.classList.add("hidden");
+      });
+
+      const target = document.getElementById("tab-" + tabName);
+      if (target) target.classList.remove("hidden");
+
+      const titles = {
+        dashboard: "Dashboard",
+        console: "Console",
+        files: "Arquivos",
+        plugins: "Plugins"
+      };
+
+      document.getElementById("pageTitle").textContent = titles[tabName] || "Painel";
+    }
+
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const tab = btn.dataset.tab;
+        setActiveTab(tab);
+
+        if (tab === "console") await loadConsole();
+        if (tab === "files") await loadFiles();
+      });
+    });
+
+    async function loadStatus() {
+      try {
+        const data = await api("/api/status");
+
+        document.getElementById("statusText").textContent = data.online ? "Servidor online" : "Servidor offline";
+        document.getElementById("statusDot").classList.toggle("online", !!data.online);
+
+        document.getElementById("dashOnline").textContent = data.online ? "ONLINE" : "OFFLINE";
+        document.getElementById("dashHost").textContent = data.minecraftHost || "--";
+        document.getElementById("dashPort").textContent = data.minecraftPort || "--";
+        document.getElementById("dashPid").textContent = data.pid || "--";
+        document.getElementById("dashJar").textContent = data.jar || "--";
+        document.getElementById("dashDir").textContent = data.serverDir || "--";
+        document.getElementById("dashPanelUrl").textContent = data.panelUrl || "--";
+      } catch (err) {
+        document.getElementById("statusText").textContent = "Erro de conexão";
+        document.getElementById("statusDot").classList.remove("online");
+        document.getElementById("dashOnline").textContent = "ERRO";
+        console.error("Erro ao carregar status:", err);
+      }
+    }
+
+    async function startServer() {
+      try {
+        const data = await api("/api/start", { method: "POST" });
+        alert(data.message || "Servidor iniciado.");
+        await refreshAll();
+      } catch (err) {
+        alert("Erro ao iniciar: " + err.message);
+      }
+    }
+
+    async function stopServer() {
+      try {
+        const data = await api("/api/stop", { method: "POST" });
+        alert(data.message || "Servidor parando.");
+        await refreshAll();
+      } catch (err) {
+        alert("Erro ao parar: " + err.message);
+      }
+    }
+
+    async function restartServer() {
+      try {
+        const data = await api("/api/restart", { method: "POST" });
+        alert(data.message || "Reinício solicitado.");
+        await refreshAll();
+      } catch (err) {
+        alert("Erro ao reiniciar: " + err.message);
+      }
+    }
+
+    async function loadConsole() {
+      try {
+        const data = await api("/api/console");
+        const box = document.getElementById("consoleBox");
+
+        let text = "";
+
+        if (Array.isArray(data.log)) {
+          text = data.log.join("\n");
+        } else if (typeof data.log === "string") {
+          text = data.log;
+        } else if (Array.isArray(data.lines)) {
+          text = data.lines.join("\n");
+        } else if (typeof data.console === "string") {
+          text = data.console;
+        } else {
+          text = "";
+        }
+
+        box.value = text;
+        box.scrollTop = box.scrollHeight;
+      } catch (err) {
+        console.error("Erro ao carregar console:", err);
+      }
+    }
+
+    async function sendCommand() {
+      const input = document.getElementById("commandInput");
+      const command = input.value.trim();
+
+      if (!command) {
+        alert("Digite um comando.");
+        return;
+      }
+
+      try {
+        await api("/api/command", {
+          method: "POST",
+          body: JSON.stringify({ command })
+        });
+
+        input.value = "";
+        await loadConsole();
+      } catch (err) {
+        alert("Erro ao enviar comando: " + err.message);
+      }
+    }
+
+    async function loadFiles() {
+      const list = document.getElementById("filesList");
+      list.innerHTML = '<div class="muted">Carregando arquivos...</div>';
+
+      try {
+        const data = await api("/api/files");
+        const files = Array.isArray(data.files) ? data.files : [];
+
+        if (!files.length) {
+          list.innerHTML = '<div class="muted">Nenhum arquivo encontrado.</div>';
+          return;
+        }
+
+        list.innerHTML = files.map(file => `
+          <div class="file-item">
+            <div>
+              <div><strong>${escapeHtml(file.name || "Sem nome")}</strong></div>
+              <div class="file-meta">
+                ${escapeHtml(file.path || "")}
+                ${file.type ? ` • ${escapeHtml(file.type)}` : ""}
+                ${typeof file.size === "number" ? ` • ${formatBytes(file.size)}` : ""}
+              </div>
+            </div>
+          </div>
+        `).join("");
+      } catch (err) {
+        list.innerHTML = `<div class="muted">Erro ao carregar arquivos: ${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    async function uploadPlugin() {
+      const input = document.getElementById("pluginFile");
+      const file = input.files && input.files[0];
+
+      if (!file) {
+        alert("Selecione um plugin.");
+        return;
+      }
+
+      if (!file.name.toLowerCase().endsWith(".jar")) {
+        alert("Selecione um arquivo .jar válido.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("plugin", file);
+
+      try {
+        const token = getToken();
+
+        const res = await fetch(API + "/api/upload-plugin", {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token
+          },
+          body: formData
+        });
+
+        let data = null;
+        try {
+          data = await res.json();
+        } catch (e) {
+          data = null;
+        }
+
+        if (!res.ok) {
+          throw new Error((data && data.error) || "Erro ao enviar plugin.");
+        }
+
+        alert("Plugin enviado: " + ((data && data.file && data.file.name) || file.name));
+        input.value = "";
+        await loadFiles();
+      } catch (err) {
+        alert("Erro ao enviar plugin: " + err.message);
+      }
+    }
+
+    async function refreshAll() {
+      await Promise.allSettled([
+        loadStatus(),
+        loadConsole()
+      ]);
+    }
+
+    function formatBytes(bytes) {
+      const sizes = ["B", "KB", "MB", "GB", "TB"];
+      if (!bytes || bytes <= 0) return "0 B";
+      const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), sizes.length - 1);
+      return (bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1) + " " + sizes[i];
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    document.getElementById("commandInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendCommand();
+      }
+    });
+
+    setActiveTab("dashboard");
+    refreshAll();
+
+    setInterval(() => {
+      loadStatus().catch(() => {});
+    }, 5000);
+
+    setInterval(() => {
+      const consoleVisible = !document.getElementById("tab-console").classList.contains("hidden");
+      if (consoleVisible) {
+        loadConsole().catch(() => {});
+      }
+    }, 2500);
+  </script>
 </body>
 </html>
