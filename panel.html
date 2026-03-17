@@ -201,25 +201,124 @@ cursor:pointer;
 
 <h2>⚙️ Configuração</h2>
 
-<label>MOTD</label>
-<input id="motd">
+  <p style="opacity:.8; margin-bottom:18px;">
+    Edite as opções principais do seu servidor Minecraft.
+  </p>
 
-<label>Max Players</label>
-<input id="players">
+  <div class="aternos-grid">
+    <div class="aternos-item">
+      <label>MOTD</label>
+      <input id="cfg_motd" placeholder="Meu Servidor Minecraft">
+    </div>
 
-<button onclick="saveConfig()">Salvar</button>
+    <div class="aternos-item">
+      <label>Gamemode</label>
+      <select id="cfg_gamemode">
+        <option value="survival">Survival</option>
+        <option value="creative">Creative</option>
+        <option value="adventure">Adventure</option>
+        <option value="spectator">Spectator</option>
+      </select>
+    </div>
 
-</div>
+    <div class="aternos-item">
+      <label>Dificuldade</label>
+      <select id="cfg_difficulty">
+        <option value="peaceful">Peaceful</option>
+        <option value="easy">Easy</option>
+        <option value="normal">Normal</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
 
-<div id="plugins" class="card" style="display:none">
+    <div class="aternos-item">
+      <label>Máx. de players</label>
+      <input id="cfg_maxplayers" type="number" min="1" placeholder="20">
+    </div>
 
-<h2>🧩 Plugins</h2>
+    <div class="aternos-item">
+      <label>PVP</label>
+      <select id="cfg_pvp">
+        <option value="true">Ativado</option>
+        <option value="false">Desativado</option>
+      </select>
+    </div>
 
-<input type="file" id="pluginFile">
+    <div class="aternos-item">
+      <label>Online Mode</label>
+      <select id="cfg_online_mode">
+        <option value="true">Ativado</option>
+        <option value="false">Desativado</option>
+      </select>
+    </div>
 
-<button onclick="uploadPlugin()">Enviar</button>
+    <div class="aternos-item">
+      <label>Whitelist</label>
+      <select id="cfg_whitelist">
+        <option value="true">Ativada</option>
+        <option value="false">Desativada</option>
+      </select>
+    </div>
 
-<div id="pluginList"></div>
+    <div class="aternos-item">
+      <label>Command Blocks</label>
+      <select id="cfg_commandblocks">
+        <option value="true">Ativados</option>
+        <option value="false">Desativados</option>
+      </select>
+    </div>
+
+    <div class="aternos-item">
+      <label>Hardcore</label>
+      <select id="cfg_hardcore">
+        <option value="true">Ativado</option>
+        <option value="false">Desativado</option>
+      </select>
+    </div>
+
+    <div class="aternos-item">
+      <label>Allow Nether</label>
+      <select id="cfg_nether">
+        <option value="true">Ativado</option>
+        <option value="false">Desativado</option>
+      </select>
+    </div>
+
+    <div class="aternos-item">
+      <label>View Distance</label>
+      <input id="cfg_viewdistance" type="number" min="2" placeholder="10">
+    </div>
+
+    <div class="aternos-item">
+      <label>Simulation Distance</label>
+      <input id="cfg_simdistance" type="number" min="2" placeholder="10">
+    </div>
+
+    <div class="aternos-item">
+      <label>Spawn Protection</label>
+      <input id="cfg_spawnprotection" type="number" min="0" placeholder="16">
+    </div>
+
+    <div class="aternos-item">
+      <label>Seed do mundo</label>
+      <input id="cfg_seed" placeholder="Seed opcional">
+    </div>
+
+    <div class="aternos-item">
+      <label>Nome do mundo</label>
+      <input id="cfg_levelname" placeholder="world">
+    </div>
+
+    <div class="aternos-item">
+      <label>Porta do servidor</label>
+      <input id="cfg_serverport" type="number" min="1" placeholder="25565">
+    </div>
+  </div>
+
+  <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+    <button class="blue" onclick="saveConfig()">💾 Salvar configuração</button>
+    <button class="nav-btn" style="width:auto; margin:0;" onclick="loadConfig()">🔄 Recarregar</button>
+  </div>
 
 </div>
 
