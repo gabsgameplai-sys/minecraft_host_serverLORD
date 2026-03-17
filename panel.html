@@ -140,6 +140,40 @@ cursor:pointer;
 .blue{background:var(--primary); color:white}
 .blue:hover{background:var(--primary-hover)}
 
+  .aternos-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:16px;
+  margin-top:18px;
+}
+
+.aternos-item{
+  background:var(--bg-soft);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+}
+
+.aternos-item label{
+  display:block;
+  font-size:14px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
+.aternos-item input,
+.aternos-item select{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:var(--input);
+  color:var(--text);
+}
+
+.aternos-item select{
+  cursor:pointer;
+}
 </style>
 
 </head>
