@@ -3,357 +3,231 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Minecraft Host LORD</title>
+  <title>Host LORD - Login</title>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
-    * {
-      box-sizing: border-box;
+    :root{
+      --bg:#0b1120;
+      --card:#111827;
+      --border:#1f2937;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --primary:#2563eb;
+      --danger-bg:#3a1624;
+      --danger-border:#7f1d1d;
     }
 
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(135deg, #101827, #1e293b);
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(180deg,#0b1120 0%,#0a0f1d 100%);
+      color:var(--text);
+      font-family:Arial,Helvetica,sans-serif;
+      padding:20px;
     }
 
-    .card {
-      width: 100%;
-      max-width: 420px;
-      background: rgba(15, 23, 42, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 18px;
-      padding: 28px;
-      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.35);
+    .card{
+      width:100%;
+      max-width:420px;
+      background:rgba(17,24,39,.96);
+      border:1px solid var(--border);
+      border-radius:20px;
+      padding:28px;
+      box-shadow:0 12px 40px rgba(0,0,0,.35);
     }
 
-    h1 {
-      margin: 0 0 10px;
-      font-size: 28px;
-      text-align: center;
+    h1{
+      margin:0 0 8px;
+      font-size:28px;
     }
 
-    .subtitle {
-      margin: 0 0 24px;
-      text-align: center;
-      color: #cbd5e1;
-      font-size: 14px;
+    p{
+      margin:0 0 20px;
+      color:var(--muted);
     }
 
-    label {
-      display: block;
-      margin: 14px 0 6px;
-      font-size: 14px;
-      color: #cbd5e1;
+    label{
+      display:block;
+      margin:14px 0 8px;
+      font-size:14px;
     }
 
-    input {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: #fff;
-      outline: none;
-      font-size: 14px;
+    input{
+      width:100%;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:#020617;
+      color:var(--text);
+      outline:none;
     }
 
-    input:focus {
-      border-color: #60a5fa;
-      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+    .row{
+      margin-top:16px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
     }
 
-    button {
-      width: 100%;
-      margin-top: 18px;
-      padding: 12px 14px;
-      border: none;
-      border-radius: 12px;
-      background: #2563eb;
-      color: white;
-      font-weight: bold;
-      font-size: 15px;
-      cursor: pointer;
-      transition: 0.2s;
+    button{
+      border:none;
+      background:var(--primary);
+      color:white;
+      padding:12px 16px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:700;
     }
 
-    button:hover {
-      background: #1d4ed8;
+    .msg{
+      margin-top:16px;
+      padding:14px 16px;
+      border-radius:14px;
+      background:var(--danger-bg);
+      border:1px solid var(--danger-border);
+      display:none;
     }
 
-    .secondary-btn {
-      background: #334155;
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:14px;
+      line-height:1.5;
     }
 
-    .secondary-btn:hover {
-      background: #475569;
-    }
-
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 20px 0;
-      color: #94a3b8;
-      font-size: 13px;
-    }
-
-    .divider::before,
-    .divider::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: rgba(255, 255, 255, 0.12);
-    }
-
-    .small {
-      margin-top: 14px;
-      color: #94a3b8;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .message {
-      margin-top: 16px;
-      padding: 12px;
-      border-radius: 12px;
-      font-size: 14px;
-      display: none;
-    }
-
-    .message.error {
-      display: block;
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #fecaca;
-    }
-
-    .message.success {
-      display: block;
-      background: rgba(34, 197, 94, 0.12);
-      border: 1px solid rgba(34, 197, 94, 0.3);
-      color: #bbf7d0;
-    }
-
-    .google-wrap {
-      display: flex;
-      justify-content: center;
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .top-actions button {
-      margin-top: 0;
+    #googleBtnWrap{
+      margin-top:16px;
+      display:flex;
+      justify-content:center;
     }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>Minecraft Host LORD</h1>
-    <p class="subtitle">Entre no painel do seu host Minecraft</p>
+    <h1>Host LORD</h1>
+    <p>Entre com sua conta Google para acessar o painel.</p>
 
-    <label for="apiBase">Endereço do backend</label>
-    <input
-      id="apiBase"
-      type="text"
-      placeholder="Ex: http://192.168.0.10:3000"
-    />
+    <label for="backendUrl">URL do backend</label>
+    <input id="backendUrl" placeholder="http://192.168.0.10:3000" />
 
-    <div class="top-actions">
-      <button type="button" class="secondary-btn" onclick="usarAtual()">
-        Usar endereço atual
-      </button>
-      <button type="button" class="secondary-btn" onclick="testarConexao()">
-        Testar conexão
-      </button>
+    <div class="row">
+      <button onclick="saveBackendUrl()">Salvar backend</button>
+      <button onclick="goPanel()">Abrir painel</button>
     </div>
 
-    <label for="username">Usuário</label>
-    <input id="username" type="text" placeholder="Digite seu usuário" />
+    <div id="googleBtnWrap"></div>
 
-    <label for="password">Senha</label>
-    <input id="password" type="password" placeholder="Digite sua senha" />
+    <div id="msg" class="msg"></div>
 
-    <button type="button" onclick="login()">Entrar</button>
-
-    <div class="divider">ou</div>
-
-    <div class="google-wrap">
-      <div
-        id="g_id_onload"
-        data-client_id="735004448085-15s049l8cd9ged1d9gva134t8hoc39gm.apps.googleusercontent.com"
-        data-context="signin"
-        data-ux_mode="popup"
-        data-callback="handleGoogleResponse"
-        data-auto_prompt="false">
-      </div>
-
-      <div
-        class="g_id_signin"
-        data-type="standard"
-        data-size="large"
-        data-theme="outline"
-        data-text="signin_with"
-        data-shape="pill"
-        data-logo_alignment="left">
-      </div>
+    <div class="small">
+      O backend precisa estar rodando no seu PC/VPS.  
+      Exemplo: <code>http://192.168.0.10:3000</code>
     </div>
-
-    <div id="messageBox" class="message"></div>
-
-    <p class="small">
-      Dica: se o painel estiver no mesmo PC do backend, pode deixar o campo do backend
-      no endereço atual. Se estiver em outro dispositivo da rede, use o IP local do PC
-      onde o Node está rodando.
-    </p>
   </div>
 
   <script>
-    function normalizeBaseUrl(url) {
-      return String(url || "").trim().replace(/\/+$/, "");
+    const GOOGLE_CLIENT_ID = "SEU_GOOGLE_CLIENT_ID_AQUI";
+
+    const backendInput = document.getElementById("backendUrl");
+    const msg = document.getElementById("msg");
+
+    backendInput.value = localStorage.getItem("backend_url") || "http://localhost:3000";
+
+    function showError(text){
+      msg.style.display = "block";
+      msg.textContent = text;
     }
 
-    function getApiBase() {
-      const inputValue = document.getElementById("apiBase")?.value?.trim();
-      if (inputValue) return normalizeBaseUrl(inputValue);
-
-      const saved = localStorage.getItem("apiBase");
-      if (saved) return normalizeBaseUrl(saved);
-
-      return normalizeBaseUrl(window.location.origin);
+    function clearError(){
+      msg.style.display = "none";
+      msg.textContent = "";
     }
 
-    function setMessage(text, type = "error") {
-      const box = document.getElementById("messageBox");
-      box.className = `message ${type}`;
-      box.textContent = text;
-    }
-
-    function clearMessage() {
-      const box = document.getElementById("messageBox");
-      box.className = "message";
-      box.textContent = "";
-    }
-
-    function usarAtual() {
-      document.getElementById("apiBase").value = window.location.origin;
-      setMessage("Endereço atual aplicado.", "success");
-    }
-
-    async function testarConexao() {
-      clearMessage();
-      const apiBase = getApiBase();
-
-      try {
-        const res = await fetch(`${apiBase}/api/ping`);
-        const data = await res.json();
-
-        if (!res.ok || !data.ok) {
-          throw new Error(data.error || "Falha no ping.");
-        }
-
-        localStorage.setItem("apiBase", apiBase);
-        setMessage(`Conexão OK com ${apiBase}`, "success");
-      } catch (err) {
-        setMessage(`Não foi possível conectar em ${apiBase}`);
-      }
-    }
-
-    async function login() {
-      clearMessage();
-
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const apiBase = getApiBase();
-
-      if (!username || !password) {
-        setMessage("Preencha usuário e senha.");
+    function saveBackendUrl(){
+      const url = backendInput.value.trim();
+      if(!url){
+        showError("Preencha a URL do backend.");
         return;
       }
+      localStorage.setItem("backend_url", url);
+      clearError();
+      alert("Backend salvo.");
+    }
 
-      try {
-        const res = await fetch(`${apiBase}/api/login`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ username, password })
-        });
+    function goPanel(){
+      window.location.href = "panel.html";
+    }
 
-        const data = await res.json().catch(() => ({}));
+    async function handleGoogleCredentialResponse(response){
+      try{
+        clearError();
 
-        if (!res.ok || !data.ok) {
-          setMessage(data.error || "Falha no login.");
+        const backend = (localStorage.getItem("backend_url") || backendInput.value || "").trim();
+        if(!backend){
+          showError("Defina a URL do backend antes de entrar.");
           return;
         }
 
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("apiBase", apiBase);
-        localStorage.setItem("username", data.user?.username || username);
+        localStorage.setItem("backend_url", backend);
 
-        window.location.href = "panel.html";
-      } catch (err) {
-        setMessage("Erro ao conectar com o backend.");
-      }
-    }
+        if(!response || !response.credential){
+          showError("O Google não retornou o token de login.");
+          return;
+        }
 
-    async function handleGoogleResponse(response) {
-      clearMessage();
-
-      const apiBase = getApiBase();
-
-      if (!response || !response.credential) {
-        setMessage("Login Google inválido.");
-        return;
-      }
-
-      try {
-        const res = await fetch(`${apiBase}/api/google-login`, {
+        const res = await fetch(backend + "/api/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            credential: response.credential
+            token: response.credential
           })
         });
 
-        const data = await res.json().catch(() => ({}));
+        const data = await res.json();
 
-        if (!res.ok || !data.ok) {
-          setMessage(data.error || "Falha no login Google.");
-          return;
+        if(!res.ok || !data.ok){
+          throw new Error(data.error || "Falha no login.");
         }
 
         localStorage.setItem("token", data.token);
-        localStorage.setItem("apiBase", apiBase);
-        localStorage.setItem("username", data.user?.username || "Google User");
+        localStorage.setItem("user", JSON.stringify(data.user || {}));
 
         window.location.href = "panel.html";
-      } catch (err) {
-        setMessage("Erro ao conectar com o backend no login Google.");
+      }catch(err){
+        showError(err.message || "Erro no login.");
       }
     }
 
-    document.getElementById("password").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        login();
-      }
-    });
+    window.handleGoogleCredentialResponse = handleGoogleCredentialResponse;
 
-    window.addEventListener("load", () => {
-      const saved = localStorage.getItem("apiBase");
-      document.getElementById("apiBase").value = saved || window.location.origin;
-    });
+    window.onload = () => {
+      if(!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === "SEU_GOOGLE_CLIENT_ID_AQUI"){
+        showError("Coloque seu GOOGLE_CLIENT_ID no login.html.");
+        return;
+      }
+
+      google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleGoogleCredentialResponse
+      });
+
+      google.accounts.id.renderButton(
+        document.getElementById("googleBtnWrap"),
+        {
+          theme: "outline",
+          size: "large",
+          text: "signin_with",
+          shape: "pill",
+          width: 280
+        }
+      );
+    };
   </script>
 </body>
 </html>
