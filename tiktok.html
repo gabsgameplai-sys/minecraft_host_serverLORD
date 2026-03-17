@@ -9,10 +9,12 @@
 :root{
   --bg:#0f172a;
   --bg-soft:#020617;
-  --card:#111827;
+  --card:#020617;
   --text:#ffffff;
   --input:#020617;
   --border:#334155;
+  --nav:#111827;
+  --nav-hover:#2563eb;
   --primary:#2563eb;
   --primary-hover:#1d4ed8;
   --success:#22c55e;
@@ -27,6 +29,8 @@ html[data-theme="light"]{
   --text:#0f172a;
   --input:#ffffff;
   --border:#cbd5e1;
+  --nav:#e2e8f0;
+  --nav-hover:#2563eb;
   --primary:#2563eb;
   --primary-hover:#1d4ed8;
   --success:#22c55e;
@@ -41,6 +45,8 @@ html[data-theme="lord"]{
   --text:#f5e6c8;
   --input:#2a1b0c;
   --border:#8b5e2b;
+  --nav:#4a3117;
+  --nav-hover:#ffd54a;
   --primary:#ffd54a;
   --primary-hover:#f5c518;
   --success:#8bc34a;
@@ -55,6 +61,8 @@ html[data-theme="creeper"]{
   --text:#d8ffd8;
   --input:#102510;
   --border:#2e7d32;
+  --nav:#244424;
+  --nav-hover:#4caf50;
   --primary:#4caf50;
   --primary-hover:#43a047;
   --success:#00e676;
@@ -67,20 +75,45 @@ html[data-theme="creeper"]{
 }
 
 body{
+  margin:0;
   font-family:Arial,sans-serif;
   background:var(--bg);
   color:var(--text);
-  margin:0;
-  padding:40px 20px;
+  display:flex;
+  min-height:100vh;
 }
 
-.container{
-  max-width:950px;
-  margin:auto;
+.sidebar{
+  width:230px;
+  background:var(--bg-soft);
+  padding:20px;
 }
 
-h1{
+.sidebar h2{
   margin-bottom:20px;
+}
+
+.nav-btn{
+  width:100%;
+  padding:12px;
+  margin-bottom:10px;
+  background:var(--nav);
+  border:none;
+  color:var(--text);
+  cursor:pointer;
+  border-radius:6px;
+  text-align:left;
+}
+
+.nav-btn:hover{
+  background:var(--nav-hover);
+  color:#fff;
+}
+
+.main{
+  flex:1;
+  padding:30px;
+  overflow:auto;
 }
 
 .card{
@@ -150,17 +183,29 @@ button{
 </head>
 <body>
 
-<div class="container">
-  <h1>🎵 TikTok LIVE</h1>
+<div class="sidebar">
+  <h2>👑 Host LORD</h2>
 
+  <button class="nav-btn" onclick="window.location='panel.html'">🏠 Dashboard</button>
+  <button class="nav-btn" onclick="window.location='panel.html'">🖥 Console</button>
+  <button class="nav-btn" onclick="window.location='panel.html'">⚙️ Config</button>
+  <button class="nav-btn" onclick="window.location='panel.html'">🧩 Plugins</button>
+  <button class="nav-btn" onclick="window.location='panel.html'">📁 Arquivos</button>
+  <button class="nav-btn" onclick="window.location='tiktok.html'">🎵 TikTok LIVE</button>
+  <button class="nav-btn" onclick="window.location='temas.html'">🎨 Temas</button>
+  <button class="nav-btn" onclick="window.location='panel.html'">👤 Conta</button>
+  <button class="nav-btn" onclick="logout()">🚪 Sair</button>
+</div>
+
+<div class="main">
   <div class="card">
-    <h3>🎵 Conectar LIVE</h3>
+    <h1>🎵 TikTok LIVE</h1>
 
+    <label>@ do TikTok</label>
     <input id="tiktokUser" placeholder="@usuario">
 
     <button class="connect" onclick="connect()">Conectar</button>
     <button class="disconnect" onclick="disconnect()">Desconectar</button>
-    <button class="secondary" onclick="window.location='panel.html'">⬅ Voltar</button>
 
     <p>Status: <span id="status">desconectado</span></p>
   </div>
@@ -196,90 +241,99 @@ button{
 </div>
 
 <script>
-const token=localStorage.getItem("token");
-const API=location.origin;
-let eventSource=null;
+const token = localStorage.getItem("token");
+const API = location.origin;
+let eventSource = null;
 
 function applyTheme(theme){
-  const allowed=["dark","light","lord","creeper"];
-  const finalTheme=allowed.includes(theme)?theme:"dark";
-  document.documentElement.setAttribute("data-theme",finalTheme);
+  const allowed = ["dark","light","lord","creeper"];
+  const finalTheme = allowed.includes(theme) ? theme : "dark";
+  document.documentElement.setAttribute("data-theme", finalTheme);
 }
 
 function loadSavedTheme(){
-  const saved=localStorage.getItem("theme")||"dark";
+  const saved = localStorage.getItem("theme") || "dark";
   applyTheme(saved);
 }
 
+function logout(){
+  localStorage.removeItem("token");
+  localStorage.removeItem("username");
+  location = "login.html";
+}
+
 function log(text){
-  const box=document.getElementById("events");
-  const current=box.innerHTML==="Aguardando eventos..."?"":box.innerHTML+"<br>";
-  box.innerHTML=current+text;
-  box.scrollTop=box.scrollHeight;
+  const box = document.getElementById("events");
+  const current = box.innerHTML === "Aguardando eventos..." ? "" : box.innerHTML + "<br>";
+  box.innerHTML = current + text;
+  box.scrollTop = box.scrollHeight;
 }
 
 async function connect(){
-  const user=document.getElementById("tiktokUser").value.trim();
+  const user = document.getElementById("tiktokUser").value.trim();
 
-  const res=await fetch(API+"/api/tiktoklive/connect",{
+  const res = await fetch(API + "/api/tiktoklive/connect", {
     method:"POST",
     headers:{
       "Content-Type":"application/json",
-      "Authorization":"Bearer "+token
+      "Authorization":"Bearer " + token
     },
-    body:JSON.stringify({uniqueId:user})
+    body:JSON.stringify({ uniqueId:user })
   });
 
-  const data=await res.json();
+  const data = await res.json();
 
-  if(data.error) return alert(data.error);
+  if (data.error) {
+    alert(data.error);
+    return;
+  }
 
-  document.getElementById("status").innerText="conectado";
+  document.getElementById("status").innerText = "conectado";
   startStream();
 }
 
 async function disconnect(){
-  await fetch(API+"/api/tiktoklive/disconnect",{
+  await fetch(API + "/api/tiktoklive/disconnect", {
     method:"POST",
     headers:{
-      "Authorization":"Bearer "+token
+      "Authorization":"Bearer " + token
     }
   });
 
-  document.getElementById("status").innerText="desconectado";
+  document.getElementById("status").innerText = "desconectado";
 
-  if(eventSource) eventSource.close();
+  if (eventSource) eventSource.close();
 }
 
 function startStream(){
-  if(eventSource) eventSource.close();
+  if (eventSource) eventSource.close();
 
-  eventSource=new EventSource(API+"/api/tiktoklive/stream?token="+encodeURIComponent(token));
+  eventSource = new EventSource(API + "/api/tiktoklive/stream?token=" + encodeURIComponent(token));
 
-  eventSource.onmessage=(msg)=>{
-    const event=JSON.parse(msg.data);
+  eventSource.onmessage = (msg) => {
+    const event = JSON.parse(msg.data);
 
-    if(event.type==="hello") return;
-    if(event.type==="chat") log("💬 "+(event.data.nickname||"Usuário")+": "+(event.data.comment||""));
-    if(event.type==="follow") log("➕ "+(event.data.nickname||"Usuário")+" seguiu");
-    if(event.type==="gift") log("🎁 "+(event.data.nickname||"Usuário")+" enviou "+(event.data.giftName||"presente"));
-    if(event.type==="like") log("❤️ "+(event.data.nickname||"Usuário")+" curtiu");
-    if(event.type==="share") log("🔄 "+(event.data.nickname||"Usuário")+" compartilhou");
-    if(event.type==="member") log("👋 "+(event.data.nickname||"Usuário")+" entrou");
-    if(event.type==="error") log("❌ Erro: "+(event.data.message||"desconhecido"));
+    if (event.type === "hello") return;
+    if (event.type === "chat") log("💬 " + (event.data.nickname || "Usuário") + ": " + (event.data.comment || ""));
+    if (event.type === "follow") log("➕ " + (event.data.nickname || "Usuário") + " seguiu");
+    if (event.type === "gift") log("🎁 " + (event.data.nickname || "Usuário") + " enviou " + (event.data.giftName || "presente"));
+    if (event.type === "like") log("❤️ " + (event.data.nickname || "Usuário") + " curtiu");
+    if (event.type === "share") log("🔄 " + (event.data.nickname || "Usuário") + " compartilhou");
+    if (event.type === "member") log("👋 " + (event.data.nickname || "Usuário") + " entrou");
+    if (event.type === "error") log("❌ Erro: " + (event.data.message || "desconhecido"));
   };
 }
 
 async function addRule(){
-  const eventType=document.getElementById("eventType").value;
-  const everyCount=document.getElementById("eventCount").value;
-  const command=document.getElementById("mcCommand").value.trim();
+  const eventType = document.getElementById("eventType").value;
+  const everyCount = document.getElementById("eventCount").value;
+  const command = document.getElementById("mcCommand").value.trim();
 
-  const res=await fetch(API+"/api/tiktoklive/rules",{
+  const res = await fetch(API + "/api/tiktoklive/rules", {
     method:"POST",
     headers:{
       "Content-Type":"application/json",
-      "Authorization":"Bearer "+token
+      "Authorization":"Bearer " + token
     },
     body:JSON.stringify({
       eventType,
@@ -288,107 +342,107 @@ async function addRule(){
     })
   });
 
-  const data=await res.json();
-  alert(data.message||data.error||"Regra criada");
+  const data = await res.json();
+  alert(data.message || data.error || "Regra criada");
   loadRules();
 }
 
 async function deleteRule(id){
-  const res=await fetch(API+"/api/tiktoklive/rules/"+encodeURIComponent(id),{
+  const res = await fetch(API + "/api/tiktoklive/rules/" + encodeURIComponent(id), {
     method:"DELETE",
     headers:{
-      "Authorization":"Bearer "+token
+      "Authorization":"Bearer " + token
     }
   });
 
-  const data=await res.json();
-  alert(data.message||data.error||"Regra removida");
+  const data = await res.json();
+  alert(data.message || data.error || "Regra removida");
   loadRules();
 }
 
 async function toggleRule(rule){
-  const res=await fetch(API+"/api/tiktoklive/rules/"+encodeURIComponent(rule.id),{
+  const res = await fetch(API + "/api/tiktoklive/rules/" + encodeURIComponent(rule.id), {
     method:"PUT",
     headers:{
       "Content-Type":"application/json",
-      "Authorization":"Bearer "+token
+      "Authorization":"Bearer " + token
     },
     body:JSON.stringify({
-      enabled:!rule.enabled
+      enabled: !rule.enabled
     })
   });
 
-  const data=await res.json();
-  alert(data.message||data.error||"Regra atualizada");
+  const data = await res.json();
+  alert(data.message || data.error || "Regra atualizada");
   loadRules();
 }
 
 async function editRule(rule){
-  const newEventType=prompt("Evento (follow, like, gift, share, member):",rule.eventType);
-  if(!newEventType) return;
+  const newEventType = prompt("Evento (follow, like, gift, share, member):", rule.eventType);
+  if (!newEventType) return;
 
-  const newEveryCount=prompt("Executar a cada quantos eventos?",rule.everyCount);
-  if(!newEveryCount) return;
+  const newEveryCount = prompt("Executar a cada quantos eventos?", rule.everyCount);
+  if (!newEveryCount) return;
 
-  const newCommand=prompt("Comando do Minecraft:",rule.command);
-  if(!newCommand) return;
+  const newCommand = prompt("Comando do Minecraft:", rule.command);
+  if (!newCommand) return;
 
-  const res=await fetch(API+"/api/tiktoklive/rules/"+encodeURIComponent(rule.id),{
+  const res = await fetch(API + "/api/tiktoklive/rules/" + encodeURIComponent(rule.id), {
     method:"PUT",
     headers:{
       "Content-Type":"application/json",
-      "Authorization":"Bearer "+token
+      "Authorization":"Bearer " + token
     },
     body:JSON.stringify({
-      eventType:newEventType.trim(),
-      everyCount:Number(newEveryCount),
-      command:newCommand.trim()
+      eventType: newEventType.trim(),
+      everyCount: Number(newEveryCount),
+      command: newCommand.trim()
     })
   });
 
-  const data=await res.json();
-  alert(data.message||data.error||"Regra atualizada");
+  const data = await res.json();
+  alert(data.message || data.error || "Regra atualizada");
   loadRules();
 }
 
 async function loadRules(){
-  const res=await fetch(API+"/api/tiktoklive/rules",{
-    headers:{Authorization:"Bearer "+token}
+  const res = await fetch(API + "/api/tiktoklive/rules", {
+    headers:{ Authorization:"Bearer " + token }
   });
 
-  const data=await res.json();
+  const data = await res.json();
 
-  const list=document.getElementById("rules");
-  list.innerHTML="";
+  const list = document.getElementById("rules");
+  list.innerHTML = "";
 
-  if(!data.rules || !data.rules.length){
-    list.innerHTML='<div class="rule">Nenhuma regra criada.</div>';
+  if (!data.rules || !data.rules.length){
+    list.innerHTML = '<div class="rule">Nenhuma regra criada.</div>';
     return;
   }
 
-  data.rules.forEach(rule=>{
-    const div=document.createElement("div");
-    div.className="rule";
+  data.rules.forEach(rule => {
+    const div = document.createElement("div");
+    div.className = "rule";
 
-    div.innerHTML=`
+    div.innerHTML = `
       <b>${rule.eventType}</b> — a cada ${rule.everyCount}<br>
       ${rule.command}<br><br>
     `;
 
-    const editBtn=document.createElement("button");
-    editBtn.className="secondary";
-    editBtn.textContent="Editar";
-    editBtn.onclick=()=>editRule(rule);
+    const editBtn = document.createElement("button");
+    editBtn.className = "secondary";
+    editBtn.textContent = "Editar";
+    editBtn.onclick = () => editRule(rule);
 
-    const toggleBtn=document.createElement("button");
-    toggleBtn.className="secondary";
-    toggleBtn.textContent=rule.enabled?"Desativar":"Ativar";
-    toggleBtn.onclick=()=>toggleRule(rule);
+    const toggleBtn = document.createElement("button");
+    toggleBtn.className = "secondary";
+    toggleBtn.textContent = rule.enabled ? "Desativar" : "Ativar";
+    toggleBtn.onclick = () => toggleRule(rule);
 
-    const delBtn=document.createElement("button");
-    delBtn.className="disconnect";
-    delBtn.textContent="Excluir";
-    delBtn.onclick=()=>deleteRule(rule.id);
+    const delBtn = document.createElement("button");
+    delBtn.className = "disconnect";
+    delBtn.textContent = "Excluir";
+    delBtn.onclick = () => deleteRule(rule.id);
 
     div.appendChild(editBtn);
     div.appendChild(toggleBtn);
@@ -398,7 +452,7 @@ async function loadRules(){
   });
 }
 
-window.addEventListener("load",()=>{
+window.addEventListener("load", () => {
   loadSavedTheme();
   loadRules();
 });
