@@ -1,1710 +1,340 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel - Minecraft Host LORD</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --bg-soft: #111827;
-      --bg-card: #111827;
-      --bg-input: #0f172a;
-      --bg-hover: #1e293b;
-      --text: #e2e8f0;
-      --muted: #94a3b8;
-      --border: rgba(255, 255, 255, 0.08);
-      --input-border: #334155;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --danger: #dc2626;
-      --danger-hover: #b91c1c;
-      --success: #4ade80;
-      --error: #f87171;
-      --console-bg: #020617;
-      --console-text: #d1fae5;
-      --shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-    }
 
-    html[data-theme="light"] {
-      --bg: #eef2ff;
-      --bg-soft: #f8fafc;
-      --bg-card: #ffffff;
-      --bg-input: #ffffff;
-      --bg-hover: #e2e8f0;
-      --text: #0f172a;
-      --muted: #475569;
-      --border: rgba(15, 23, 42, 0.12);
-      --input-border: #cbd5e1;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --danger: #dc2626;
-      --danger-hover: #b91c1c;
-      --success: #16a34a;
-      --error: #dc2626;
-      --console-bg: #f8fafc;
-      --console-text: #0f172a;
-      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-    }
+<meta charset="UTF-8">
+<title>Host LORD</title>
 
-    * {
-      box-sizing: border-box;
-    }
+<style>
 
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
+body{
+margin:0;
+font-family:Arial;
+background:#0f172a;
+color:white;
+display:flex;
+height:100vh;
+}
 
-    .layout {
-      display: grid;
-      grid-template-columns: 280px 1fr;
-      min-height: 100vh;
-    }
+.sidebar{
+width:230px;
+background:#020617;
+padding:20px;
+}
 
-    .sidebar {
-      background: var(--bg-soft);
-      border-right: 1px solid var(--border);
-      padding: 20px;
-    }
+.sidebar h2{
+margin-bottom:20px;
+}
 
-    .brand {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
+.nav-btn{
+width:100%;
+padding:12px;
+margin-bottom:10px;
+background:#111827;
+border:none;
+color:white;
+cursor:pointer;
+border-radius:6px;
+}
 
-    .subbrand {
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 24px;
-    }
+.nav-btn:hover{
+background:#2563eb;
+}
 
-    .user-box {
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 18px;
-      border: 1px solid var(--border);
-    }
+.main{
+flex:1;
+padding:30px;
+}
 
-    html[data-theme="light"] .user-box {
-      background: rgba(15, 23, 42, 0.03);
-    }
+.card{
+background:#020617;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+}
 
-    .sidebar-profile {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+.console{
+background:black;
+height:350px;
+overflow:auto;
+padding:10px;
+font-family:monospace;
+font-size:13px;
+}
 
-    .sidebar-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--input-border);
-      background: var(--bg-input);
-    }
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+margin-bottom:10px;
+background:#020617;
+border:1px solid #334155;
+color:white;
+}
 
-    .sidebar-avatar-fallback {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg-hover);
-      color: var(--text);
-      font-weight: bold;
-      border: 2px solid var(--input-border);
-    }
+button{
+padding:10px 16px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
 
-    .nav-btn {
-      width: 100%;
-      text-align: left;
-      padding: 12px 14px;
-      margin-bottom: 10px;
-      border: 1px solid var(--input-border);
-      border-radius: 12px;
-      background: var(--bg-hover);
-      color: var(--text);
-      cursor: pointer;
-      transition: 0.2s;
-    }
+.green{background:#22c55e}
+.red{background:#dc2626}
+.blue{background:#2563eb}
 
-    .nav-btn:hover,
-    .nav-btn.active {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #fff;
-    }
+</style>
 
-    .main {
-      padding: 24px;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-
-    .page-title {
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    button {
-      padding: 10px 14px;
-      border: none;
-      border-radius: 12px;
-      background: var(--primary);
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: var(--primary-hover);
-    }
-
-    .danger {
-      background: var(--danger);
-    }
-
-    .danger:hover {
-      background: var(--danger-hover);
-    }
-
-    .secondary {
-      background: var(--bg-hover);
-      color: var(--text);
-      border: 1px solid var(--input-border);
-    }
-
-    .secondary:hover {
-      background: var(--input-border);
-      color: #fff;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 18px;
-      margin-bottom: 22px;
-    }
-
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: var(--shadow);
-    }
-
-    .card h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      font-size: 17px;
-    }
-
-    .card p {
-      margin: 6px 0;
-      color: var(--text);
-    }
-
-    .status-online {
-      color: var(--success);
-      font-weight: bold;
-    }
-
-    .status-offline {
-      color: var(--error);
-      font-weight: bold;
-    }
-
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
-    }
-
-    .console-box {
-      background: var(--console-bg);
-      color: var(--console-text);
-      border: 1px solid var(--input-border);
-      border-radius: 14px;
-      padding: 14px;
-      min-height: 360px;
-      max-height: 480px;
-      overflow: auto;
-      font-family: Consolas, monospace;
-      font-size: 13px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .console-controls {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .console-controls input {
-      flex: 1;
-    }
-
-    input,
-    textarea,
-    select {
-      width: 100%;
-      padding: 11px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--input-border);
-      background: var(--bg-input);
-      color: var(--text);
-      outline: none;
-      margin-top: 6px;
-    }
-
-    textarea {
-      min-height: 320px;
-      resize: vertical;
-      font-family: Consolas, monospace;
-      font-size: 13px;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .form-row {
-      margin-bottom: 14px;
-    }
-
-    .small-note {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .file-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .file-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      background: var(--bg-input);
-      border: 1px solid var(--input-border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      flex-wrap: wrap;
-    }
-
-    .file-item-left {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .tag {
-      display: inline-block;
-      font-size: 12px;
-      color: var(--text);
-      background: var(--bg-hover);
-      border-radius: 999px;
-      padding: 4px 8px;
-    }
-
-    .path-box {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-
-    .path-box input {
-      flex: 1;
-      margin-top: 0;
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
-    .message {
-      margin-bottom: 16px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      display: none;
-    }
-
-    .message.error {
-      display: block;
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      color: #fecaca;
-    }
-
-    .message.success {
-      display: block;
-      background: rgba(34, 197, 94, 0.12);
-      border: 1px solid rgba(34, 197, 94, 0.25);
-      color: #bbf7d0;
-    }
-
-    .account-layout {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 18px;
-    }
-
-    .avatar-preview-wrap {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-
-    .avatar-preview {
-      width: 96px;
-      height: 96px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid var(--input-border);
-      background: var(--bg-input);
-    }
-
-    .avatar-fallback-big {
-      width: 96px;
-      height: 96px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg-hover);
-      color: var(--text);
-      font-size: 28px;
-      font-weight: bold;
-      border: 3px solid var(--input-border);
-    }
-
-    code {
-      background: rgba(255,255,255,0.08);
-      padding: 2px 6px;
-      border-radius: 6px;
-      font-family: Consolas, monospace;
-    }
-
-    html[data-theme="light"] code {
-      background: rgba(15,23,42,0.08);
-    }
-
-    @media (max-width: 900px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .grid-2,
-      .account-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .console-controls {
-        flex-direction: column;
-      }
-    }
-  </style>
 </head>
+
 <body>
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="brand">Host LORD</div>
-      <div class="subbrand">Painel Minecraft local</div>
-
-      <div class="user-box">
-        <div class="sidebar-profile">
-          <img id="sidebarAvatar" class="sidebar-avatar" style="display:none;" alt="Avatar" />
-          <div id="sidebarAvatarFallback" class="sidebar-avatar-fallback">U</div>
-          <div>
-            <strong id="userName">Usuário</strong>
-            <div class="muted" id="apiBaseView"></div>
-          </div>
-        </div>
-      </div>
-
-      <button class="nav-btn active" onclick="showSection('dashboard', this)">Dashboard</button>
-      <button class="nav-btn" onclick="showSection('console', this)">Console</button>
-      <button class="nav-btn" onclick="showSection('config', this)">Configuração</button>
-      <button class="nav-btn" onclick="showSection('plugins', this)">Plugins</button>
-      <button class="nav-btn" onclick="showSection('files', this)">Arquivos</button>
-      <button class="nav-btn" onclick="showSection('tiktoklive', this)">TikTok LIVE</button>
-      <button class="nav-btn" onclick="showSection('account', this)">Conta</button>
-
-      <div style="margin-top:20px;">
-        <button class="danger" style="width:100%;" onclick="logout()">Sair</button>
-      </div>
-    </aside>
-
-    <main class="main">
-      <div class="topbar">
-        <div class="page-title">Painel do Servidor</div>
-        <div class="top-actions">
-          <button onclick="startServer()">Iniciar</button>
-          <button class="secondary" onclick="restartServer()">Reiniciar</button>
-          <button class="danger" onclick="stopServer()">Parar</button>
-        </div>
-      </div>
-
-      <div id="messageBox" class="message"></div>
-
-      <section id="dashboard" class="section active">
-        <div class="cards">
-          <div class="card">
-            <h3>Status do servidor</h3>
-            <p id="serverStatus" class="status-offline">● Offline</p>
-            <p>PID: <span id="serverPid">-</span></p>
-          </div>
-
-          <div class="card">
-            <h3>Conexão Minecraft</h3>
-            <p>IP/Porta: <strong id="serverIP">-</strong></p>
-            <p class="small-note">Use esse endereço no cliente Minecraft dentro da sua rede local.</p>
-          </div>
-
-          <div class="card">
-            <h3>Acesso do painel</h3>
-            <p class="small-note">Use o endereço abaixo para abrir o dashboard na sua rede local.</p>
-            <div class="path-box">
-              <input id="publicUrlBox" type="text" readonly />
-              <button type="button" class="secondary" onclick="copyPublicUrl()">Copiar</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="console" class="section">
-        <div class="card">
-          <h3>Console do servidor</h3>
-          <div id="consoleArea" class="console-box">Carregando console...</div>
-          <div class="console-controls">
-            <input
-              id="consoleCommand"
-              type="text"
-              placeholder="Digite um comando, ex: say Olá"
-              onkeydown="handleConsoleEnter(event)"
-            />
-            <button onclick="sendCommand()">Enviar</button>
-          </div>
-        </div>
-      </section>
-
-      <section id="config" class="section">
-        <div class="card">
-          <h3>Configuração do servidor</h3>
-          <div class="grid-2">
-            <div class="form-row">
-              <label>MOTD</label>
-              <input id="cfg_motd" type="text" />
-            </div>
-            <div class="form-row">
-              <label>Gamemode</label>
-              <select id="cfg_gamemode">
-                <option value="survival">survival</option>
-                <option value="creative">creative</option>
-                <option value="adventure">adventure</option>
-                <option value="spectator">spectator</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <label>Dificuldade</label>
-              <select id="cfg_difficulty">
-                <option value="peaceful">peaceful</option>
-                <option value="easy">easy</option>
-                <option value="normal">normal</option>
-                <option value="hard">hard</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <label>Máximo de players</label>
-              <input id="cfg_maxplayers" type="number" />
-            </div>
-            <div class="form-row">
-              <label>PVP</label>
-              <select id="cfg_pvp">
-                <option value="true">true</option>
-                <option value="false">false</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <label>Online mode</label>
-              <select id="cfg_online_mode">
-                <option value="true">true</option>
-                <option value="false">false</option>
-              </select>
-            </div>
-          </div>
-
-          <button onclick="saveConfig()">Salvar configuração</button>
-        </div>
-      </section>
-
-      <section id="plugins" class="section">
-        <div class="card">
-          <h3>Upload de plugins</h3>
-          <input id="pluginFile" type="file" accept=".jar" />
-          <div style="margin-top:12px;">
-            <button onclick="uploadPlugin()">Enviar plugin</button>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:18px;">
-          <h3>Plugins instalados</h3>
-          <div id="pluginsList" class="file-list"></div>
-        </div>
-      </section>
-
-      <section id="files" class="section">
-        <div class="card">
-          <h3>Gerenciador de arquivos</h3>
-
-          <div class="path-box">
-            <input id="currentDir" type="text" placeholder="Caminho atual" />
-            <button class="secondary" onclick="loadFiles()">Abrir</button>
-            <button class="secondary" onclick="goUpFolder()">Voltar</button>
-          </div>
-
-          <div style="margin-top:14px;" class="grid-2">
-            <div>
-              <label>Novo arquivo</label>
-              <input id="newFileName" type="text" placeholder="ex: arquivo.txt" />
-              <button style="margin-top:10px;" onclick="createFile()">Criar arquivo</button>
-            </div>
-            <div>
-              <label>Nova pasta</label>
-              <input id="newFolderName" type="text" placeholder="ex: plugins-backup" />
-              <button style="margin-top:10px;" onclick="createFolder()">Criar pasta</button>
-            </div>
-          </div>
-
-          <div id="filesList" class="file-list"></div>
-        </div>
-
-        <div class="card" style="margin-top:18px;">
-          <h3>Editor de arquivo</h3>
-          <div class="form-row">
-            <label>Caminho do arquivo</label>
-            <input id="editFilePath" type="text" readonly />
-          </div>
-          <textarea id="fileEditor" placeholder="Conteúdo do arquivo"></textarea>
-          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
-            <button onclick="saveFile()">Salvar arquivo</button>
-            <button class="secondary" onclick="renameCurrentFile()">Renomear</button>
-            <button class="danger" onclick="deleteCurrentFile()">Excluir</button>
-          </div>
-        </div>
-      </section>
-
-      <section id="tiktoklive" class="section">
-        <div class="cards">
-          <div class="card">
-            <h3>Conectar TikTok LIVE</h3>
-
-            <div class="form-row">
-              <label>@ do TikTok</label>
-              <input id="tiktokUniqueId" type="text" placeholder="ex: gabsgameplai" />
-            </div>
-
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <button onclick="connectTikTokLive()">Conectar</button>
-              <button class="secondary" onclick="disconnectTikTokLive()">Desconectar</button>
-              <button class="secondary" onclick="loadTikTokStatus()">Atualizar</button>
-            </div>
-
-            <p style="margin-top:14px;">
-              Status:
-              <strong id="tiktokStatusText">Desconectado</strong>
-            </p>
-            <p>Sala: <span id="tiktokRoomId">-</span></p>
-            <p>Canal: <span id="tiktokCurrentUser">-</span></p>
-            <p>Último erro: <span id="tiktokLastError">-</span></p>
-          </div>
-
-          <div class="card">
-            <h3>Eventos ao vivo</h3>
-            <div id="tiktokEvents" class="console-box">Aguardando eventos...</div>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:18px;">
-          <h3>Automações TikTok → Minecraft</h3>
-          <p class="small-note">
-            Exemplo: a cada 1 follow executar <code>/summon zombie</code>.
-            Você pode editar depois para <code>/summon creeper</code> ou qualquer outro comando.
-          </p>
-
-          <div class="grid-2">
-            <div class="form-row">
-              <label>Evento</label>
-              <select id="ruleEventType">
-                <option value="follow">Follow</option>
-                <option value="like">Like</option>
-                <option value="gift">Gift</option>
-                <option value="share">Share</option>
-                <option value="member">Member</option>
-              </select>
-            </div>
-
-            <div class="form-row">
-              <label>A cada quantos eventos</label>
-              <input id="ruleEveryCount" type="number" min="1" value="1" />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <label>Comando do Minecraft</label>
-            <input id="ruleCommand" type="text" value="/summon zombie" placeholder="/summon zombie" />
-          </div>
-
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button onclick="createTikTokRule()">Adicionar regra</button>
-            <button class="secondary" onclick="loadTikTokRules()">Atualizar regras</button>
-            <button class="secondary" onclick="resetTikTokCountersUI()">Resetar contadores</button>
-          </div>
-
-          <div style="margin-top:14px;">
-            <strong>Contadores atuais:</strong>
-            <div class="small-note" id="tiktokCountersInfo">-</div>
-          </div>
-
-          <div id="tiktokRulesList" class="file-list"></div>
-        </div>
-      </section>
-
-      <section id="account" class="section">
-        <div class="account-layout">
-          <div class="card">
-            <h3>Perfil</h3>
-
-            <div class="avatar-preview-wrap">
-              <img id="accountAvatar" class="avatar-preview" style="display:none;" alt="Avatar" />
-              <div id="accountAvatarFallback" class="avatar-fallback-big">U</div>
-              <div>
-                <strong id="accountUsername">Usuário</strong>
-                <div class="small-note">Imagem de perfil da conta</div>
-              </div>
-            </div>
-
-            <input id="avatarFile" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,image/*" />
-            <div style="margin-top:12px;">
-              <button onclick="uploadAvatar()">Salvar imagem</button>
-            </div>
-          </div>
-
-          <div>
-            <div class="card" style="margin-bottom:18px;">
-              <h3>Tema</h3>
-              <div class="form-row">
-                <label>Escolha o tema</label>
-                <select id="themeSelect">
-                  <option value="dark">Escuro</option>
-                  <option value="light">Claro</option>
-                </select>
-              </div>
-              <button onclick="saveTheme()">Salvar tema</button>
-            </div>
-
-            <div class="card">
-              <h3>Alterar senha</h3>
-
-              <div class="form-row">
-                <label>Senha atual</label>
-                <input id="currentPassword" type="password" />
-              </div>
-
-              <div class="form-row">
-                <label>Nova senha</label>
-                <input id="newPassword" type="password" />
-              </div>
-
-              <button onclick="changePassword()">Alterar senha</button>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <script>
-    const token = localStorage.getItem("token");
-    let tiktokEventSource = null;
-
-    function normalizeBaseUrl(url) {
-      return String(url || "").trim().replace(/\/+$/, "");
-    }
-
-    function getApiBase() {
-      const saved = localStorage.getItem("apiBase");
-      if (saved) return normalizeBaseUrl(saved);
-      return normalizeBaseUrl(window.location.origin);
-    }
-
-    const API_BASE = getApiBase();
-
-    if (!token) {
-      window.location = "login.html";
-    }
-
-    function setMessage(text, type = "error") {
-      const box = document.getElementById("messageBox");
-      box.className = `message ${type}`;
-      box.textContent = text;
-    }
-
-    function clearMessage() {
-      const box = document.getElementById("messageBox");
-      box.className = "message";
-      box.textContent = "";
-    }
-
-    function escapeHtml(text) {
-      return String(text ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function getUserInitial(username) {
-      return String(username || "U").trim().charAt(0).toUpperCase() || "U";
-    }
-
-    function resolveAssetUrl(url) {
-      if (!url) return "";
-      if (/^https?:\/\//i.test(url)) return url;
-      return `${API_BASE}${url.startsWith("/") ? url : "/" + url}`;
-    }
-
-    function setAvatarUI(avatarUrl, username) {
-      const sidebarImg = document.getElementById("sidebarAvatar");
-      const sidebarFallback = document.getElementById("sidebarAvatarFallback");
-      const accountImg = document.getElementById("accountAvatar");
-      const accountFallback = document.getElementById("accountAvatarFallback");
-      const initial = getUserInitial(username);
-
-      sidebarFallback.textContent = initial;
-      accountFallback.textContent = initial;
-
-      const fullUrl = resolveAssetUrl(avatarUrl);
-
-      if (fullUrl) {
-        sidebarImg.src = fullUrl;
-        accountImg.src = fullUrl;
-        sidebarImg.style.display = "block";
-        accountImg.style.display = "block";
-        sidebarFallback.style.display = "none";
-        accountFallback.style.display = "none";
-      } else {
-        sidebarImg.style.display = "none";
-        accountImg.style.display = "none";
-        sidebarFallback.style.display = "flex";
-        accountFallback.style.display = "flex";
-      }
-    }
-
-    function applyTheme(theme) {
-      const finalTheme = theme === "light" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", finalTheme);
-      const select = document.getElementById("themeSelect");
-      if (select) select.value = finalTheme;
-    }
-
-    function loadSavedTheme() {
-      const saved = localStorage.getItem("theme") || "dark";
-      applyTheme(saved);
-    }
-
-    function saveTheme() {
-      const theme = document.getElementById("themeSelect").value;
-      localStorage.setItem("theme", theme);
-      applyTheme(theme);
-      setMessage("Tema salvo com sucesso.", "success");
-    }
-
-    async function api(path, options = {}) {
-      const headers = {
-        Authorization: `Bearer ${token}`,
-        ...(options.headers || {})
-      };
-
-      if (!(options.body instanceof FormData)) {
-        headers["Content-Type"] = "application/json";
-      }
-
-      const res = await fetch(`${API_BASE}${path}`, {
-        ...options,
-        headers
-      });
-
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        throw new Error(data.error || "Erro na API.");
-      }
-
-      return data;
-    }
-
-    function showSection(sectionId, btn) {
-      document.querySelectorAll(".section").forEach((el) => {
-        el.classList.remove("active");
-      });
-
-      document.querySelectorAll(".nav-btn").forEach((el) => {
-        el.classList.remove("active");
-      });
-
-      document.getElementById(sectionId).classList.add("active");
-      if (btn) btn.classList.add("active");
-
-      clearMessage();
-    }
-
-    async function loadStatus() {
-      try {
-        const data = await api("/api/status");
-
-        const statusEl = document.getElementById("serverStatus");
-        statusEl.textContent = data.online ? "● Online" : "● Offline";
-        statusEl.className = data.online ? "status-online" : "status-offline";
-
-        document.getElementById("serverPid").textContent = data.pid || "-";
-        document.getElementById("serverIP").textContent = `${data.minecraftHost}:${data.minecraftPort}`;
-        document.getElementById("publicUrlBox").value = data.localPanelUrl || API_BASE;
-      } catch (err) {
-        setMessage(err.message || "Erro ao carregar status.");
-      }
-    }
-
-    async function fetchPublicUrl() {
-      try {
-        const data = await api("/api/public-url");
-        document.getElementById("publicUrlBox").value = data.localUrl || API_BASE;
-      } catch (err) {
-        setMessage(err.message || "Erro ao buscar URL.");
-      }
-    }
-
-    function copyPublicUrl() {
-      const box = document.getElementById("publicUrlBox");
-      box.select();
-      box.setSelectionRange(0, 99999);
-      document.execCommand("copy");
-      setMessage("Endereço copiado.", "success");
-    }
-
-    async function loadConsole() {
-      try {
-        const data = await api("/api/console");
-        const consoleDiv = document.getElementById("consoleArea");
-        consoleDiv.innerHTML = data.lines.map(escapeHtml).join("<br>");
-        consoleDiv.scrollTop = consoleDiv.scrollHeight;
-      } catch (err) {
-        document.getElementById("consoleArea").textContent = "Erro ao carregar console.";
-      }
-    }
-
-    async function startServer() {
-      try {
-        const data = await api("/api/start", { method: "POST" });
-        setMessage(data.message || "Servidor iniciando.", "success");
-        await loadStatus();
-      } catch (err) {
-        setMessage(err.message || "Erro ao iniciar servidor.");
-      }
-    }
-
-    async function stopServer() {
-      try {
-        await api("/api/stop", { method: "POST" });
-        setMessage("Servidor parando.", "success");
-        await loadStatus();
-      } catch (err) {
-        setMessage(err.message || "Erro ao parar servidor.");
-      }
-    }
-
-    async function restartServer() {
-      try {
-        const data = await api("/api/restart", { method: "POST" });
-        setMessage(data.message || "Servidor reiniciando.", "success");
-        await loadStatus();
-      } catch (err) {
-        setMessage(err.message || "Erro ao reiniciar servidor.");
-      }
-    }
-
-    async function sendCommand() {
-      const input = document.getElementById("consoleCommand");
-      const command = input.value.trim();
-
-      if (!command) {
-        setMessage("Digite um comando.");
-        return;
-      }
-
-      try {
-        await api("/api/command", {
-          method: "POST",
-          body: JSON.stringify({ command })
-        });
-
-        input.value = "";
-        await loadConsole();
-      } catch (err) {
-        setMessage(err.message || "Erro ao enviar comando.");
-      }
-    }
-
-    function handleConsoleEnter(event) {
-      if (event.key === "Enter") {
-        sendCommand();
-      }
-    }
-
-    async function loadConfig() {
-      try {
-        const data = await api("/api/server-config");
-        const c = data.config || {};
-
-        document.getElementById("cfg_motd").value = c["motd"] || "";
-        document.getElementById("cfg_gamemode").value = c["gamemode"] || "survival";
-        document.getElementById("cfg_difficulty").value = c["difficulty"] || "easy";
-        document.getElementById("cfg_maxplayers").value = c["max-players"] || 20;
-        document.getElementById("cfg_pvp").value = c["pvp"] || "true";
-        document.getElementById("cfg_online_mode").value = c["online-mode"] || "true";
-      } catch (err) {
-        setMessage(err.message || "Erro ao carregar configuração.");
-      }
-    }
-
-    async function saveConfig() {
-      try {
-        const config = {
-          "motd": document.getElementById("cfg_motd").value.trim(),
-          "gamemode": document.getElementById("cfg_gamemode").value,
-          "difficulty": document.getElementById("cfg_difficulty").value,
-          "max-players": document.getElementById("cfg_maxplayers").value,
-          "pvp": document.getElementById("cfg_pvp").value,
-          "online-mode": document.getElementById("cfg_online_mode").value
-        };
-
-        await api("/api/server-config", {
-          method: "POST",
-          body: JSON.stringify({ config })
-        });
-
-        setMessage("Configuração salva com sucesso.", "success");
-      } catch (err) {
-        setMessage(err.message || "Erro ao salvar configuração.");
-      }
-    }
-
-    async function uploadPlugin() {
-      const input = document.getElementById("pluginFile");
-      const file = input.files[0];
-
-      if (!file) {
-        setMessage("Selecione um plugin .jar.");
-        return;
-      }
-
-      const form = new FormData();
-      form.append("plugin", file);
-
-      try {
-        const data = await api("/api/upload-plugin", {
-          method: "POST",
-          body: form
-        });
-
-        input.value = "";
-        setMessage(`Plugin enviado: ${data.filename}`, "success");
-        await loadPlugins();
-      } catch (err) {
-        setMessage(err.message || "Erro ao enviar plugin.");
-      }
-    }
-
-    async function loadPlugins() {
-      try {
-        const data = await api("/api/plugins");
-        const list = document.getElementById("pluginsList");
-        list.innerHTML = "";
-
-        const plugins = data.plugins || [];
-
-        if (!plugins.length) {
-          list.innerHTML = '<div class="muted">Nenhum plugin instalado.</div>';
-          return;
-        }
-
-        plugins.forEach((name) => {
-          const item = document.createElement("div");
-          item.className = "file-item";
-          item.innerHTML = `
-            <div class="file-item-left">
-              <strong>${escapeHtml(name)}</strong>
-              <span class="tag">plugin</span>
-            </div>
-          `;
-          list.appendChild(item);
-        });
-      } catch (err) {
-        setMessage(err.message || "Erro ao carregar plugins.");
-      }
-    }
-
-    async function loadFiles() {
-      try {
-        const dir = document.getElementById("currentDir").value.trim();
-        const data = await api(`/api/files?dir=${encodeURIComponent(dir)}`);
-
-        document.getElementById("currentDir").value = data.currentPath || "";
-
-        const list = document.getElementById("filesList");
-        list.innerHTML = "";
-
-        const items = data.items || [];
-
-        if (!items.length) {
-          list.innerHTML = '<div class="muted">Nenhum item nesta pasta.</div>';
-          return;
-        }
-
-        items.forEach((item) => {
-          const row = document.createElement("div");
-          row.className = "file-item";
-
-          const left = document.createElement("div");
-          left.className = "file-item-left";
-          left.innerHTML = `
-            <strong>${escapeHtml(item.name)}</strong>
-            <span class="tag">${item.type === "folder" ? "pasta" : "arquivo"}</span>
-          `;
-
-          const right = document.createElement("div");
-          right.style.display = "flex";
-          right.style.gap = "8px";
-          right.style.flexWrap = "wrap";
-
-          if (item.type === "folder") {
-            const openBtn = document.createElement("button");
-            openBtn.className = "secondary";
-            openBtn.textContent = "Abrir";
-            openBtn.onclick = () => {
-              document.getElementById("currentDir").value = item.path;
-              loadFiles();
-            };
-            right.appendChild(openBtn);
-          } else {
-            const editBtn = document.createElement("button");
-            editBtn.className = "secondary";
-            editBtn.textContent = "Editar";
-            editBtn.onclick = () => openFile(item.path);
-            right.appendChild(editBtn);
-          }
-
-          const delBtn = document.createElement("button");
-          delBtn.className = "danger";
-          delBtn.textContent = "Excluir";
-          delBtn.onclick = () => deleteItem(item.path);
-          right.appendChild(delBtn);
-
-          row.appendChild(left);
-          row.appendChild(right);
-          list.appendChild(row);
-        });
-      } catch (err) {
-        setMessage(err.message || "Erro ao carregar arquivos.");
-      }
-    }
-
-    async function openFile(filePath) {
-      try {
-        const data = await api(`/api/file?path=${encodeURIComponent(filePath)}`);
-        document.getElementById("editFilePath").value = data.path || "";
-        document.getElementById("fileEditor").value = data.content || "";
-        setMessage(`Arquivo aberto: ${data.name}`, "success");
-      } catch (err) {
-        setMessage(err.message || "Erro ao abrir arquivo.");
-      }
-    }
-
-    async function saveFile() {
-      const filePath = document.getElementById("editFilePath").value.trim();
-      const content = document.getElementById("fileEditor").value;
-
-      if (!filePath) {
-        setMessage("Nenhum arquivo aberto.");
-        return;
-      }
-
-      try {
-        await api("/api/file", {
-          method: "POST",
-          body: JSON.stringify({
-            path: filePath,
-            content
-          })
-        });
-
-        setMessage("Arquivo salvo com sucesso.", "success");
-        await loadFiles();
-      } catch (err) {
-        setMessage(err.message || "Erro ao salvar arquivo.");
-      }
-    }
-
-    async function createFile() {
-      const dir = document.getElementById("currentDir").value.trim();
-      const name = document.getElementById("newFileName").value.trim();
-
-      if (!name) {
-        setMessage("Digite o nome do arquivo.");
-        return;
-      }
-
-      try {
-        const data = await api("/api/file/new", {
-          method: "POST",
-          body: JSON.stringify({ dir, name })
-        });
-
-        document.getElementById("newFileName").value = "";
-        setMessage(`Arquivo criado: ${data.path}`, "success");
-        await loadFiles();
-      } catch (err) {
-        setMessage(err.message || "Erro ao criar arquivo.");
-      }
-    }
-
-    async function createFolder() {
-      const dir = document.getElementById("currentDir").value.trim();
-      const name = document.getElementById("newFolderName").value.trim();
-
-      if (!name) {
-        setMessage("Digite o nome da pasta.");
-        return;
-      }
-
-      try {
-        const data = await api("/api/folder/new", {
-          method: "POST",
-          body: JSON.stringify({ dir, name })
-        });
-
-        document.getElementById("newFolderName").value = "";
-        setMessage(`Pasta criada: ${data.path}`, "success");
-        await loadFiles();
-      } catch (err) {
-        setMessage(err.message || "Erro ao criar pasta.");
-      }
-    }
-
-    async function deleteItem(itemPath) {
-      if (!confirm(`Deseja excluir "${itemPath}"?`)) {
-        return;
-      }
-
-      try {
-        await api(`/api/file?path=${encodeURIComponent(itemPath)}`, {
-          method: "DELETE"
-        });
-
-        if (document.getElementById("editFilePath").value === itemPath) {
-          document.getElementById("editFilePath").value = "";
-          document.getElementById("fileEditor").value = "";
-        }
-
-        setMessage("Item excluído com sucesso.", "success");
-        await loadFiles();
-      } catch (err) {
-        setMessage(err.message || "Erro ao excluir item.");
-      }
-    }
-
-    async function deleteCurrentFile() {
-      const filePath = document.getElementById("editFilePath").value.trim();
-
-      if (!filePath) {
-        setMessage("Nenhum arquivo aberto.");
-        return;
-      }
-
-      await deleteItem(filePath);
-    }
-
-    async function renameCurrentFile() {
-      const oldPath = document.getElementById("editFilePath").value.trim();
-
-      if (!oldPath) {
-        setMessage("Nenhum arquivo aberto.");
-        return;
-      }
-
-      const newName = prompt("Novo nome do arquivo:", oldPath.split("/").pop());
-      if (!newName) return;
-
-      try {
-        const data = await api("/api/file/rename", {
-          method: "PUT",
-          body: JSON.stringify({
-            oldPath,
-            newName
-          })
-        });
-
-        document.getElementById("editFilePath").value = data.newPath || "";
-        setMessage(`Arquivo renomeado para ${data.newPath}`, "success");
-        await loadFiles();
-      } catch (err) {
-        setMessage(err.message || "Erro ao renomear arquivo.");
-      }
-    }
-
-    function goUpFolder() {
-      const current = document.getElementById("currentDir").value.trim();
-      if (!current) return;
-
-      const parts = current.split("/").filter(Boolean);
-      parts.pop();
-      document.getElementById("currentDir").value = parts.join("/");
-      loadFiles();
-    }
-
-    async function changePassword() {
-      const currentPassword = document.getElementById("currentPassword").value.trim();
-      const newPassword = document.getElementById("newPassword").value.trim();
-
-      if (!currentPassword || !newPassword) {
-        setMessage("Preencha a senha atual e a nova senha.");
-        return;
-      }
-
-      try {
-        const data = await api("/api/change-password", {
-          method: "POST",
-          body: JSON.stringify({
-            currentPassword,
-            newPassword
-          })
-        });
-
-        document.getElementById("currentPassword").value = "";
-        document.getElementById("newPassword").value = "";
-        setMessage(data.message || "Senha alterada com sucesso.", "success");
-      } catch (err) {
-        setMessage(err.message || "Erro ao alterar senha.");
-      }
-    }
-
-    async function uploadAvatar() {
-      const input = document.getElementById("avatarFile");
-      const file = input.files[0];
-
-      if (!file) {
-        setMessage("Selecione uma imagem.");
-        return;
-      }
-
-      const form = new FormData();
-      form.append("avatar", file);
-
-      try {
-        const data = await api("/api/account/avatar", {
-          method: "POST",
-          body: form
-        });
-
-        input.value = "";
-        setAvatarUI(data.avatarUrl, localStorage.getItem("username") || "Usuário");
-        setMessage(data.message || "Imagem atualizada com sucesso.", "success");
-      } catch (err) {
-        setMessage(err.message || "Erro ao enviar imagem.");
-      }
-    }
-
-    function formatTikTokEvent(event) {
-      const type = event.type || "event";
-      const data = event.data || {};
-      const hour = new Date(event.time || Date.now()).toLocaleTimeString("pt-BR");
-
-      switch (type) {
-        case "connected":
-          return `[${hour}] ✅ Conectado em @${data.uniqueId} (roomId: ${data.roomId || "-"})`;
-        case "disconnected":
-          return `[${hour}] ⚠️ Desconectado de @${data.uniqueId || "-"}`;
-        case "manualDisconnect":
-          return `[${hour}] ⛔ Desconectado manualmente`;
-        case "streamEnd":
-          return `[${hour}] 🛑 Live encerrada`;
-        case "chat":
-          return `[${hour}] 💬 ${data.nickname || "Usuário"}: ${data.comment || ""}`;
-        case "gift":
-          return `[${hour}] 🎁 ${data.nickname || "Usuário"} enviou ${data.giftName || "presente"} x${data.repeatCount || 1}`;
-        case "like":
-          return `[${hour}] ❤️ ${data.nickname || "Usuário"} curtiu (${data.likeCount || 0})`;
-        case "follow":
-          return `[${hour}] ➕ ${data.nickname || "Usuário"} começou a seguir`;
-        case "share":
-          return `[${hour}] 🔄 ${data.nickname || "Usuário"} compartilhou a live`;
-        case "member":
-          return `[${hour}] 👋 ${data.nickname || "Usuário"} entrou na live`;
-        case "roomUser":
-          return `[${hour}] 👀 Viewers: ${data.viewerCount || 0}`;
-        case "error":
-          return `[${hour}] ❌ Erro: ${data.message || "desconhecido"}`;
-        default:
-          return `[${hour}] ${type}: ${JSON.stringify(data)}`;
-      }
-    }
-
-    function appendTikTokEventLine(text) {
-      const box = document.getElementById("tiktokEvents");
-      const current = box.innerHTML && box.innerHTML !== "Aguardando eventos..."
-        ? box.innerHTML + "<br>"
-        : "";
-
-      box.innerHTML = current + escapeHtml(text);
-      box.scrollTop = box.scrollHeight;
-    }
-
-    function startTikTokStream() {
-      if (tiktokEventSource) {
-        tiktokEventSource.close();
-        tiktokEventSource = null;
-      }
-
-      const sseUrl = `${API_BASE}/api/tiktoklive/stream?token=${encodeURIComponent(token)}`;
-      tiktokEventSource = new EventSource(sseUrl);
-
-      tiktokEventSource.onmessage = (msg) => {
-        try {
-          const parsed = JSON.parse(msg.data);
-          if (parsed.type !== "hello") {
-            appendTikTokEventLine(formatTikTokEvent(parsed));
-          }
-        } catch (err) {}
-      };
-
-      tiktokEventSource.onerror = () => {};
-    }
-
-    async function loadTikTokStatus() {
-      try {
-        const data = await api("/api/tiktoklive/status");
-        const state = data.state || {};
-        const events = data.recentEvents || [];
-
-        document.getElementById("tiktokStatusText").textContent =
-          state.connected ? "Conectado" : "Desconectado";
-        document.getElementById("tiktokRoomId").textContent = state.roomId || "-";
-        document.getElementById("tiktokCurrentUser").textContent =
-          state.uniqueId ? `@${state.uniqueId}` : "-";
-        document.getElementById("tiktokLastError").textContent =
-          state.lastError || "-";
-
-        const box = document.getElementById("tiktokEvents");
-        box.innerHTML = "";
-
-        if (!events.length) {
-          box.innerHTML = "Aguardando eventos...";
-        } else {
-          for (const event of events) {
-            appendTikTokEventLine(formatTikTokEvent(event));
-          }
-        }
-      } catch (err) {
-        setMessage(err.message || "Erro ao carregar TikTok LIVE.");
-      }
-    }
-
-    async function connectTikTokLive() {
-      const uniqueId = document.getElementById("tiktokUniqueId").value.trim();
-
-      if (!uniqueId) {
-        setMessage("Digite o @ do TikTok.");
-        return;
-      }
-
-      try {
-        const data = await api("/api/tiktoklive/connect", {
-          method: "POST",
-          body: JSON.stringify({ uniqueId })
-        });
-
-        setMessage(data.message || "TikTok LIVE conectado.", "success");
-        await loadTikTokStatus();
-        await loadTikTokRules();
-        startTikTokStream();
-      } catch (err) {
-        setMessage(err.message || "Erro ao conectar TikTok LIVE.");
-      }
-    }
-
-    async function disconnectTikTokLive() {
-      try {
-        const data = await api("/api/tiktoklive/disconnect", {
-          method: "POST"
-        });
-
-        setMessage(data.message || "TikTok LIVE desconectado.", "success");
-        await loadTikTokStatus();
-      } catch (err) {
-        setMessage(err.message || "Erro ao desconectar TikTok LIVE.");
-      }
-    }
-
-    async function loadTikTokRules() {
-      try {
-        const data = await api("/api/tiktoklive/rules");
-        const rules = data.rules || [];
-        const counters = data.counters || {};
-
-        document.getElementById("tiktokCountersInfo").textContent =
-          `follow: ${counters.follow || 0} | like: ${counters.like || 0} | gift: ${counters.gift || 0} | share: ${counters.share || 0} | member: ${counters.member || 0}`;
-
-        const list = document.getElementById("tiktokRulesList");
-        list.innerHTML = "";
-
-        if (!rules.length) {
-          list.innerHTML = '<div class="muted">Nenhuma regra criada.</div>';
-          return;
-        }
-
-        rules.forEach((rule) => {
-          const item = document.createElement("div");
-          item.className = "file-item";
-
-          const left = document.createElement("div");
-          left.className = "file-item-left";
-          left.innerHTML = `
-            <strong>${escapeHtml(rule.eventType)}</strong>
-            <span class="tag">a cada ${escapeHtml(rule.everyCount)}</span>
-            <span class="tag">${rule.enabled ? "ativa" : "desativada"}</span>
-            <span class="small-note">${escapeHtml(rule.command)}</span>
-          `;
-
-          const right = document.createElement("div");
-          right.style.display = "flex";
-          right.style.gap = "8px";
-          right.style.flexWrap = "wrap";
-
-          const editBtn = document.createElement("button");
-          editBtn.className = "secondary";
-          editBtn.textContent = "Editar";
-          editBtn.onclick = () => editTikTokRule(rule);
-
-          const toggleBtn = document.createElement("button");
-          toggleBtn.className = "secondary";
-          toggleBtn.textContent = rule.enabled ? "Desativar" : "Ativar";
-          toggleBtn.onclick = () => toggleTikTokRule(rule);
-
-          const delBtn = document.createElement("button");
-          delBtn.className = "danger";
-          delBtn.textContent = "Excluir";
-          delBtn.onclick = () => deleteTikTokRule(rule.id);
-
-          right.appendChild(editBtn);
-          right.appendChild(toggleBtn);
-          right.appendChild(delBtn);
-
-          item.appendChild(left);
-          item.appendChild(right);
-          list.appendChild(item);
-        });
-      } catch (err) {
-        setMessage(err.message || "Erro ao carregar regras TikTok.");
-      }
-    }
-
-    async function createTikTokRule() {
-      const eventType = document.getElementById("ruleEventType").value;
-      const everyCount = Number(document.getElementById("ruleEveryCount").value || 1);
-      const command = document.getElementById("ruleCommand").value.trim();
-
-      if (!command) {
-        setMessage("Digite um comando do Minecraft.");
-        return;
-      }
-
-      try {
-        const data = await api("/api/tiktoklive/rules", {
-          method: "POST",
-          body: JSON.stringify({
-            eventType,
-            everyCount,
-            command,
-            enabled: true
-          })
-        });
-
-        setMessage(data.message || "Regra criada com sucesso.", "success");
-        await loadTikTokRules();
-      } catch (err) {
-        setMessage(err.message || "Erro ao criar regra.");
-      }
-    }
-
-    async function editTikTokRule(rule) {
-      const newEventType = prompt("Evento (follow, like, gift, share, member):", rule.eventType);
-      if (!newEventType) return;
-
-      const newEveryCount = prompt("Executar a cada quantos eventos?", rule.everyCount);
-      if (!newEveryCount) return;
-
-      const newCommand = prompt("Comando do Minecraft:", rule.command);
-      if (!newCommand) return;
-
-      try {
-        const data = await api(`/api/tiktoklive/rules/${encodeURIComponent(rule.id)}`, {
-          method: "PUT",
-          body: JSON.stringify({
-            eventType: newEventType.trim(),
-            everyCount: Number(newEveryCount),
-            command: newCommand.trim()
-          })
-        });
-
-        setMessage(data.message || "Regra atualizada com sucesso.", "success");
-        await loadTikTokRules();
-      } catch (err) {
-        setMessage(err.message || "Erro ao editar regra.");
-      }
-    }
-
-    async function toggleTikTokRule(rule) {
-      try {
-        const data = await api(`/api/tiktoklive/rules/${encodeURIComponent(rule.id)}`, {
-          method: "PUT",
-          body: JSON.stringify({
-            enabled: !rule.enabled
-          })
-        });
-
-        setMessage(data.message || "Regra atualizada com sucesso.", "success");
-        await loadTikTokRules();
-      } catch (err) {
-        setMessage(err.message || "Erro ao alterar regra.");
-      }
-    }
-
-    async function deleteTikTokRule(ruleId) {
-      if (!confirm("Deseja excluir esta regra?")) {
-        return;
-      }
-
-      try {
-        const data = await api(`/api/tiktoklive/rules/${encodeURIComponent(ruleId)}`, {
-          method: "DELETE"
-        });
-
-        setMessage(data.message || "Regra removida com sucesso.", "success");
-        await loadTikTokRules();
-      } catch (err) {
-        setMessage(err.message || "Erro ao excluir regra.");
-      }
-    }
-
-    async function resetTikTokCountersUI() {
-      try {
-        const data = await api("/api/tiktoklive/rules/reset-counters", {
-          method: "POST"
-        });
-
-        setMessage(data.message || "Contadores resetados.", "success");
-        await loadTikTokRules();
-      } catch (err) {
-        setMessage(err.message || "Erro ao resetar contadores.");
-      }
-    }
-
-    async function validateSession() {
-      try {
-        const data = await api("/api/me");
-        const username = data.user?.username || localStorage.getItem("username") || "Usuário";
-        const avatarUrl = data.user?.avatarUrl || "";
-
-        document.getElementById("userName").textContent = username;
-        document.getElementById("accountUsername").textContent = username;
-        localStorage.setItem("username", username);
-
-        setAvatarUI(avatarUrl, username);
-      } catch (err) {
-        localStorage.removeItem("token");
-        window.location = "login.html";
-      }
-    }
-
-    async function logout() {
-      try {
-        await api("/api/logout", { method: "POST" });
-      } catch (err) {}
-
-      localStorage.removeItem("token");
-      localStorage.removeItem("username");
-      window.location = "login.html";
-    }
-
-    window.addEventListener("load", async () => {
-      loadSavedTheme();
-      document.getElementById("apiBaseView").textContent = API_BASE;
-
-      await validateSession();
-      await loadStatus();
-      await fetchPublicUrl();
-      await loadConsole();
-      await loadConfig();
-      await loadPlugins();
-      await loadFiles();
-      await loadTikTokStatus();
-      await loadTikTokRules();
-
-      startTikTokStream();
-
-      setInterval(loadConsole, 2000);
-      setInterval(loadStatus, 5000);
-    });
-  </script>
+
+<div class="sidebar">
+
+<h2>👑 Host LORD</h2>
+
+<button class="nav-btn" onclick="show('dashboard')">🏠 Dashboard</button>
+
+<button class="nav-btn" onclick="show('console')">🖥️ Console</button>
+
+<button class="nav-btn" onclick="show('config')">⚙️ Configuração</button>
+
+<button class="nav-btn" onclick="show('plugins')">🧩 Plugins</button>
+
+<button class="nav-btn" onclick="show('files')">📁 Arquivos</button>
+
+<button class="nav-btn" onclick="window.location='tiktok.html'">
+🎵 TikTok LIVE
+</button>
+
+<button class="nav-btn" onclick="window.location='temas.html'">
+🎨 Temas
+</button>
+
+<button class="nav-btn" onclick="show('account')">👤 Conta</button>
+
+<button class="nav-btn" onclick="logout()">🚪 Sair</button>
+
+</div>
+
+<div class="main">
+
+<div id="dashboard" class="card">
+
+<h2>📡 Status do servidor</h2>
+
+<p>Status: <span id="status">carregando...</span></p>
+
+<p>IP: <span id="ip"></span></p>
+
+<button class="green" onclick="start()">Iniciar</button>
+<button class="red" onclick="stop()">Parar</button>
+<button class="blue" onclick="restart()">Reiniciar</button>
+
+</div>
+
+<div id="console" class="card" style="display:none">
+
+<h2>🖥️ Console</h2>
+
+<div id="consoleBox" class="console"></div>
+
+<input id="command" placeholder="digite um comando">
+
+<button onclick="sendCommand()">Enviar</button>
+
+</div>
+
+<div id="config" class="card" style="display:none">
+
+<h2>⚙️ Configuração</h2>
+
+<label>MOTD</label>
+<input id="motd">
+
+<label>Max Players</label>
+<input id="players">
+
+<button onclick="saveConfig()">Salvar</button>
+
+</div>
+
+<div id="plugins" class="card" style="display:none">
+
+<h2>🧩 Plugins</h2>
+
+<input type="file" id="pluginFile">
+
+<button onclick="uploadPlugin()">Enviar plugin</button>
+
+<div id="pluginList"></div>
+
+</div>
+
+<div id="files" class="card" style="display:none">
+
+<h2>📁 Arquivos</h2>
+
+<input id="path" placeholder="caminho">
+
+<button onclick="loadFiles()">Abrir</button>
+
+<div id="fileList"></div>
+
+</div>
+
+<div id="account" class="card" style="display:none">
+
+<h2>👤 Conta</h2>
+
+<p>Usuário: <span id="username"></span></p>
+
+<input type="password" id="oldpass" placeholder="senha atual">
+
+<input type="password" id="newpass" placeholder="nova senha">
+
+<button onclick="changePass()">Alterar senha</button>
+
+</div>
+
+</div>
+
+<script>
+
+const API=location.origin
+const token=localStorage.getItem("token")
+
+function show(id){
+
+document.querySelectorAll(".card").forEach(c=>c.style.display="none")
+
+document.getElementById(id).style.display="block"
+
+}
+
+async function api(path,options={}){
+
+options.headers={
+Authorization:"Bearer "+token,
+"Content-Type":"application/json"
+}
+
+const res=await fetch(API+path,options)
+
+return res.json()
+
+}
+
+async function loadStatus(){
+
+const data=await api("/api/status")
+
+document.getElementById("status").innerText=data.online?"Online":"Offline"
+
+document.getElementById("ip").innerText=data.minecraftHost+":"+data.minecraftPort
+
+}
+
+async function start(){
+
+await api("/api/start",{method:"POST"})
+
+loadStatus()
+
+}
+
+async function stop(){
+
+await api("/api/stop",{method:"POST"})
+
+loadStatus()
+
+}
+
+async function restart(){
+
+await api("/api/restart",{method:"POST"})
+
+}
+
+async function loadConsole(){
+
+const data=await api("/api/console")
+
+const box=document.getElementById("consoleBox")
+
+box.innerHTML=data.lines.join("<br>")
+
+box.scrollTop=box.scrollHeight
+
+}
+
+async function sendCommand(){
+
+const cmd=document.getElementById("command").value
+
+await api("/api/command",{
+
+method:"POST",
+
+body:JSON.stringify({command:cmd})
+
+})
+
+}
+
+async function uploadPlugin(){
+
+const file=document.getElementById("pluginFile").files[0]
+
+const form=new FormData()
+
+form.append("plugin",file)
+
+await fetch(API+"/api/upload-plugin",{
+
+method:"POST",
+
+headers:{Authorization:"Bearer "+token},
+
+body:form
+
+})
+
+}
+
+async function loadFiles(){
+
+const path=document.getElementById("path").value
+
+const res=await api("/api/files?dir="+path)
+
+const list=document.getElementById("fileList")
+
+list.innerHTML=""
+
+res.items.forEach(i=>{
+
+list.innerHTML+=i.name+"<br>"
+
+})
+
+}
+
+function logout(){
+
+localStorage.removeItem("token")
+
+location="login.html"
+
+}
+
+loadStatus()
+
+setInterval(loadConsole,2000)
+
+</script>
+
 </body>
 </html>
