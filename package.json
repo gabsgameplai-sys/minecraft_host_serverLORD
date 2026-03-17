@@ -1,0 +1,20 @@
+{
+  "name": "myminehost-backend",
+  "version": "1.0.0",
+  "description": "Backend do painel MyMineHost para controlar servidor Minecraft",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "MyMineHost",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^4.22.1",
+    "google-auth-library": "^9.15.1",
+    "multer": "^1.4.5-lts.1",
+    "tiktok-live-connector": "^2.1.1-beta1"
+  }
+}
