@@ -388,6 +388,268 @@ input[type="password"]{
 .mc-underlined{text-decoration:underline;}
 .mc-strikethrough{text-decoration:line-through;}
 
+/* TIKTOK */
+.tiktok-shell{
+  display:grid;
+  grid-template-columns:1.15fr 0.85fr;
+  gap:18px;
+  margin-top:14px;
+}
+
+.tiktok-card{
+  background:linear-gradient(180deg, rgba(15,23,42,0.96), rgba(30,41,59,0.95));
+  border:1px solid rgba(236,72,153,0.22);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 12px 35px rgba(0,0,0,.28);
+}
+
+.tiktok-hero{
+  background:
+    radial-gradient(circle at top right, rgba(236,72,153,.22), transparent 32%),
+    radial-gradient(circle at bottom left, rgba(34,211,238,.18), transparent 28%),
+    linear-gradient(135deg, #111827, #1e293b 65%, #0f172a);
+  border:1px solid rgba(236,72,153,.28);
+  border-radius:22px;
+  padding:20px;
+  margin-bottom:18px;
+}
+
+.tiktok-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:#f9a8d4;
+  background:rgba(236,72,153,.12);
+  border:1px solid rgba(236,72,153,.28);
+  padding:8px 12px;
+  border-radius:999px;
+}
+
+.tiktok-title{
+  font-size:28px;
+  margin:14px 0 8px;
+  font-weight:800;
+}
+
+.tiktok-subtitle{
+  color:#cbd5e1;
+  line-height:1.55;
+  margin:0 0 16px;
+}
+
+.tiktok-topbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+
+.tiktok-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.tiktok-input, .tiktok-select{
+  width:100%;
+  background:#0f172a;
+  color:#fff;
+  border:1px solid #334155;
+  border-radius:12px;
+  padding:12px 14px;
+  outline:none;
+}
+
+.tiktok-input:focus, .tiktok-select:focus{
+  border-color:#ec4899;
+  box-shadow:0 0 0 3px rgba(236,72,153,.15);
+}
+
+.tiktok-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:12px;
+  margin:14px 0 18px;
+}
+
+.metric-box{
+  background:#0f172a;
+  border:1px solid #334155;
+  border-radius:16px;
+  padding:14px;
+}
+
+.metric-label{
+  font-size:12px;
+  color:#94a3b8;
+  margin-bottom:8px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+
+.metric-value{
+  font-size:26px;
+  font-weight:800;
+}
+
+.goal-wrap{
+  margin-top:16px;
+}
+
+.goal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+  color:#e2e8f0;
+}
+
+.goal-bar{
+  width:100%;
+  height:14px;
+  background:#0f172a;
+  border:1px solid #334155;
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.goal-fill{
+  height:100%;
+  width:42%;
+  background:linear-gradient(90deg, #22d3ee, #ec4899);
+  border-radius:999px;
+  transition:width .25s ease;
+}
+
+.chat-feed{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-height:520px;
+  overflow:auto;
+  padding-right:4px;
+}
+
+.chat-item{
+  background:#0f172a;
+  border:1px solid #334155;
+  border-radius:14px;
+  padding:12px;
+}
+
+.chat-user{
+  font-weight:700;
+  color:#fff;
+  margin-bottom:4px;
+}
+
+.chat-meta{
+  font-size:12px;
+  color:#94a3b8;
+  margin-bottom:8px;
+}
+
+.chat-message{
+  color:#e2e8f0;
+  line-height:1.5;
+}
+
+.event-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(34,211,238,.08);
+  border:1px solid rgba(34,211,238,.2);
+  color:#67e8f9;
+  margin-right:8px;
+  margin-bottom:8px;
+}
+
+.tiktok-note{
+  font-size:13px;
+  color:#94a3b8;
+  margin-top:12px;
+}
+
+.switch-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid #1e293b;
+}
+
+.switch-row:last-child{
+  border-bottom:none;
+}
+
+.switch-text small{
+  display:block;
+  color:#94a3b8;
+  margin-top:4px;
+}
+
+.switch{
+  position:relative;
+  width:52px;
+  height:30px;
+  flex-shrink:0;
+}
+
+.switch input{
+  display:none;
+}
+
+.slider{
+  position:absolute;
+  inset:0;
+  background:#334155;
+  border-radius:999px;
+  transition:.2s ease;
+  cursor:pointer;
+}
+
+.slider::before{
+  content:"";
+  position:absolute;
+  width:22px;
+  height:22px;
+  left:4px;
+  top:4px;
+  border-radius:50%;
+  background:#fff;
+  transition:.2s ease;
+}
+
+.switch input:checked + .slider{
+  background:linear-gradient(90deg, #22d3ee, #ec4899);
+}
+
+.switch input:checked + .slider::before{
+  transform:translateX(22px);
+}
+
+@media (max-width:980px){
+  .tiktok-shell{
+    grid-template-columns:1fr;
+  }
+
+  .tiktok-grid{
+    grid-template-columns:1fr;
+  }
+}
+
 @media (max-width:900px){
   .layout{
     grid-template-columns:1fr;
@@ -421,6 +683,7 @@ input[type="password"]{
     <button class="menu-btn" onclick="showSection('dashboard')">🏠 Dashboard</button>
     <button class="menu-btn" onclick="showSection('consoleSection')">🖥 Console</button>
     <button class="menu-btn" onclick="showSection('filesSection')">📁 Gerenciador de Arquivos</button>
+    <button class="menu-btn" onclick="showSection('tiktokSection')">🎵 TikTok LIVE</button>
     <button class="menu-btn" onclick="showSection('profileSection')">👤 Perfil</button>
   </aside>
 
@@ -506,6 +769,142 @@ input[type="password"]{
       </div>
     </section>
 
+    <section id="tiktokSection" class="card" style="display:none;">
+      <div class="tiktok-hero">
+        <span class="tiktok-badge">● TikTok LIVE Control</span>
+        <h2 class="tiktok-title">Central TikTok LIVE</h2>
+        <p class="tiktok-subtitle">
+          Conecte sua live, acompanhe o chat em tempo real, veja eventos,
+          metas e deixe o painel com uma cara mais streamer.
+        </p>
+
+        <div class="tiktok-topbar">
+          <div class="tiktok-actions" style="flex:1; min-width:280px;">
+            <input
+              id="tiktokUsername"
+              class="tiktok-input"
+              type="text"
+              placeholder="@seu_usuario_tiktok"
+            >
+          </div>
+
+          <div class="tiktok-actions">
+            <button class="btn" onclick="connectTikTokLive()">Conectar</button>
+            <button class="btn gray" onclick="disconnectTikTokLive()">Desconectar</button>
+          </div>
+        </div>
+
+        <div class="tiktok-grid">
+          <div class="metric-box">
+            <div class="metric-label">Status</div>
+            <div class="metric-value" id="ttStatusText">Offline</div>
+          </div>
+
+          <div class="metric-box">
+            <div class="metric-label">Comentários</div>
+            <div class="metric-value" id="ttCommentsCount">0</div>
+          </div>
+
+          <div class="metric-box">
+            <div class="metric-label">Curtidas</div>
+            <div class="metric-value" id="ttLikesCount">0</div>
+          </div>
+        </div>
+
+        <div class="goal-wrap">
+          <div class="goal-head">
+            <strong>Meta da LIVE</strong>
+            <span id="ttGoalText">420 / 1000 likes</span>
+          </div>
+          <div class="goal-bar">
+            <div class="goal-fill" id="ttGoalFill" style="width:42%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tiktok-shell">
+        <div class="tiktok-card">
+          <div class="tiktok-topbar">
+            <div>
+              <h3 style="margin:0 0 6px;">Chat da LIVE</h3>
+              <div class="small-note">Mensagens recentes da transmissão.</div>
+            </div>
+
+            <div class="tiktok-actions">
+              <button class="btn gray" onclick="clearTikTokChat()">Limpar chat</button>
+            </div>
+          </div>
+
+          <div id="tiktokChatFeed" class="chat-feed">
+            <div class="chat-item">
+              <div class="chat-user">sistema</div>
+              <div class="chat-meta">aguardando conexão</div>
+              <div class="chat-message">Conecte uma live do TikTok para começar a receber mensagens.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <div class="tiktok-card">
+            <h3 style="margin-top:0;">Eventos rápidos</h3>
+            <div id="tiktokEvents">
+              <span class="event-pill">Sem eventos ainda</span>
+            </div>
+            <div class="tiktok-note">
+              Aqui você pode mostrar presentes, entrada de membros, follows e alertas.
+            </div>
+          </div>
+
+          <div class="tiktok-card">
+            <h3 style="margin-top:0;">Automação</h3>
+
+            <div class="switch-row">
+              <div class="switch-text">
+                <strong>TTS do chat</strong>
+                <small>Ler comentários em voz alta.</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="ttTtsEnabled">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="switch-row">
+              <div class="switch-text">
+                <strong>Alertas de presente</strong>
+                <small>Mostrar gifts com destaque visual.</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="ttGiftAlerts" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="switch-row">
+              <div class="switch-text">
+                <strong>Overlay OBS</strong>
+                <small>Preparar saída para browser source.</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="ttObsMode" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="tiktok-card">
+            <h3 style="margin-top:0;">Comandos rápidos</h3>
+            <div class="tiktok-actions" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <button class="btn" onclick="simulateTikTokEvent('chat')">Simular chat</button>
+              <button class="btn" onclick="simulateTikTokEvent('gift')">Simular gift</button>
+              <button class="btn gray" onclick="simulateTikTokEvent('follow')">Simular follow</button>
+              <button class="btn gray" onclick="simulateTikTokEvent('like')">Simular like</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="profileSection" class="card" style="display:none;">
       <h2>Perfil do Usuário</h2>
 
@@ -561,6 +960,13 @@ let currentFile = "";
 let currentDir = "";
 let currentItems = [];
 let currentUser = localStorage.getItem("myminehost_user") || "Usuário";
+
+let tikTokConnected = false;
+let tikTokStats = {
+  comments: 0,
+  likes: 420,
+  goal: 1000
+};
 
 function defaultAvatarData(username){
   const initial = (username || "U").charAt(0).toUpperCase();
@@ -627,9 +1033,19 @@ async function fetchMe(){
 }
 
 function showSection(id){
-  const sections = ["dashboard", "consoleSection", "filesSection", "profileSection"];
+  const sections = [
+    "dashboard",
+    "consoleSection",
+    "filesSection",
+    "tiktokSection",
+    "profileSection"
+  ];
+
   sections.forEach(sectionId => {
-    document.getElementById(sectionId).style.display = sectionId === id ? "block" : "none";
+    const el = document.getElementById(sectionId);
+    if(el){
+      el.style.display = sectionId === id ? "block" : "none";
+    }
   });
 }
 
@@ -637,7 +1053,9 @@ function escapeHtml(text){
   return String(text)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 function getFileExt(name){
@@ -1225,12 +1643,131 @@ function exportCurrentFile(){
   URL.revokeObjectURL(url);
 }
 
+/* TIKTOK */
+function updateTikTokUI(){
+  const statusEl = document.getElementById("ttStatusText");
+  const commentsEl = document.getElementById("ttCommentsCount");
+  const likesEl = document.getElementById("ttLikesCount");
+  const goalTextEl = document.getElementById("ttGoalText");
+  const goalFillEl = document.getElementById("ttGoalFill");
+
+  if(statusEl) statusEl.textContent = tikTokConnected ? "Ao vivo" : "Offline";
+  if(commentsEl) commentsEl.textContent = String(tikTokStats.comments);
+  if(likesEl) likesEl.textContent = String(tikTokStats.likes);
+  if(goalTextEl) goalTextEl.textContent = `${tikTokStats.likes} / ${tikTokStats.goal} likes`;
+
+  const percent = Math.max(0, Math.min(100, (tikTokStats.likes / tikTokStats.goal) * 100));
+  if(goalFillEl) goalFillEl.style.width = `${percent}%`;
+}
+
+function addTikTokChatMessage(user, message, meta = "agora"){
+  const feed = document.getElementById("tiktokChatFeed");
+  if(!feed) return;
+
+  const emptyState = feed.querySelector(".chat-item");
+  if(emptyState && feed.children.length === 1 && emptyState.textContent.includes("aguardando conexão")){
+    feed.innerHTML = "";
+  }
+
+  const item = document.createElement("div");
+  item.className = "chat-item";
+  item.innerHTML = `
+    <div class="chat-user">${escapeHtml(user)}</div>
+    <div class="chat-meta">${escapeHtml(meta)}</div>
+    <div class="chat-message">${escapeHtml(message)}</div>
+  `;
+
+  feed.prepend(item);
+
+  while(feed.children.length > 30){
+    feed.removeChild(feed.lastChild);
+  }
+}
+
+function addTikTokEvent(label){
+  const box = document.getElementById("tiktokEvents");
+  if(!box) return;
+
+  const pill = document.createElement("span");
+  pill.className = "event-pill";
+  pill.textContent = label;
+
+  if(box.textContent.includes("Sem eventos ainda")){
+    box.innerHTML = "";
+  }
+
+  box.prepend(pill);
+
+  while(box.children.length > 10){
+    box.removeChild(box.lastChild);
+  }
+}
+
+function clearTikTokChat(){
+  const feed = document.getElementById("tiktokChatFeed");
+  if(!feed) return;
+
+  feed.innerHTML = `
+    <div class="chat-item">
+      <div class="chat-user">sistema</div>
+      <div class="chat-meta">limpo agora</div>
+      <div class="chat-message">O histórico visual do chat foi apagado.</div>
+    </div>
+  `;
+}
+
+function connectTikTokLive(){
+  const username = document.getElementById("tiktokUsername")?.value?.trim() || "@seu_usuario_tiktok";
+  tikTokConnected = true;
+  updateTikTokUI();
+  addTikTokEvent(`LIVE conectada: ${username}`);
+  addTikTokChatMessage("sistema", `Conexão iniciada com ${username}.`, "conectado");
+}
+
+function disconnectTikTokLive(){
+  tikTokConnected = false;
+  updateTikTokUI();
+  addTikTokEvent("LIVE desconectada");
+  addTikTokChatMessage("sistema", "A conexão com a live foi encerrada.", "desconectado");
+}
+
+function simulateTikTokEvent(type){
+  if(!tikTokConnected){
+    addTikTokChatMessage("sistema", "Conecte a live antes de simular eventos.", "aviso");
+    return;
+  }
+
+  if(type === "chat"){
+    tikTokStats.comments += 1;
+    addTikTokChatMessage("gab_fan123", "salveee, muito top essa live 🔥", "comentário");
+  }
+
+  if(type === "gift"){
+    addTikTokEvent("Gift recebido: Rosa x5");
+    addTikTokChatMessage("viewer_gold", "mandou Rosa x5", "gift");
+    tikTokStats.likes += 25;
+  }
+
+  if(type === "follow"){
+    addTikTokEvent("Novo seguidor");
+    addTikTokChatMessage("novo_follower", "começou a seguir você", "follow");
+  }
+
+  if(type === "like"){
+    addTikTokEvent("Rajada de likes");
+    tikTokStats.likes += 40;
+  }
+
+  updateTikTokUI();
+}
+
 showSection("dashboard");
 loadProfile();
 fetchMe();
 fetchFiles();
 fetchStatus();
 fetchConsole();
+updateTikTokUI();
 
 setInterval(fetchStatus, 3000);
 setInterval(fetchConsole, 2000);
