@@ -1,265 +1,326 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Temas - Host LORD</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Host LORD - Temas</title>
+  <style>
+    :root{
+      --bg:#0b1120;
+      --bg-soft:#111827;
+      --card:#0f172a;
+      --border:#1f2937;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --primary:#2563eb;
+      --primary-hover:#1d4ed8;
+      --success:#16a34a;
+      --danger:#dc2626;
+      --shadow:0 10px 30px rgba(0,0,0,.25);
+      --radius:18px;
+    }
 
-<style>
-:root{
-  --bg:#0f172a;
-  --bg-soft:#020617;
-  --card:#020617;
-  --text:#ffffff;
-  --input:#020617;
-  --border:#334155;
-  --nav:#111827;
-  --nav-hover:#2563eb;
-  --primary:#2563eb;
-  --primary-hover:#1d4ed8;
-}
+    *{box-sizing:border-box}
 
-html[data-theme="light"]{
-  --bg:#eef2ff;
-  --bg-soft:#ffffff;
-  --card:#ffffff;
-  --text:#0f172a;
-  --input:#ffffff;
-  --border:#cbd5e1;
-  --nav:#e2e8f0;
-  --nav-hover:#2563eb;
-  --primary:#2563eb;
-  --primary-hover:#1d4ed8;
-}
+    html,body{
+      margin:0;
+      padding:0;
+      min-height:100%;
+      background:linear-gradient(180deg,#0b1120 0%,#0a0f1d 100%);
+      color:var(--text);
+      font-family:Inter,Arial,Helvetica,sans-serif;
+    }
 
-html[data-theme="lord"]{
-  --bg:#2b1d0e;
-  --bg-soft:#3b2613;
-  --card:#3a2612;
-  --text:#f5e6c8;
-  --input:#2a1b0c;
-  --border:#8b5e2b;
-  --nav:#4a3117;
-  --nav-hover:#ffd54a;
-  --primary:#ffd54a;
-  --primary-hover:#f5c518;
-}
+    body.theme-light{
+      --bg:#e5eefc;
+      --bg-soft:#ffffff;
+      --card:#ffffff;
+      --border:#cbd5e1;
+      --text:#0f172a;
+      --muted:#475569;
+      background:linear-gradient(180deg,#dbeafe 0%,#eff6ff 100%);
+    }
 
-html[data-theme="creeper"]{
-  --bg:#0f1f0f;
-  --bg-soft:#142814;
-  --card:#1b331b;
-  --text:#d8ffd8;
-  --input:#102510;
-  --border:#2e7d32;
-  --nav:#244424;
-  --nav-hover:#4caf50;
-  --primary:#4caf50;
-  --primary-hover:#43a047;
-}
+    body.theme-lord{
+      --bg:#180d05;
+      --bg-soft:#2a1307;
+      --card:#2b160a;
+      --border:#4a2410;
+      --text:#fff2e8;
+      --muted:#f4b183;
+      --primary:#ff7a1a;
+      --primary-hover:#ea5f00;
+      background:linear-gradient(180deg,#1a0d06 0%,#120904 100%);
+    }
 
-*{
-  box-sizing:border-box;
-}
+    .container{
+      max-width:1100px;
+      margin:0 auto;
+      padding:24px;
+    }
 
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  display:flex;
-  min-height:100vh;
-}
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-bottom:24px;
+    }
 
-.sidebar{
-  width:230px;
-  background:var(--bg-soft);
-  padding:20px;
-}
+    .title h1{
+      margin:0;
+      font-size:30px;
+    }
 
-.sidebar h2{
-  margin-bottom:20px;
-}
+    .title p{
+      margin:6px 0 0;
+      color:var(--muted);
+    }
 
-.nav-btn{
-  width:100%;
-  padding:12px;
-  margin-bottom:10px;
-  background:var(--nav);
-  border:none;
-  color:var(--text);
-  cursor:pointer;
-  border-radius:6px;
-  text-align:left;
-}
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
 
-.nav-btn:hover{
-  background:var(--nav-hover);
-  color:#fff;
-}
+    .btn{
+      border:none;
+      border-radius:12px;
+      padding:11px 16px;
+      font-weight:600;
+      cursor:pointer;
+      transition:.2s ease;
+      color:#fff;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
 
-.main{
-  flex:1;
-  padding:30px;
-  overflow:auto;
-}
+    .btn-primary{background:var(--primary)}
+    .btn-primary:hover{background:var(--primary-hover)}
+    .btn-secondary{background:#334155}
+    .btn-secondary:hover{background:#475569}
+    .btn-success{background:var(--success)}
+    .btn-success:hover{filter:brightness(.95)}
+    .btn-danger{background:var(--danger)}
+    .btn-danger:hover{filter:brightness(.95)}
 
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  padding:24px;
-  border-radius:12px;
-  max-width:700px;
-}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:18px;
+    }
 
-h1{
-  margin-top:0;
-}
+    .card{
+      background:linear-gradient(180deg,rgba(15,23,42,.96),rgba(17,24,39,.96));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
 
-.theme-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:16px;
-  margin-top:20px;
-}
+    body.theme-light .card,
+    body.theme-lord .card{
+      background:var(--card);
+    }
 
-.theme-card{
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:16px;
-  background:var(--bg-soft);
-  cursor:pointer;
-}
+    .card h3{
+      margin:0 0 10px;
+      font-size:20px;
+    }
 
-.theme-card.active{
-  outline:2px solid var(--primary);
-}
+    .card p{
+      margin:0 0 14px;
+      color:var(--muted);
+      line-height:1.5;
+    }
 
-.preview{
-  height:90px;
-  border-radius:10px;
-  margin-bottom:12px;
-  border:1px solid rgba(255,255,255,0.08);
-}
+    .preview{
+      border-radius:16px;
+      min-height:160px;
+      border:1px solid rgba(255,255,255,.08);
+      padding:16px;
+      margin-bottom:14px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      overflow:hidden;
+    }
 
-.preview.dark{
-  background:linear-gradient(135deg,#0f172a,#1e293b);
-}
+    .preview h4{
+      margin:0 0 8px;
+      font-size:18px;
+    }
 
-.preview.light{
-  background:linear-gradient(135deg,#ffffff,#e2e8f0);
-}
+    .preview span{
+      color:rgba(255,255,255,.8);
+      font-size:14px;
+    }
 
-.preview.lord{
-  background:linear-gradient(135deg,#2b1d0e,#8b5e2b);
-}
+    .preview-dark{
+      background:linear-gradient(135deg,#0f172a,#111827);
+      color:#e5e7eb;
+    }
 
-.preview.creeper{
-  background:linear-gradient(135deg,#0f1f0f,#4caf50);
-}
+    .preview-light{
+      background:linear-gradient(135deg,#eff6ff,#ffffff);
+      color:#0f172a;
+      border:1px solid #cbd5e1;
+    }
 
-button.primary{
-  padding:12px 16px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  background:var(--primary);
-  color:white;
-  font-weight:bold;
-  margin-top:20px;
-}
+    .preview-light span{
+      color:#475569;
+    }
 
-button.primary:hover{
-  background:var(--primary-hover);
-}
-</style>
+    .preview-lord{
+      background:linear-gradient(135deg,#2b160a,#5a2506);
+      color:#fff2e8;
+      border:1px solid #6c2f12;
+    }
+
+    .preview-lord span{
+      color:#f4b183;
+    }
+
+    .badge{
+      display:inline-block;
+      background:rgba(37,99,235,.18);
+      border:1px solid rgba(59,130,246,.35);
+      color:#bfdbfe;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      margin-bottom:12px;
+    }
+
+    .status-box{
+      margin-top:22px;
+      background:rgba(15,23,42,.9);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px 16px;
+      color:var(--muted);
+    }
+
+    body.theme-light .status-box,
+    body.theme-lord .status-box{
+      background:var(--card);
+    }
+
+    @media (max-width: 900px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-
-<div class="sidebar">
-  <h2>👑 Host LORD</h2>
-
-  <button class="nav-btn" onclick="window.location='panel.html'">🏠 Dashboard</button>
-  <button class="nav-btn" onclick="window.location='panel.html'">🖥 Console</button>
-  <button class="nav-btn" onclick="window.location='panel.html'">⚙️ Config</button>
-  <button class="nav-btn" onclick="window.location='panel.html'">🧩 Plugins</button>
-  <button class="nav-btn" onclick="window.location='panel.html'">📁 Arquivos</button>
-  <button class="nav-btn" onclick="window.location='tiktok.html'">🎵 TikTok LIVE</button>
-  <button class="nav-btn" onclick="window.location='temas.html'">🎨 Temas</button>
-  <button class="nav-btn" onclick="window.location='panel.html'">👤 Conta</button>
-  <button class="nav-btn" onclick="logout()">🚪 Sair</button>
-</div>
-
-<div class="main">
-  <div class="card">
-    <h1>🎨 Temas</h1>
-    <p>Escolha o visual do painel. O tema será aplicado também no TikTok LIVE e nas outras páginas.</p>
-
-    <div class="theme-grid">
-      <div class="theme-card" id="card-dark" onclick="selectTheme('dark')">
-        <div class="preview dark"></div>
-        <strong>🌙 Escuro</strong>
+  <div class="container">
+    <div class="topbar">
+      <div class="title">
+        <h1>🎨 Temas do painel</h1>
+        <p>Escolha o visual do Host LORD e salve no navegador.</p>
       </div>
 
-      <div class="theme-card" id="card-light" onclick="selectTheme('light')">
-        <div class="preview light"></div>
-        <strong>☀️ Claro</strong>
-      </div>
-
-      <div class="theme-card" id="card-lord" onclick="selectTheme('lord')">
-        <div class="preview lord"></div>
-        <strong>👑 Lord</strong>
-      </div>
-
-      <div class="theme-card" id="card-creeper" onclick="selectTheme('creeper')">
-        <div class="preview creeper"></div>
-        <strong>🟩 Creeper</strong>
+      <div class="actions">
+        <a class="btn btn-secondary" href="panel.html">⬅ Voltar ao painel</a>
+        <button class="btn btn-danger" type="button" onclick="resetTheme()">Resetar</button>
       </div>
     </div>
 
-    <button class="primary" onclick="saveTheme()">Salvar tema</button>
+    <div class="grid">
+      <div class="card">
+        <div class="badge">Tema padrão</div>
+        <div class="preview preview-dark">
+          <div>
+            <h4>Dark</h4>
+            <span>Fundo escuro, visual moderno e padrão do Host LORD.</span>
+          </div>
+          <div>🌙 Dashboard escuro</div>
+        </div>
+        <h3>Tema Dark</h3>
+        <p>Ideal para uso noturno e combina com o painel principal.</p>
+        <button class="btn btn-primary" type="button" onclick="applyTheme('dark')">Usar tema Dark</button>
+      </div>
+
+      <div class="card">
+        <div class="badge">Claro</div>
+        <div class="preview preview-light">
+          <div>
+            <h4>Light</h4>
+            <span>Visual limpo, claro e confortável para uso durante o dia.</span>
+          </div>
+          <div>☀ Interface clara</div>
+        </div>
+        <h3>Tema Light</h3>
+        <p>Uma alternativa mais clara para editar configurações e arquivos.</p>
+        <button class="btn btn-primary" type="button" onclick="applyTheme('light')">Usar tema Light</button>
+      </div>
+
+      <div class="card">
+        <div class="badge">Exclusivo</div>
+        <div class="preview preview-lord">
+          <div>
+            <h4>LORD</h4>
+            <span>Visual laranja e marrom com identidade própria do projeto.</span>
+          </div>
+          <div>🔥 Tema LORD</div>
+        </div>
+        <h3>Tema LORD</h3>
+        <p>Deixa o painel com a cara da sua marca.</p>
+        <button class="btn btn-primary" type="button" onclick="applyTheme('lord')">Usar tema LORD</button>
+      </div>
+    </div>
+
+    <div class="status-box">
+      Tema atual: <strong id="currentTheme">carregando...</strong>
+    </div>
   </div>
-</div>
 
-<script>
-let selectedTheme = "dark";
+  <script>
+    const STORAGE_KEY = "hostlord_theme";
 
-function applyTheme(theme){
-  const allowed = ["dark","light","lord","creeper"];
-  const finalTheme = allowed.includes(theme) ? theme : "dark";
-  document.documentElement.setAttribute("data-theme", finalTheme);
-  selectedTheme = finalTheme;
+    function getSavedTheme() {
+      return localStorage.getItem(STORAGE_KEY) || "dark";
+    }
 
-  document.querySelectorAll(".theme-card").forEach(card => {
-    card.classList.remove("active");
-  });
+    function updateThemeLabel(theme) {
+      const map = {
+        dark: "Dark",
+        light: "Light",
+        lord: "LORD"
+      };
 
-  const activeCard = document.getElementById("card-" + finalTheme);
-  if (activeCard) activeCard.classList.add("active");
-}
+      document.getElementById("currentTheme").textContent = map[theme] || "Dark";
+    }
 
-function selectTheme(theme){
-  applyTheme(theme);
-}
+    function renderTheme(theme) {
+      document.body.classList.remove("theme-light", "theme-lord");
 
-function saveTheme(){
-  localStorage.setItem("theme", selectedTheme);
-  alert("Tema salvo com sucesso.");
-}
+      if (theme === "light") {
+        document.body.classList.add("theme-light");
+      } else if (theme === "lord") {
+        document.body.classList.add("theme-lord");
+      }
 
-function loadSavedTheme(){
-  const saved = localStorage.getItem("theme") || "dark";
-  applyTheme(saved);
-}
+      updateThemeLabel(theme);
+    }
 
-function logout(){
-  localStorage.removeItem("token");
-  localStorage.removeItem("username");
-  location = "login.html";
-}
+    function applyTheme(theme) {
+      localStorage.setItem(STORAGE_KEY, theme);
+      renderTheme(theme);
+      alert("Tema aplicado com sucesso: " + theme.toUpperCase());
+    }
 
-window.addEventListener("load", loadSavedTheme);
-</script>
+    function resetTheme() {
+      localStorage.removeItem(STORAGE_KEY);
+      renderTheme("dark");
+      alert("Tema resetado para Dark.");
+    }
 
+    renderTheme(getSavedTheme());
+  </script>
 </body>
 </html>
