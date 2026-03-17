@@ -15,6 +15,7 @@
       --primary-hover:#1d4ed8;
       --success:#16a34a;
       --danger:#dc2626;
+      --warning:#d97706;
       --shadow:0 10px 30px rgba(0,0,0,.25);
       --radius:18px;
     }
@@ -83,6 +84,8 @@
     .btn-success:hover{filter:brightness(.95)}
     .btn-danger{background:var(--danger)}
     .btn-danger:hover{filter:brightness(.95)}
+    .btn-warning{background:var(--warning)}
+    .btn-warning:hover{filter:brightness(.95)}
 
     .grid{
       display:grid;
@@ -171,6 +174,41 @@
       color:var(--muted);
     }
 
+    .gift-row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .gift-info{
+      flex:1;
+      min-width:220px;
+    }
+
+    .gift-title{
+      color:var(--text);
+      font-weight:700;
+      margin-bottom:6px;
+    }
+
+    .gift-tags{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+
+    .tag{
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:#cbd5e1;
+    }
+
     .full{
       grid-column:1 / -1;
     }
@@ -179,6 +217,16 @@
       background:rgba(255,255,255,.06);
       padding:2px 6px;
       border-radius:8px;
+      word-break:break-word;
+    }
+
+    .mapping-image{
+      width:100%;
+      max-width:340px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      display:block;
+      margin-top:12px;
     }
 
     @media (max-width: 900px){
@@ -215,28 +263,14 @@
           <input id="tiktokUsername" type="text" placeholder="@seuusuario ou seuusuario" />
         </div>
 
-        <div class="field">
-          <label for="giftAction">Ação ao receber presente</label>
-          <select id="giftAction">
-            <option value="say">Mandar mensagem no chat</option>
-            <option value="give">Dar item ao jogador</option>
-            <option value="effect">Aplicar efeito</option>
-            <option value="command">Executar comando customizado</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="giftCommand">Comando / modelo</label>
-          <input id="giftCommand" type="text" placeholder='Ex: say Obrigado {user} pelo presente!' />
-        </div>
-
         <div class="actions">
           <button class="btn btn-primary" type="button" onclick="saveTikTokConfig()">Salvar</button>
           <button class="btn btn-success" type="button" onclick="toggleLiveConnection()">Conectar / Desconectar</button>
+          <button class="btn btn-warning" type="button" onclick="resetPresetMappings()">Restaurar mapeamento padrão</button>
         </div>
 
         <p class="small" style="margin-top:14px;">
-          Você pode usar variáveis como <code>{user}</code>, <code>{gift}</code> e <code>{count}</code> no comando.
+          Esta página salva as preferências no navegador. A execução real depende do backend da TikTok Live ler esses dados.
         </p>
       </div>
 
@@ -245,23 +279,34 @@
         <div class="list">
           <div class="list-item"><strong>Usuário:</strong> <span id="summaryUsername">--</span></div>
           <div class="list-item"><strong>Status:</strong> <span id="summaryStatus">Desconectado</span></div>
-          <div class="list-item"><strong>Ação:</strong> <span id="summaryAction">--</span></div>
-          <div class="list-item"><strong>Comando:</strong> <span id="summaryCommand">--</span></div>
+          <div class="list-item"><strong>Eventos configurados:</strong> <span id="summaryCount">0</span></div>
         </div>
       </div>
 
       <div class="card full">
-        <h3>Exemplos de comandos</h3>
-        <div class="list">
-          <div class="list-item"><code>say Obrigado {user} pelo presente {gift} x{count}!</code></div>
-          <div class="list-item"><code>give NomeDoPlayer diamond 1</code></div>
-          <div class="list-item"><code>effect give NomeDoPlayer speed 10 1 true</code></div>
-          <div class="list-item"><code>summon lightning_bolt ~ ~ ~</code></div>
-        </div>
+        <h3>Mapa atual de presentes e eventos</h3>
+        <div id="giftList" class="list"></div>
+      </div>
 
-        <p class="small" style="margin-top:14px;">
-          Esta página salva as preferências no navegador. A conexão real com TikTok Live depende do seu backend ter as rotas e o sistema da live configurados.
-        </p>
+      <div class="card full">
+        <h3>JSON para o backend</h3>
+        <div class="list">
+          <div class="list-item">
+            <div class="small" style="margin-bottom:8px;">Seu backend pode ler este objeto para executar comandos no Minecraft:</div>
+            <code id="jsonPreview"></code>
+          </div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <h3>Exemplo de lógica no backend</h3>
+        <div class="list">
+          <div class="list-item"><code>follow => summon zombie ~ ~ ~</code></div>
+          <div class="list-item"><code>Rosa => summon zombie ~ ~ ~</code></div>
+          <div class="list-item"><code>Dinossauro => summon creeper ~ ~ ~</code></div>
+          <div class="list-item"><code>Whiter => summon creeper ~ ~ ~</code></div>
+          <div class="list-item"><code>Chapéu de cowboy => summon warden ~ ~ ~</code></div>
+        </div>
       </div>
     </div>
   </div>
@@ -272,9 +317,49 @@
     function getDefaultConfig() {
       return {
         username: "",
-        action: "say",
-        command: "say Obrigado {user} pelo presente {gift} x{count}!",
-        connected: false
+        connected: false,
+        mappings: [
+          {
+            id: "follow",
+            type: "follow",
+            label: "Seguidor",
+            coins: 0,
+            mob: "zombie",
+            command: "summon zombie ~ ~ ~"
+          },
+          {
+            id: "rosa",
+            type: "gift",
+            label: "Rosa",
+            coins: 1,
+            mob: "zombie",
+            command: "summon zombie ~ ~ ~"
+          },
+          {
+            id: "dinossauro",
+            type: "gift",
+            label: "Dinossauro",
+            coins: 10,
+            mob: "creeper",
+            command: "summon creeper ~ ~ ~"
+          },
+          {
+            id: "whiter",
+            type: "gift",
+            label: "Whiter",
+            coins: 0,
+            mob: "creeper",
+            command: "summon creeper ~ ~ ~"
+          },
+          {
+            id: "chapeu-de-cowboy",
+            type: "gift",
+            label: "Chapéu de cowboy",
+            coins: 100,
+            mob: "warden",
+            command: "summon warden ~ ~ ~"
+          }
+        ]
       };
     }
 
@@ -284,25 +369,31 @@
         if (!raw) return getDefaultConfig();
 
         const parsed = JSON.parse(raw);
+        const defaults = getDefaultConfig();
+
         return {
-          ...getDefaultConfig(),
-          ...parsed
+          ...defaults,
+          ...parsed,
+          mappings: Array.isArray(parsed.mappings) ? parsed.mappings : defaults.mappings
         };
       } catch {
         return getDefaultConfig();
       }
     }
 
+    function saveConfig(config) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+    }
+
     function saveTikTokConfig() {
-      const config = {
-        username: document.getElementById("tiktokUsername").value.trim().replace(/^@/, ""),
-        action: document.getElementById("giftAction").value,
-        command: document.getElementById("giftCommand").value.trim(),
-        connected: loadTikTokConfig().connected
+      const current = loadTikTokConfig();
+      const updated = {
+        ...current,
+        username: document.getElementById("tiktokUsername").value.trim().replace(/^@/, "")
       };
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
-      renderTikTokConfig(config);
+      saveConfig(updated);
+      renderTikTokConfig(updated);
       alert("Configuração do TikTok salva com sucesso.");
     }
 
@@ -319,27 +410,72 @@
         connected: !current.connected
       };
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      saveConfig(updated);
       renderTikTokConfig(updated);
 
       alert(updated.connected ? "TikTok Live conectada." : "TikTok Live desconectada.");
     }
 
+    function resetPresetMappings() {
+      const old = loadTikTokConfig();
+      const fresh = getDefaultConfig();
+      fresh.username = old.username || "";
+      fresh.connected = false;
+
+      saveConfig(fresh);
+      renderTikTokConfig(fresh);
+      alert("Mapeamento padrão restaurado.");
+    }
+
     function renderTikTokConfig(config) {
       document.getElementById("tiktokUsername").value = config.username || "";
-      document.getElementById("giftAction").value = config.action || "say";
-      document.getElementById("giftCommand").value = config.command || "";
 
       document.getElementById("summaryUsername").textContent = config.username || "--";
       document.getElementById("summaryStatus").textContent = config.connected ? "Conectado" : "Desconectado";
-      document.getElementById("summaryAction").textContent = config.action || "--";
-      document.getElementById("summaryCommand").textContent = config.command || "--";
+      document.getElementById("summaryCount").textContent = Array.isArray(config.mappings) ? config.mappings.length : 0;
 
       const dot = document.getElementById("liveDot");
       const text = document.getElementById("liveStatusText");
 
       dot.classList.toggle("online", !!config.connected);
       text.textContent = config.connected ? "Conectado" : "Desconectado";
+
+      renderMappings(config.mappings || []);
+      document.getElementById("jsonPreview").textContent = JSON.stringify(config, null, 2);
+    }
+
+    function renderMappings(mappings) {
+      const list = document.getElementById("giftList");
+
+      if (!mappings.length) {
+        list.innerHTML = `<div class="list-item">Nenhum mapeamento configurado.</div>`;
+        return;
+      }
+
+      list.innerHTML = mappings.map(item => `
+        <div class="list-item">
+          <div class="gift-row">
+            <div class="gift-info">
+              <div class="gift-title">${escapeHtml(item.label || "Sem nome")}</div>
+              <div>Comando: <code>${escapeHtml(item.command || "")}</code></div>
+              <div class="gift-tags">
+                <span class="tag">tipo: ${escapeHtml(item.type || "--")}</span>
+                <span class="tag">moedas: ${Number(item.coins || 0)}</span>
+                <span class="tag">mob: ${escapeHtml(item.mob || "--")}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
     renderTikTokConfig(loadTikTokConfig());
