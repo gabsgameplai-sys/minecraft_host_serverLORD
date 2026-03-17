@@ -8,6 +8,7 @@
     :root{
       --bg:#0b1120;
       --card:#0f172a;
+      --card-2:#111827;
       --border:#1f2937;
       --text:#e5e7eb;
       --muted:#94a3b8;
@@ -32,7 +33,7 @@
     }
 
     .container{
-      max-width:1100px;
+      max-width:1180px;
       margin:0 auto;
       padding:24px;
     }
@@ -74,6 +75,7 @@
       display:inline-flex;
       align-items:center;
       justify-content:center;
+      box-shadow:var(--shadow);
     }
 
     .btn-primary{background:var(--primary)}
@@ -117,7 +119,7 @@
       font-size:14px;
     }
 
-    input,select,textarea{
+    input,textarea{
       width:100%;
       background:#020617;
       border:1px solid var(--border);
@@ -127,7 +129,7 @@
       outline:none;
     }
 
-    input:focus,select:focus,textarea:focus{
+    input:focus,textarea:focus{
       border-color:#3b82f6;
       box-shadow:0 0 0 3px rgba(59,130,246,.15);
     }
@@ -174,43 +176,98 @@
       color:var(--muted);
     }
 
-    .gift-row{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
+    .full{
+      grid-column:1 / -1;
+    }
+
+    .gift-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
       gap:14px;
-      flex-wrap:wrap;
     }
 
-    .gift-info{
-      flex:1;
-      min-width:220px;
+    .gift-card{
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px;
+      background:linear-gradient(180deg,rgba(2,6,23,.75),rgba(15,23,42,.75));
     }
 
-    .gift-title{
-      color:var(--text);
+    .gift-header{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+    }
+
+    .gift-icon{
+      width:52px;
+      height:52px;
+      border-radius:14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      flex-shrink:0;
+    }
+
+    .gift-name{
+      font-size:18px;
       font-weight:700;
-      margin-bottom:6px;
+      color:var(--text);
+      margin:0;
+    }
+
+    .gift-sub{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:13px;
     }
 
     .gift-tags{
       display:flex;
       gap:8px;
       flex-wrap:wrap;
-      margin-top:8px;
+      margin:10px 0;
     }
 
     .tag{
       font-size:12px;
-      padding:4px 8px;
+      padding:5px 9px;
       border-radius:999px;
       border:1px solid var(--border);
       background:rgba(255,255,255,.04);
       color:#cbd5e1;
     }
 
-    .full{
-      grid-column:1 / -1;
+    .gift-command{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#020617;
+      border:1px solid var(--border);
+      color:#93c5fd;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      font-size:13px;
+      word-break:break-word;
+    }
+
+    .legend{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .legend-item{
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:8px 12px;
+      background:rgba(255,255,255,.03);
+      color:#cbd5e1;
+      font-size:13px;
     }
 
     code{
@@ -220,17 +277,18 @@
       word-break:break-word;
     }
 
-    .mapping-image{
-      width:100%;
-      max-width:340px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      display:block;
-      margin-top:12px;
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-size:13px;
+      color:#93c5fd;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
     }
 
     @media (max-width: 900px){
-      .grid{
+      .grid,
+      .gift-grid{
         grid-template-columns:1fr;
       }
     }
@@ -241,7 +299,7 @@
     <div class="topbar">
       <div class="title">
         <h1>📱 TikTok Live</h1>
-        <p>Gerencie a integração da live com o Host LORD.</p>
+        <p>Gerencie os presentes e eventos da live no Host LORD.</p>
       </div>
 
       <div class="actions">
@@ -266,11 +324,11 @@
         <div class="actions">
           <button class="btn btn-primary" type="button" onclick="saveTikTokConfig()">Salvar</button>
           <button class="btn btn-success" type="button" onclick="toggleLiveConnection()">Conectar / Desconectar</button>
-          <button class="btn btn-warning" type="button" onclick="resetPresetMappings()">Restaurar mapeamento padrão</button>
+          <button class="btn btn-warning" type="button" onclick="resetPresetMappings()">Restaurar padrão</button>
         </div>
 
         <p class="small" style="margin-top:14px;">
-          Esta página salva as preferências no navegador. A execução real depende do backend da TikTok Live ler esses dados.
+          Essa página salva os dados no navegador. O backend precisa ler esse JSON para executar os comandos no Minecraft.
         </p>
       </div>
 
@@ -279,34 +337,43 @@
         <div class="list">
           <div class="list-item"><strong>Usuário:</strong> <span id="summaryUsername">--</span></div>
           <div class="list-item"><strong>Status:</strong> <span id="summaryStatus">Desconectado</span></div>
-          <div class="list-item"><strong>Eventos configurados:</strong> <span id="summaryCount">0</span></div>
+          <div class="list-item"><strong>Total de eventos:</strong> <span id="summaryCount">0</span></div>
+        </div>
+
+        <div class="legend">
+          <div class="legend-item">👤 Seguidor = 💀 Esqueleto</div>
+          <div class="legend-item">🌹 Rosa = 🧟 Zumbi</div>
+          <div class="legend-item">🦖 Dino = 💥 Creeper</div>
+          <div class="legend-item">🤠 Chapéu = ☠️ Wither</div>
         </div>
       </div>
 
       <div class="card full">
-        <h3>Mapa atual de presentes e eventos</h3>
-        <div id="giftList" class="list"></div>
+        <h3>Mapa visual dos presentes</h3>
+        <div id="giftList" class="gift-grid"></div>
       </div>
 
       <div class="card full">
         <h3>JSON para o backend</h3>
         <div class="list">
           <div class="list-item">
-            <div class="small" style="margin-bottom:8px;">Seu backend pode ler este objeto para executar comandos no Minecraft:</div>
-            <code id="jsonPreview"></code>
+            <pre id="jsonPreview"></pre>
           </div>
         </div>
       </div>
 
       <div class="card full">
-        <h3>Exemplo de lógica no backend</h3>
+        <h3>Exemplos para o backend</h3>
         <div class="list">
-          <div class="list-item"><code>follow => summon zombie ~ ~ ~</code></div>
+          <div class="list-item"><code>follow => summon skeleton ~ ~ ~</code></div>
           <div class="list-item"><code>Rosa => summon zombie ~ ~ ~</code></div>
           <div class="list-item"><code>Dinossauro => summon creeper ~ ~ ~</code></div>
-          <div class="list-item"><code>Whiter => summon creeper ~ ~ ~</code></div>
-          <div class="list-item"><code>Chapéu de cowboy => summon warden ~ ~ ~</code></div>
+          <div class="list-item"><code>Chapéu de cowboy => summon wither ~ ~ ~</code></div>
         </div>
+
+        <p class="small" style="margin-top:14px;">
+          Spawnar wither pode destruir o mapa. Se quiser mais segurança, use no backend algo como <code>summon wither ~ ~20 ~</code>.
+        </p>
       </div>
     </div>
   </div>
@@ -324,8 +391,10 @@
             type: "follow",
             label: "Seguidor",
             coins: 0,
-            mob: "zombie",
-            command: "summon zombie ~ ~ ~"
+            mob: "skeleton",
+            command: "summon skeleton ~ ~ ~",
+            icon: "👤",
+            mobIcon: "💀"
           },
           {
             id: "rosa",
@@ -333,7 +402,9 @@
             label: "Rosa",
             coins: 1,
             mob: "zombie",
-            command: "summon zombie ~ ~ ~"
+            command: "summon zombie ~ ~ ~",
+            icon: "🌹",
+            mobIcon: "🧟"
           },
           {
             id: "dinossauro",
@@ -341,23 +412,19 @@
             label: "Dinossauro",
             coins: 10,
             mob: "creeper",
-            command: "summon creeper ~ ~ ~"
-          },
-          {
-            id: "whiter",
-            type: "gift",
-            label: "Whiter",
-            coins: 0,
-            mob: "creeper",
-            command: "summon creeper ~ ~ ~"
+            command: "summon creeper ~ ~ ~",
+            icon: "🦖",
+            mobIcon: "💥"
           },
           {
             id: "chapeu-de-cowboy",
             type: "gift",
             label: "Chapéu de cowboy",
             coins: 100,
-            mob: "warden",
-            command: "summon warden ~ ~ ~"
+            mob: "wither",
+            command: "summon wither ~ ~ ~",
+            icon: "🤠",
+            mobIcon: "☠️"
           }
         ]
       };
@@ -453,18 +520,23 @@
       }
 
       list.innerHTML = mappings.map(item => `
-        <div class="list-item">
-          <div class="gift-row">
-            <div class="gift-info">
-              <div class="gift-title">${escapeHtml(item.label || "Sem nome")}</div>
-              <div>Comando: <code>${escapeHtml(item.command || "")}</code></div>
-              <div class="gift-tags">
-                <span class="tag">tipo: ${escapeHtml(item.type || "--")}</span>
-                <span class="tag">moedas: ${Number(item.coins || 0)}</span>
-                <span class="tag">mob: ${escapeHtml(item.mob || "--")}</span>
-              </div>
+        <div class="gift-card">
+          <div class="gift-header">
+            <div class="gift-icon">${escapeHtml(item.icon || "🎁")}</div>
+            <div>
+              <p class="gift-name">${escapeHtml(item.label || "Sem nome")}</p>
+              <p class="gift-sub">${item.type === "follow" ? "Evento de seguidor" : "Presente da live"}</p>
             </div>
           </div>
+
+          <div class="gift-tags">
+            <span class="tag">tipo: ${escapeHtml(item.type || "--")}</span>
+            <span class="tag">moedas: ${Number(item.coins || 0)}</span>
+            <span class="tag">mob: ${escapeHtml(item.mob || "--")}</span>
+            <span class="tag">resultado: ${escapeHtml(item.mobIcon || "⚡")}</span>
+          </div>
+
+          <div class="gift-command">${escapeHtml(item.command || "")}</div>
         </div>
       `).join("");
     }
