@@ -1,999 +1,508 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Host LORD - Painel</title>
-  <style>
-    :root{
-      --bg:#0b1120;
-      --bg-soft:#111827;
-      --card:#0f172a;
-      --card-2:#111827;
-      --border:#1f2937;
-      --text:#e5e7eb;
-      --muted:#94a3b8;
-      --primary:#2563eb;
-      --primary-hover:#1d4ed8;
-      --danger:#dc2626;
-      --danger-hover:#b91c1c;
-      --success:#16a34a;
-      --warning:#d97706;
-      --shadow:0 10px 30px rgba(0,0,0,.25);
-      --radius:18px;
-    }
 
-    *{box-sizing:border-box}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Host LORD - Painel</title>
 
-    html,body{
-      margin:0;
-      padding:0;
-      background:linear-gradient(180deg,#0b1120 0%,#0a0f1d 100%);
-      color:var(--text);
-      font-family:Inter,Arial,Helvetica,sans-serif;
-      min-height:100%;
-    }
+<style>
 
-    .app{
-      display:grid;
-      grid-template-columns:280px 1fr;
-      min-height:100vh;
-    }
+:root{
+--bg:#0b1120;
+--card:#0f172a;
+--border:#1f2937;
+--text:#e5e7eb;
+--muted:#94a3b8;
+--primary:#2563eb;
+--danger:#dc2626;
+--success:#16a34a;
+--radius:16px;
+}
 
-    .sidebar{
-      background:rgba(15,23,42,.95);
-      border-right:1px solid var(--border);
-      padding:22px 18px;
-      position:sticky;
-      top:0;
-      height:100vh;
-    }
+*{box-sizing:border-box}
 
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      margin-bottom:24px;
-      padding:8px;
-    }
+body{
+margin:0;
+font-family:Inter,Arial;
+background:var(--bg);
+color:var(--text);
+}
 
-    .brand-logo{
-      width:44px;
-      height:44px;
-      border-radius:14px;
-      background:linear-gradient(135deg,#2563eb,#60a5fa);
-      display:grid;
-      place-items:center;
-      font-weight:700;
-      box-shadow:var(--shadow);
-    }
+.app{
+display:grid;
+grid-template-columns:260px 1fr;
+min-height:100vh;
+}
 
-    .brand h1{
-      font-size:18px;
-      margin:0;
-    }
+/* SIDEBAR */
 
-    .brand p{
-      margin:2px 0 0;
-      color:var(--muted);
-      font-size:12px;
-    }
+.sidebar{
+background:#0f172a;
+border-right:1px solid var(--border);
+padding:20px;
+}
 
-    .menu{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
+.brand{
+display:flex;
+align-items:center;
+gap:10px;
+margin-bottom:20px;
+}
 
-    .menu button{
-      width:100%;
-      text-align:left;
-      border:1px solid transparent;
-      background:transparent;
-      color:var(--text);
-      padding:14px 14px;
-      border-radius:14px;
-      cursor:pointer;
-      transition:.2s ease;
-      font-size:14px;
-    }
+.brand-logo{
+width:44px;
+height:44px;
+border-radius:12px;
+overflow:hidden;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#000;
+}
 
-    .menu button:hover{
-      background:#111827;
-      border-color:var(--border);
-    }
+.brand-logo img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
 
-    .menu button.active{
-      background:linear-gradient(135deg,rgba(37,99,235,.22),rgba(37,99,235,.12));
-      border-color:rgba(59,130,246,.35);
-    }
+.brand h1{
+margin:0;
+font-size:18px;
+}
 
-    .sidebar-footer{
-      position:absolute;
-      left:18px;
-      right:18px;
-      bottom:18px;
-      padding:14px;
-      background:rgba(17,24,39,.7);
-      border:1px solid var(--border);
-      border-radius:16px;
-      font-size:13px;
-      color:var(--muted);
-      word-break:break-word;
-    }
+.brand p{
+margin:0;
+font-size:12px;
+color:var(--muted);
+}
 
-    .main{
-      padding:24px;
-    }
+.menu{
+display:flex;
+flex-direction:column;
+gap:8px;
+}
 
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom:22px;
-      flex-wrap:wrap;
-    }
+.menu button{
+background:none;
+border:none;
+color:var(--text);
+padding:12px;
+text-align:left;
+border-radius:10px;
+cursor:pointer;
+}
 
-    .topbar h2{
-      margin:0;
-      font-size:28px;
-    }
+.menu button:hover{
+background:#111827;
+}
 
-    .topbar p{
-      margin:6px 0 0;
-      color:var(--muted);
-    }
+.menu button.active{
+background:#1f2937;
+}
 
-    .server-badge{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      background:rgba(15,23,42,.9);
-      border:1px solid var(--border);
-      padding:12px 16px;
-      border-radius:999px;
-      box-shadow:var(--shadow);
-    }
+/* MAIN */
 
-    .dot{
-      width:11px;
-      height:11px;
-      border-radius:999px;
-      background:#64748b;
-      box-shadow:0 0 12px rgba(100,116,139,.5);
-    }
+.main{
+padding:20px;
+}
 
-    .dot.online{
-      background:#22c55e;
-      box-shadow:0 0 14px rgba(34,197,94,.8);
-    }
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
 
-    .grid{
-      display:grid;
-      gap:18px;
-    }
+.status{
+display:flex;
+align-items:center;
+gap:8px;
+background:#111827;
+padding:8px 14px;
+border-radius:999px;
+}
 
-    .grid-3{
-      grid-template-columns:repeat(3, minmax(0,1fr));
-    }
+.dot{
+width:10px;
+height:10px;
+border-radius:50%;
+background:#64748b;
+}
 
-    .grid-2{
-      grid-template-columns:repeat(2, minmax(0,1fr));
-    }
+.dot.online{
+background:#22c55e;
+}
 
-    .card{
-      background:linear-gradient(180deg,rgba(15,23,42,.96),rgba(17,24,39,.96));
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      padding:18px;
-      box-shadow:var(--shadow);
-    }
+.card{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:var(--radius);
+padding:18px;
+margin-bottom:18px;
+}
 
-    .card h3{
-      margin:0 0 14px;
-      font-size:18px;
-    }
+.actions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
 
-    .stat{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
+button.primary{background:var(--primary);color:white}
+button.success{background:var(--success);color:white}
+button.danger{background:var(--danger);color:white}
+button.secondary{background:#334155;color:white}
 
-    .stat .label{
-      color:var(--muted);
-      font-size:13px;
-    }
+button.primary,
+button.success,
+button.danger,
+button.secondary{
+border:none;
+padding:10px 14px;
+border-radius:10px;
+cursor:pointer;
+}
 
-    .stat .value{
-      font-size:28px;
-      font-weight:700;
-      word-break:break-word;
-    }
+.console{
+width:100%;
+height:350px;
+background:#020617;
+color:#93c5fd;
+border:1px solid var(--border);
+border-radius:10px;
+padding:10px;
+font-family:monospace;
+}
 
-    .actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
+input{
+width:100%;
+padding:10px;
+border-radius:10px;
+border:1px solid var(--border);
+background:#020617;
+color:white;
+}
 
-    button.primary,
-    button.secondary,
-    button.danger,
-    button.success{
-      border:none;
-      padding:11px 16px;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:600;
-      transition:.2s ease;
-      color:white;
-    }
+.hidden{
+display:none;
+}
 
-    button.primary{background:var(--primary)}
-    button.primary:hover{background:var(--primary-hover)}
-    button.secondary{background:#334155}
-    button.secondary:hover{background:#475569}
-    button.danger{background:var(--danger)}
-    button.danger:hover{background:var(--danger-hover)}
-    button.success{background:var(--success)}
-    button.success:hover{filter:brightness(.95)}
-
-    button:disabled{
-      opacity:.65;
-      cursor:not-allowed;
-    }
-
-    input,select,textarea{
-      width:100%;
-      background:#020617;
-      border:1px solid var(--border);
-      color:var(--text);
-      border-radius:12px;
-      padding:12px 14px;
-      outline:none;
-    }
-
-    input:focus,select:focus,textarea:focus{
-      border-color:#3b82f6;
-      box-shadow:0 0 0 3px rgba(59,130,246,.15);
-    }
-
-    label{
-      display:block;
-      margin:0 0 8px;
-      font-size:14px;
-      color:#cbd5e1;
-    }
-
-    .field{
-      margin-bottom:14px;
-    }
-
-    .console-box{
-      width:100%;
-      min-height:360px;
-      resize:vertical;
-      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-      line-height:1.45;
-      background:#020617;
-      color:#93c5fd;
-    }
-
-    .command-row{
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:10px;
-      margin-top:12px;
-    }
-
-    .hidden{
-      display:none !important;
-    }
-
-    .files-list{
-      display:grid;
-      gap:10px;
-      max-height:420px;
-      overflow:auto;
-    }
-
-    .file-item{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      padding:12px 14px;
-      border:1px solid var(--border);
-      border-radius:14px;
-      background:rgba(2,6,23,.6);
-    }
-
-    .file-meta{
-      color:var(--muted);
-      font-size:13px;
-      word-break:break-word;
-    }
-
-    .muted{
-      color:var(--muted);
-    }
-
-    .config-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:14px;
-    }
-
-    .full{
-      grid-column:1 / -1;
-    }
-
-    .upload-box{
-      border:1px dashed #334155;
-      border-radius:16px;
-      padding:16px;
-      background:rgba(2,6,23,.4);
-    }
-
-    .small{
-      font-size:12px;
-      color:var(--muted);
-    }
-
-    code{
-      background:rgba(255,255,255,.06);
-      padding:2px 6px;
-      border-radius:8px;
-    }
-
-    @media (max-width: 1100px){
-      .grid-3,.grid-2,.config-grid{
-        grid-template-columns:1fr;
-      }
-    }
-
-    @media (max-width: 860px){
-      .app{
-        grid-template-columns:1fr;
-      }
-
-      .sidebar{
-        position:relative;
-        height:auto;
-        border-right:none;
-        border-bottom:1px solid var(--border);
-      }
-
-      .sidebar-footer{
-        position:static;
-        margin-top:16px;
-      }
-
-      .main{
-        padding:16px;
-      }
-
-      .command-row{
-        grid-template-columns:1fr;
-      }
-    }
-  </style>
+</style>
 </head>
+
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-logo">L</div>
-        <div>
-          <h1>Host LORD</h1>
-          <p>Painel Minecraft</p>
-        </div>
-      </div>
 
-     <div class="menu">
-  <button type="button" class="tab-btn active" data-tab="dashboard">🏠 Dashboard</button>
-  <button type="button" class="tab-btn" data-tab="console">🖥️ Console</button>
-  <button type="button" class="tab-btn" data-tab="config">⚙️ Configurações</button>
-  <button type="button" class="tab-btn" data-tab="files">📁 Arquivos</button>
-  <button type="button" class="tab-btn" data-tab="plugins">🔌 Plugins</button>
+<div class="app">
 
-  <button type="button" class="tab-btn" onclick="window.location.href='temas.html'">🎨 Temas</button>
-  <button type="button" class="tab-btn" onclick="window.location.href='tiktok.html'">📱 TikTok</button>
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+<div class="brand">
+<div class="brand-logo">
+<img src="logo.png">
+</div>
+<div>
+<h1>Host LORD</h1>
+<p>Painel Minecraft</p>
+</div>
 </div>
 
-      <div class="sidebar-footer">
-        <div><strong>Backend:</strong> <span id="backendLabel">não definido</span></div>
-        <div class="small" style="margin-top:6px;">Defina com <code>localStorage.setItem("backend_url","http://SEU_IP:3000")</code></div>
-      </div>
-    </aside>
-
-    <main class="main">
-      <div class="topbar">
-        <div>
-          <h2 id="pageTitle">Dashboard</h2>
-          <p>Gerencie seu servidor Minecraft em um só lugar.</p>
-        </div>
-
-        <div class="server-badge">
-          <span id="statusDot" class="dot"></span>
-          <span id="statusText">Carregando status...</span>
-        </div>
-      </div>
-
-      <section id="tab-dashboard" class="tab-content">
-        <div class="grid grid-3">
-          <div class="card stat">
-            <span class="label">Servidor</span>
-            <span class="value" id="dashOnline">--</span>
-          </div>
-          <div class="card stat">
-            <span class="label">Host</span>
-            <span class="value" id="dashHost" style="font-size:18px;">--</span>
-          </div>
-          <div class="card stat">
-            <span class="label">Porta</span>
-            <span class="value" id="dashPort">--</span>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:18px;">
-          <h3>Controles rápidos</h3>
-          <div class="actions">
-            <button type="button" class="success" onclick="startServer()">Iniciar</button>
-            <button type="button" class="secondary" onclick="restartServer()">Reiniciar</button>
-            <button type="button" class="danger" onclick="stopServer()">Parar</button>
-            <button type="button" class="primary" onclick="refreshAll()">Atualizar</button>
-          </div>
-        </div>
-
-        <div class="grid grid-2" style="margin-top:18px;">
-          <div class="card">
-            <h3>Informações</h3>
-            <p><strong>PID:</strong> <span id="dashPid">--</span></p>
-            <p><strong>JAR:</strong> <span id="dashJar">--</span></p>
-            <p><strong>Pasta:</strong> <span id="dashDir">--</span></p>
-            <p><strong>Painel local:</strong> <span id="dashPanelUrl">--</span></p>
-          </div>
-
-          <div class="card">
-            <h3>Dicas</h3>
-            <p class="muted">Depois de salvar configurações, algumas mudanças só entram em vigor após reiniciar o servidor.</p>
-            <p class="muted">Se o painel estiver no GitHub Pages, o backend precisa estar rodando em outro lugar, como seu PC ou VPS.</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="tab-console" class="tab-content hidden">
-        <div class="card">
-          <h3>Console do servidor</h3>
-          <textarea id="consoleBox" class="console-box" readonly></textarea>
-          <div class="command-row">
-            <input id="commandInput" placeholder="Digite um comando, ex: say Olá mundo" />
-            <button type="button" class="primary" onclick="sendCommand()">Enviar</button>
-          </div>
-        </div>
-      </section>
-
-      <section id="tab-config" class="tab-content hidden">
-        <div class="card">
-          <h3>Configurações do servidor</h3>
-
-          <div class="config-grid">
-            <div class="field full">
-              <label for="cfg_motd">MOTD</label>
-              <input id="cfg_motd" placeholder="Mensagem do servidor" />
-            </div>
-
-            <div class="field">
-              <label for="cfg_gamemode">Gamemode</label>
-              <select id="cfg_gamemode">
-                <option value="survival">survival</option>
-                <option value="creative">creative</option>
-                <option value="adventure">adventure</option>
-                <option value="spectator">spectator</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="cfg_difficulty">Dificuldade</label>
-              <select id="cfg_difficulty">
-                <option value="peaceful">peaceful</option>
-                <option value="easy">easy</option>
-                <option value="normal">normal</option>
-                <option value="hard">hard</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="cfg_maxplayers">Máx. jogadores</label>
-              <input id="cfg_maxplayers" type="number" min="1" />
-            </div>
-
-            <div class="field">
-              <label for="cfg_serverport">Porta</label>
-              <input id="cfg_serverport" type="number" min="1" />
-            </div>
-
-            <div class="field">
-              <label for="cfg_pvp">PVP</label>
-              <select id="cfg_pvp">
-                <option value="true">true</option>
-                <option value="false">false</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="cfg_online_mode">Online mode</label>
-              <select id="cfg_online_mode">
-                <option value="true">true</option>
-                <option value="false">false</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="cfg_whitelist">Whitelist</label>
-              <select id="cfg_whitelist">
-                <option value="true">true</option>
-                <option value="false">false</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="cfg_commandblocks">Command blocks</label>
-              <select id="cfg_commandblocks">
-                <option value="true">true</option>
-                <option value="false">false</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="cfg_hardcore">Hardcore</label>
-              <select id="cfg_hardcore">
-                <option value="true">true</option>
-                <option value="false">false</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="cfg_nether">Allow nether</label>
-              <select id="cfg_nether">
-                <option value="true">true</option>
-                <option value="false">false</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="cfg_viewdistance">View distance</label>
-              <input id="cfg_viewdistance" type="number" min="2" />
-            </div>
-
-            <div class="field">
-              <label for="cfg_simdistance">Simulation distance</label>
-              <input id="cfg_simdistance" type="number" min="2" />
-            </div>
-
-            <div class="field">
-              <label for="cfg_spawnprotection">Spawn protection</label>
-              <input id="cfg_spawnprotection" type="number" min="0" />
-            </div>
-
-            <div class="field">
-              <label for="cfg_levelname">Nome do mundo</label>
-              <input id="cfg_levelname" />
-            </div>
-
-            <div class="field full">
-              <label for="cfg_seed">Seed</label>
-              <input id="cfg_seed" />
-            </div>
-          </div>
-
-          <div class="actions" style="margin-top:10px;">
-            <button type="button" class="primary" onclick="saveConfig()">Salvar configurações</button>
-            <button type="button" class="secondary" onclick="loadConfig()">Recarregar</button>
-          </div>
-        </div>
-      </section>
-
-      <section id="tab-files" class="tab-content hidden">
-        <div class="card">
-          <h3>Arquivos do servidor</h3>
-          <div class="actions" style="margin-bottom:14px;">
-            <button type="button" class="primary" onclick="loadFiles()">Atualizar arquivos</button>
-          </div>
-          <div id="filesList" class="files-list">
-            <div class="muted">Nenhum arquivo carregado.</div>
-          </div>
-        </div>
-      </section>
-
-      <section id="tab-plugins" class="tab-content hidden">
-        <div class="card">
-          <h3>Upload de plugins</h3>
-          <div class="upload-box">
-            <div class="field">
-              <label for="pluginFile">Selecione um arquivo .jar</label>
-              <input id="pluginFile" type="file" accept=".jar,application/java-archive" />
-            </div>
-            <div class="actions">
-              <button type="button" class="primary" onclick="uploadPlugin()">Enviar plugin</button>
-            </div>
-            <p class="small">O arquivo será enviado para a pasta <code>plugins/</code> do servidor.</p>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <script>
-    const API = (localStorage.getItem("backend_url") || "http://localhost:3000").replace(/\/+$/, "");
-
-    function redirectToLogin() {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      window.location.href = "login.html";
-    }
-
-    if (!localStorage.getItem("token")) {
-      alert("Você precisa fazer login primeiro.");
-      redirectToLogin();
-    }
-
-    document.getElementById("backendLabel").textContent = API || "não definido";
-
-    async function api(path, options = {}) {
-      const currentToken = localStorage.getItem("token");
-
-      if (!currentToken) {
-        redirectToLogin();
-        throw new Error("Token ausente.");
-      }
-
-      const headers = {
-        Authorization: "Bearer " + currentToken,
-        ...(options.headers || {})
-      };
-
-      if (!(options.body instanceof FormData) && options.body !== undefined) {
-        headers["Content-Type"] = "application/json";
-      }
-
-      let res;
-      try {
-        res = await fetch(API + path, {
-          ...options,
-          headers
-        });
-      } catch (err) {
-        throw new Error("Não foi possível conectar ao backend.");
-      }
-
-      let data = null;
-      try {
-        data = await res.json();
-      } catch {
-        if (!res.ok) {
-          throw new Error("Resposta inválida do backend.");
-        }
-      }
-
-      if (!res.ok) {
-        if (res.status === 401) {
-          alert("Sessão expirada ou login inválido. Faça login novamente.");
-          redirectToLogin();
-          throw new Error("Não autenticado.");
-        }
-
-        throw new Error((data && data.error) || "Erro na API.");
-      }
-
-      return data || {};
-    }
-
-    function setActiveTab(tabName) {
-      document.querySelectorAll(".tab-btn").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.tab === tabName);
-      });
-
-      document.querySelectorAll(".tab-content").forEach(section => {
-        section.classList.add("hidden");
-      });
-
-      const target = document.getElementById("tab-" + tabName);
-      if (target) target.classList.remove("hidden");
-
-      const titles = {
-        dashboard: "Dashboard",
-        console: "Console",
-        config: "Configurações",
-        files: "Arquivos",
-        plugins: "Plugins"
-      };
-
-      document.getElementById("pageTitle").textContent = titles[tabName] || "Painel";
-    }
-
-    document.querySelectorAll(".tab-btn").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const tab = btn.dataset.tab;
-        setActiveTab(tab);
-
-        if (tab === "config") await loadConfig();
-        if (tab === "files") await loadFiles();
-        if (tab === "console") await loadConsole();
-      });
-    });
-
-    async function loadStatus() {
-      try {
-        const data = await api("/api/status");
-
-        document.getElementById("statusText").textContent = data.online ? "Servidor online" : "Servidor offline";
-        document.getElementById("statusDot").classList.toggle("online", !!data.online);
-
-        document.getElementById("dashOnline").textContent = data.online ? "ONLINE" : "OFFLINE";
-        document.getElementById("dashHost").textContent = data.minecraftHost || "--";
-        document.getElementById("dashPort").textContent = data.minecraftPort || "--";
-        document.getElementById("dashPid").textContent = data.pid || "--";
-        document.getElementById("dashJar").textContent = data.jar || "--";
-        document.getElementById("dashDir").textContent = data.serverDir || "--";
-        document.getElementById("dashPanelUrl").textContent = data.panelUrl || "--";
-      } catch (err) {
-        document.getElementById("statusText").textContent = "Erro de conexão";
-        document.getElementById("statusDot").classList.remove("online");
-
-        document.getElementById("dashOnline").textContent = "ERRO";
-        document.getElementById("dashHost").textContent = "--";
-        document.getElementById("dashPort").textContent = "--";
-        document.getElementById("dashPid").textContent = "--";
-        document.getElementById("dashJar").textContent = "--";
-        document.getElementById("dashDir").textContent = "--";
-        document.getElementById("dashPanelUrl").textContent = "--";
-
-        console.error("Erro ao carregar status:", err);
-      }
-    }
-
-    async function startServer() {
-      try {
-        const data = await api("/api/start", { method: "POST" });
-        alert(data.message || "Servidor iniciado.");
-        await refreshAll();
-      } catch (err) {
-        alert("Erro ao iniciar: " + err.message);
-      }
-    }
-
-    async function stopServer() {
-      try {
-        const data = await api("/api/stop", { method: "POST" });
-        alert(data.message || "Servidor parando.");
-        await refreshAll();
-      } catch (err) {
-        alert("Erro ao parar: " + err.message);
-      }
-    }
-
-    async function restartServer() {
-      try {
-        const data = await api("/api/restart", { method: "POST" });
-        alert(data.message || "Reinício solicitado.");
-        await refreshAll();
-      } catch (err) {
-        alert("Erro ao reiniciar: " + err.message);
-      }
-    }
-
-    async function loadConsole() {
-      try {
-        const data = await api("/api/console");
-        const box = document.getElementById("consoleBox");
-
-        let content = "";
-        if (Array.isArray(data.log)) {
-          content = data.log.join("\n");
-        } else if (typeof data.log === "string") {
-          content = data.log;
-        } else if (typeof data.console === "string") {
-          content = data.console;
-        }
-
-        box.value = content;
-        box.scrollTop = box.scrollHeight;
-      } catch (err) {
-        console.error("Erro ao carregar console:", err);
-      }
-    }
-
-    async function sendCommand() {
-      const input = document.getElementById("commandInput");
-      const command = input.value.trim();
-
-      if (!command) {
-        alert("Digite um comando.");
-        return;
-      }
-
-      try {
-        await api("/api/command", {
-          method: "POST",
-          body: JSON.stringify({ command })
-        });
-
-        input.value = "";
-        await loadConsole();
-      } catch (err) {
-        alert("Erro ao enviar comando: " + err.message);
-      }
-    }
-
-    async function loadConfig() {
-      try {
-        const data = await api("/api/server-config");
-        const cfg = data.config || {};
-
-        document.getElementById("cfg_motd").value = cfg["motd"] || "";
-        document.getElementById("cfg_gamemode").value = cfg["gamemode"] || "survival";
-        document.getElementById("cfg_difficulty").value = cfg["difficulty"] || "easy";
-        document.getElementById("cfg_maxplayers").value = cfg["max-players"] || "20";
-        document.getElementById("cfg_serverport").value = cfg["server-port"] || "25565";
-        document.getElementById("cfg_pvp").value = cfg["pvp"] || "true";
-        document.getElementById("cfg_online_mode").value = cfg["online-mode"] || "true";
-        document.getElementById("cfg_whitelist").value = cfg["white-list"] || "false";
-        document.getElementById("cfg_commandblocks").value = cfg["enable-command-block"] || "false";
-        document.getElementById("cfg_hardcore").value = cfg["hardcore"] || "false";
-        document.getElementById("cfg_nether").value = cfg["allow-nether"] || "true";
-        document.getElementById("cfg_viewdistance").value = cfg["view-distance"] || "10";
-        document.getElementById("cfg_simdistance").value = cfg["simulation-distance"] || "10";
-        document.getElementById("cfg_spawnprotection").value = cfg["spawn-protection"] || "16";
-        document.getElementById("cfg_seed").value = cfg["level-seed"] || "";
-        document.getElementById("cfg_levelname").value = cfg["level-name"] || "world";
-      } catch (err) {
-        alert("Erro ao carregar configurações: " + err.message);
-      }
-    }
-
-    async function saveConfig() {
-      try {
-        const config = {
-          "motd": document.getElementById("cfg_motd").value.trim(),
-          "gamemode": document.getElementById("cfg_gamemode").value,
-          "difficulty": document.getElementById("cfg_difficulty").value,
-          "max-players": document.getElementById("cfg_maxplayers").value,
-          "server-port": document.getElementById("cfg_serverport").value,
-          "pvp": document.getElementById("cfg_pvp").value,
-          "online-mode": document.getElementById("cfg_online_mode").value,
-          "white-list": document.getElementById("cfg_whitelist").value,
-          "enable-command-block": document.getElementById("cfg_commandblocks").value,
-          "hardcore": document.getElementById("cfg_hardcore").value,
-          "allow-nether": document.getElementById("cfg_nether").value,
-          "view-distance": document.getElementById("cfg_viewdistance").value,
-          "simulation-distance": document.getElementById("cfg_simdistance").value,
-          "spawn-protection": document.getElementById("cfg_spawnprotection").value,
-          "level-seed": document.getElementById("cfg_seed").value.trim(),
-          "level-name": document.getElementById("cfg_levelname").value.trim()
-        };
-
-        const data = await api("/api/server-config", {
-          method: "POST",
-          body: JSON.stringify({ config })
-        });
-
-        alert(data.message || "Configuração salva.");
-        await loadConfig();
-        await loadStatus();
-      } catch (err) {
-        alert("Erro ao salvar configurações: " + err.message);
-      }
-    }
-
-    async function loadFiles() {
-      const list = document.getElementById("filesList");
-      list.innerHTML = '<div class="muted">Carregando arquivos...</div>';
-
-      try {
-        const data = await api("/api/files");
-        const files = Array.isArray(data.files) ? data.files : [];
-
-        if (!files.length) {
-          list.innerHTML = '<div class="muted">Nenhum arquivo encontrado.</div>';
-          return;
-        }
-
-        list.innerHTML = files.map(file => `
-          <div class="file-item">
-            <div>
-              <div><strong>${escapeHtml(file.name || "Sem nome")}</strong></div>
-              <div class="file-meta">
-                ${escapeHtml(file.path || "")}
-                ${file.type ? ` • ${escapeHtml(file.type)}` : ""}
-                ${typeof file.size === "number" ? ` • ${formatBytes(file.size)}` : ""}
-              </div>
-            </div>
-          </div>
-        `).join("");
-      } catch (err) {
-        list.innerHTML = `<div class="muted">Erro ao carregar arquivos: ${escapeHtml(err.message)}</div>`;
-      }
-    }
-
-    async function uploadPlugin() {
-      const input = document.getElementById("pluginFile");
-      const file = input.files && input.files[0];
-
-      if (!file) {
-        alert("Selecione um plugin.");
-        return;
-      }
-
-      if (!file.name.toLowerCase().endsWith(".jar")) {
-        alert("Selecione um arquivo .jar válido.");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("plugin", file);
-
-      try {
-        const data = await api("/api/upload-plugin", {
-          method: "POST",
-          body: formData
-        });
-
-        alert("Plugin enviado: " + ((data.file && data.file.name) || file.name));
-        input.value = "";
-        await loadFiles();
-      } catch (err) {
-        alert("Erro ao enviar plugin: " + err.message);
-      }
-    }
-
-    async function refreshAll() {
-      await Promise.allSettled([
-        loadStatus(),
-        loadConsole()
-      ]);
-    }
-
-    function formatBytes(bytes) {
-      const sizes = ["B", "KB", "MB", "GB", "TB"];
-      if (!bytes || bytes <= 0) return "0 B";
-      const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), sizes.length - 1);
-      return (bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1) + " " + sizes[i];
-    }
-
-    function escapeHtml(str) {
-      return String(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    document.getElementById("commandInput").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        sendCommand();
-      }
-    });
-
-    setActiveTab("dashboard");
-    refreshAll();
-    loadConfig();
-
-    setInterval(() => {
-      loadStatus().catch(() => {});
-    }, 5000);
-
-    setInterval(() => {
-      const consoleTabVisible = !document.getElementById("tab-console").classList.contains("hidden");
-      if (consoleTabVisible) {
-        loadConsole().catch(() => {});
-      }
-    }, 2500);
-  </script>
+<div class="menu">
+
+<button class="tab-btn active" data-tab="dashboard">🏠 Dashboard</button>
+<button class="tab-btn" data-tab="console">🖥 Console</button>
+<button class="tab-btn" data-tab="files">📁 Arquivos</button>
+<button class="tab-btn" data-tab="plugins">🔌 Plugins</button>
+
+<button onclick="window.location.href='temas.html'">🎨 Temas</button>
+<button onclick="window.location.href='tiktok.html'">📱 TikTok</button>
+
+</div>
+
+</aside>
+
+<!-- MAIN -->
+
+<main class="main">
+
+<div class="topbar">
+<h2 id="pageTitle">Dashboard</h2>
+
+<div class="status">
+<div id="statusDot" class="dot"></div>
+<span id="statusText">Carregando...</span>
+</div>
+
+</div>
+
+<!-- DASHBOARD -->
+
+<section id="tab-dashboard">
+
+<div class="card">
+
+<h3>Controles do servidor</h3>
+
+<div class="actions">
+
+<button class="success" onclick="startServer()">Iniciar</button>
+<button class="secondary" onclick="restartServer()">Reiniciar</button>
+<button class="danger" onclick="stopServer()">Parar</button>
+<button class="primary" onclick="refreshAll()">Atualizar</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<p><strong>Host:</strong> <span id="dashHost">--</span></p>
+<p><strong>Porta:</strong> <span id="dashPort">--</span></p>
+<p><strong>PID:</strong> <span id="dashPid">--</span></p>
+
+</div>
+
+</section>
+
+<!-- CONSOLE -->
+
+<section id="tab-console" class="hidden">
+
+<div class="card">
+
+<textarea id="consoleBox" class="console" readonly></textarea>
+
+<div style="margin-top:10px">
+<input id="commandInput" placeholder="Digite comando">
+</div>
+
+<div style="margin-top:10px">
+
+<button class="primary" onclick="sendCommand()">Enviar</button>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FILES -->
+
+<section id="tab-files" class="hidden">
+
+<div class="card">
+
+<h3>Arquivos</h3>
+
+<button class="primary" onclick="loadFiles()">Atualizar</button>
+
+<div id="filesList" style="margin-top:10px"></div>
+
+</div>
+
+</section>
+
+<!-- PLUGINS -->
+
+<section id="tab-plugins" class="hidden">
+
+<div class="card">
+
+<h3>Upload Plugin</h3>
+
+<input type="file" id="pluginFile">
+
+<div style="margin-top:10px">
+
+<button class="primary" onclick="uploadPlugin()">Enviar Plugin</button>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+</div>
+
+<script>
+
+/* BACKEND */
+
+const API = localStorage.getItem("backend_url") || "http://localhost:3000"
+
+/* TABS */
+
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+btn.onclick=()=>{
+document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"))
+btn.classList.add("active")
+
+document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"))
+
+document.getElementById("tab-"+btn.dataset.tab).classList.remove("hidden")
+
+document.getElementById("pageTitle").innerText=btn.innerText
+}
+})
+
+/* API */
+
+async function api(path,options={}){
+
+const res=await fetch(API+path,options)
+
+const data=await res.json()
+
+return data
+}
+
+/* STATUS */
+
+async function loadStatus(){
+
+try{
+
+const data=await api("/api/status")
+
+document.getElementById("statusText").innerText=data.online?"Online":"Offline"
+
+document.getElementById("statusDot").classList.toggle("online",data.online)
+
+document.getElementById("dashHost").innerText=data.minecraftHost||"--"
+document.getElementById("dashPort").innerText=data.minecraftPort||"--"
+document.getElementById("dashPid").innerText=data.pid||"--"
+
+}catch(e){
+
+document.getElementById("statusText").innerText="Erro conexão"
+
+}
+
+}
+
+/* SERVER */
+
+async function startServer(){
+
+await api("/api/start",{method:"POST"})
+
+alert("Servidor iniciado")
+
+}
+
+async function stopServer(){
+
+await api("/api/stop",{method:"POST"})
+
+alert("Servidor parado")
+
+}
+
+async function restartServer(){
+
+await api("/api/restart",{method:"POST"})
+
+alert("Servidor reiniciando")
+
+}
+
+/* CONSOLE */
+
+async function loadConsole(){
+
+const data=await api("/api/console")
+
+const box=document.getElementById("consoleBox")
+
+box.value=(data.log||[]).join("\n")
+
+box.scrollTop=box.scrollHeight
+
+}
+
+async function sendCommand(){
+
+const cmd=document.getElementById("commandInput").value
+
+await api("/api/command",{
+
+method:"POST",
+
+headers:{"Content-Type":"application/json"},
+
+body:JSON.stringify({command:cmd})
+
+})
+
+document.getElementById("commandInput").value=""
+
+loadConsole()
+
+}
+
+/* FILES */
+
+async function loadFiles(){
+
+const data=await api("/api/files")
+
+const list=document.getElementById("filesList")
+
+list.innerHTML=""
+
+data.files.forEach(f=>{
+
+const div=document.createElement("div")
+
+div.innerText=f.name
+
+list.appendChild(div)
+
+})
+
+}
+
+/* PLUGIN */
+
+async function uploadPlugin(){
+
+const file=document.getElementById("pluginFile").files[0]
+
+const form=new FormData()
+
+form.append("plugin",file)
+
+await fetch(API+"/api/upload-plugin",{
+
+method:"POST",
+
+body:form
+
+})
+
+alert("Plugin enviado")
+
+}
+
+/* REFRESH */
+
+function refreshAll(){
+
+loadStatus()
+loadConsole()
+
+}
+
+loadStatus()
+
+setInterval(loadStatus,5000)
+setInterval(loadConsole,2500)
+
+</script>
+
 </body>
 </html>
