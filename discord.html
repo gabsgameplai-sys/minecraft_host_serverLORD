@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Host LORD - Discord Bot</title>
+  <style>
+    body{
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      background:#0b1120;
+      color:#e5e7eb;
+      padding:24px;
+    }
+    .card{
+      max-width:900px;
+      margin:0 auto 20px;
+      background:#111827;
+      border:1px solid #1f2937;
+      border-radius:18px;
+      padding:20px;
+    }
+    h1,h2{margin-top:0}
+    input,textarea,button{
+      padding:12px;
+      border-radius:10px;
+      border:none;
+      margin:6px 0;
+    }
+    input,textarea{
+      width:100%;
+      background:#020617;
+      color:white;
+      border:1px solid #334155;
+    }
+    textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+    button{
+      background:#2563eb;
+      color:white;
+      cursor:pointer;
+      margin-right:8px;
+    }
+    .muted{color:#94a3b8}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>💬 Discord Bot</h1>
+    <p class="muted">Painel administrativo do bot de Minecraft no Discord.</p>
+    <div class="row">
+      <button onclick="window.location.href='panel.html'">← Voltar</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Status do bot</h2>
+    <p><strong>Online:</strong> <span id="dcOnline">--</span></p>
+    <p><strong>Servidor:</strong> <span id="dcGuild">--</span></p>
+    <p><strong>Canal:</strong> <span id="dcChannel">--</span></p>
+    <p><strong>Players online:</strong> <span id="dcPlayers">--</span></p>
+  </div>
+
+  <div class="card">
+    <h2>Enviar mensagem</h2>
+    <textarea id="discordMessage" placeholder="Mensagem para o Discord"></textarea>
+    <div class="row">
+      <button onclick="sendDiscordMessage()">Enviar</button>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const API = localStorage.getItem("backend_url") || "http://localhost:3000";
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+    if (!token) {
+      alert("Faça login primeiro.");
+      window.location.href = "login.html";
+    }
+
+    if (user.role !== "admin") {
+      alert("Acesso apenas para administrador.");
+      window.location.href = "panel.html";
+    }
+
+    async function api(path, options = {}) {
+      const headers = {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+        ...(options.headers || {})
+      };
+
+      if (!(options.body instanceof FormData)) {
+        headers["Content-Type"] = "application/json";
+      }
+
+      const res = await fetch(API + path, {
+        ...options,
+        headers
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (res.status === 401 || res.status === 403) {
+          alert(data.error || "Acesso negado.");
+          window.location.href = "panel.html";
+          throw new Error(data.error || "Acesso negado.");
+        }
+        throw new Error(data.error || "Erro na API.");
+      }
+
+      return data;
+    }
+
+    async function loadDiscordStatus() {
+      try {
+        const data = await api("/api/discord/status");
+        document.getElementById("dcOnline").textContent = data.botOnline ? "Sim" : "Não";
+        document.getElementById("dcGuild").textContent = data.guildName || "--";
+        document.getElementById("dcChannel").textContent = data.channelName || "--";
+        document.getElementById("dcPlayers").textContent = data.playersOnline ?? 0;
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    async function sendDiscordMessage() {
+      try {
+        const message = document.getElementById("discordMessage").value.trim();
+        const data = await api("/api/discord/send", {
+          method: "POST",
+          body: JSON.stringify({ message })
+        });
+        alert(data.message || "Mensagem enviada.");
+        document.getElementById("discordMessage").value = "";
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    loadDiscordStatus();
+  </script>
+</body>
+</html>
