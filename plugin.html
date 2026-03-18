@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Host LORD - Plugin Live</title>
+  <style>
+    body{
+      margin:0;
+      font-family:Arial, sans-serif;
+      background:#0b1120;
+      color:#e5e7eb;
+    }
+    .wrap{
+      max-width:1000px;
+      margin:30px auto;
+      padding:20px;
+    }
+    .card{
+      background:#111827;
+      border:1px solid #1f2937;
+      border-radius:16px;
+      padding:20px;
+      margin-bottom:20px;
+    }
+    h1,h2{
+      margin-top:0;
+    }
+    input,select,button,textarea{
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid #374151;
+      background:#0f172a;
+      color:#fff;
+      margin-top:10px;
+      margin-bottom:10px;
+    }
+    button{
+      background:#2563eb;
+      border:none;
+      cursor:pointer;
+    }
+    button:hover{
+      background:#1d4ed8;
+    }
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+    }
+    .status{
+      font-weight:bold;
+    }
+    .ok{ color:#22c55e; }
+    .off{ color:#ef4444; }
+    pre{
+      background:#020617;
+      padding:12px;
+      border-radius:10px;
+      overflow:auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Plugin Live / TikFinity</h1>
+
+    <div class="card">
+      <h2>Status</h2>
+      <div id="pluginStatus" class="status">Carregando...</div>
+      <button onclick="loadStatus()">Testar conexão</button>
+      <pre id="statusJson">{}</pre>
+    </div>
+
+    <div class="card">
+      <h2>Executar comando</h2>
+      <input id="commandInput" placeholder="Ex: say obrigado pelo presente!" />
+      <button onclick="sendCommand()">Enviar comando</button>
+    </div>
+
+    <div class="card">
+      <h2>Ação rápida</h2>
+      <div class="row">
+        <div>
+          <input id="playerInput" placeholder="Nome do jogador" />
+          <select id="effectInput">
+            <option value="SPEED">SPEED</option>
+            <option value="JUMP">JUMP</option>
+            <option value="REGENERATION">REGENERATION</option>
+            <option value="SLOW">SLOW</option>
+          </select>
+        </div>
+        <div>
+          <input id="durationInput" type="number" value="200" placeholder="Duração" />
+          <input id="amplifierInput" type="number" value="1" placeholder="Nível" />
+        </div>
+      </div>
+      <button onclick="sendEffect()">Aplicar efeito</button>
+    </div>
+
+    <div class="card">
+      <h2>Broadcast</h2>
+      <textarea id="broadcastInput" placeholder="Mensagem para o chat"></textarea>
+      <button onclick="sendBroadcast()">Enviar mensagem</button>
+    </div>
+
+    <div class="card">
+      <h2>Resposta</h2>
+      <pre id="resultBox">Nenhuma ação ainda.</pre>
+    </div>
+  </div>
+
+  <script>
+    async function loadStatus(){
+      const statusEl = document.getElementById("pluginStatus");
+      const jsonEl = document.getElementById("statusJson");
+
+      statusEl.textContent = "Verificando...";
+      statusEl.className = "status";
+
+      try {
+        const res = await fetch("/api/plugin/status");
+        const data = await res.json();
+
+        if(data.ok){
+          statusEl.textContent = "Plugin online";
+          statusEl.className = "status ok";
+          jsonEl.textContent = JSON.stringify(data, null, 2);
+        } else {
+          statusEl.textContent = "Plugin offline";
+          statusEl.className = "status off";
+          jsonEl.textContent = JSON.stringify(data, null, 2);
+        }
+      } catch (err){
+        statusEl.textContent = "Erro ao conectar";
+        statusEl.className = "status off";
+        jsonEl.textContent = err.message;
+      }
+    }
+
+    async function sendCommand(){
+      const command = document.getElementById("commandInput").value.trim();
+      if(!command) return;
+
+      const res = await fetch("/api/plugin/command", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ command })
+      });
+
+      const data = await res.json();
+      document.getElementById("resultBox").textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function sendEffect(){
+      const player = document.getElementById("playerInput").value.trim();
+      const effect = document.getElementById("effectInput").value;
+      const duration = Number(document.getElementById("durationInput").value || 200);
+      const amplifier = Number(document.getElementById("amplifierInput").value || 1);
+
+      const res = await fetch("/api/plugin/action", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "effect",
+          player,
+          effect,
+          duration,
+          amplifier
+        })
+      });
+
+      const data = await res.json();
+      document.getElementById("resultBox").textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function sendBroadcast(){
+      const text = document.getElementById("broadcastInput").value.trim();
+      if(!text) return;
+
+      const res = await fetch("/api/plugin/action", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "message",
+          text
+        })
+      });
+
+      const data = await res.json();
+      document.getElementById("resultBox").textContent = JSON.stringify(data, null, 2);
+    }
+
+    loadStatus();
+  </script>
+</body>
+</html>
