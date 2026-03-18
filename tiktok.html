@@ -1,41 +1,173 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Host LORD - TikTok Live</title>
+
   <style>
     :root{
-      --bg:#0b1120;
-      --card:#0f172a;
-      --card-2:#111827;
-      --border:#1f2937;
-      --text:#e5e7eb;
+      --bg:#0f172a;
+      --bg-soft:#020617;
+      --card:#111827;
+      --card-2:#0b1220;
+      --text:#ffffff;
       --muted:#94a3b8;
+      --input:#0b1220;
+      --border:#334155;
+      --nav:#111827;
+      --nav-hover:#1d4ed8;
       --primary:#2563eb;
       --primary-hover:#1d4ed8;
       --success:#16a34a;
-      --danger:#dc2626;
       --warning:#d97706;
+      --danger:#dc2626;
       --shadow:0 10px 30px rgba(0,0,0,.25);
       --radius:18px;
     }
 
-    *{box-sizing:border-box}
+    html[data-theme="light"]{
+      --bg:#eef2ff;
+      --bg-soft:#ffffff;
+      --card:#ffffff;
+      --card-2:#f8fafc;
+      --text:#0f172a;
+      --muted:#64748b;
+      --input:#ffffff;
+      --border:#cbd5e1;
+      --nav:#e2e8f0;
+      --nav-hover:#2563eb;
+      --primary:#2563eb;
+      --primary-hover:#1d4ed8;
+      --success:#16a34a;
+      --warning:#d97706;
+      --danger:#dc2626;
+      --shadow:0 10px 25px rgba(15,23,42,.08);
+    }
+
+    html[data-theme="lord"]{
+      --bg:#111111;
+      --bg-soft:#1a1a1a;
+      --card:#181818;
+      --card-2:#202020;
+      --text:#f5f5f5;
+      --muted:#b0b0b0;
+      --input:#101010;
+      --border:#333333;
+      --nav:#1c1c1c;
+      --nav-hover:#b91c1c;
+      --primary:#dc2626;
+      --primary-hover:#b91c1c;
+      --success:#16a34a;
+      --warning:#d97706;
+      --danger:#dc2626;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+
+    *{
+      box-sizing:border-box;
+    }
 
     html,body{
       margin:0;
       padding:0;
       min-height:100%;
-      background:linear-gradient(180deg,#0b1120 0%,#0a0f1d 100%);
+      font-family:Arial, Helvetica, sans-serif;
+      background:var(--bg);
       color:var(--text);
-      font-family:Inter,Arial,Helvetica,sans-serif;
     }
 
-    .container{
-      max-width:1180px;
-      margin:0 auto;
+    body{
+      display:flex;
+      min-height:100vh;
+    }
+
+    .sidebar{
+      width:260px;
+      background:var(--nav);
+      border-right:1px solid var(--border);
+      padding:20px 16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px;
+      border-radius:16px;
+      background:linear-gradient(135deg, rgba(37,99,235,.18), rgba(37,99,235,.06));
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      margin-bottom:8px;
+    }
+
+    .brand-logo{
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:var(--primary);
+      color:#fff;
+      font-weight:700;
+      font-size:18px;
+      flex-shrink:0;
+    }
+
+    .brand-text{
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+    }
+
+    .brand-text strong{
+      font-size:16px;
+      line-height:1.1;
+    }
+
+    .brand-text span{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:3px;
+    }
+
+    .menu{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      margin-top:10px;
+    }
+
+    .menu a{
+      text-decoration:none;
+      color:var(--text);
+      background:transparent;
+      border:1px solid transparent;
+      padding:12px 14px;
+      border-radius:12px;
+      transition:.2s ease;
+      display:block;
+      font-weight:600;
+    }
+
+    .menu a:hover{
+      background:rgba(37,99,235,.12);
+      border-color:var(--border);
+    }
+
+    .menu a.active{
+      background:var(--primary);
+      color:#fff;
+      border-color:transparent;
+    }
+
+    .main{
+      flex:1;
       padding:24px;
+      min-width:0;
     }
 
     .topbar{
@@ -43,21 +175,22 @@
       justify-content:space-between;
       align-items:center;
       gap:16px;
+      margin-bottom:22px;
       flex-wrap:wrap;
-      margin-bottom:24px;
     }
 
-    .title h1{
+    .page-title{
       margin:0;
-      font-size:30px;
+      font-size:28px;
     }
 
-    .title p{
-      margin:6px 0 0;
+    .page-subtitle{
+      margin-top:6px;
       color:var(--muted);
+      font-size:14px;
     }
 
-    .actions{
+    .top-actions{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
@@ -65,510 +198,730 @@
 
     .btn{
       border:none;
+      outline:none;
       border-radius:12px;
-      padding:11px 16px;
-      font-weight:600;
+      padding:12px 16px;
       cursor:pointer;
+      font-weight:700;
       transition:.2s ease;
+    }
+
+    .btn-primary{
+      background:var(--primary);
       color:#fff;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow:var(--shadow);
     }
 
-    .btn-primary{background:var(--primary)}
-    .btn-primary:hover{background:var(--primary-hover)}
-    .btn-secondary{background:#334155}
-    .btn-secondary:hover{background:#475569}
-    .btn-success{background:var(--success)}
-    .btn-success:hover{filter:brightness(.95)}
-    .btn-danger{background:var(--danger)}
-    .btn-danger:hover{filter:brightness(.95)}
-    .btn-warning{background:var(--warning)}
-    .btn-warning:hover{filter:brightness(.95)}
+    .btn-primary:hover{
+      background:var(--primary-hover);
+    }
 
-    .grid{
+    .btn-secondary{
+      background:var(--card);
+      color:var(--text);
+      border:1px solid var(--border);
+    }
+
+    .btn-secondary:hover{
+      background:var(--card-2);
+    }
+
+    .stats{
       display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:18px;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:16px;
+      margin-bottom:22px;
     }
 
-    .card{
-      background:linear-gradient(180deg,rgba(15,23,42,.96),rgba(17,24,39,.96));
+    .stat-card{
+      background:var(--card);
       border:1px solid var(--border);
       border-radius:var(--radius);
       padding:18px;
       box-shadow:var(--shadow);
     }
 
+    .stat-card .label{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:10px;
+    }
+
+    .stat-card .value{
+      font-size:24px;
+      font-weight:800;
+    }
+
+    .stat-online{
+      color:var(--success);
+    }
+
+    .stat-offline{
+      color:var(--danger);
+    }
+
+    .subtabs{
+      display:flex;
+      gap:10px;
+      margin-bottom:22px;
+      flex-wrap:wrap;
+    }
+
+    .subtab-btn{
+      border:1px solid var(--border);
+      background:var(--card);
+      color:var(--text);
+      padding:12px 18px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:700;
+      transition:.2s ease;
+    }
+
+    .subtab-btn:hover{
+      background:var(--card-2);
+    }
+
+    .subtab-btn.active{
+      background:var(--primary);
+      color:#fff;
+      border-color:transparent;
+    }
+
+    .tab-panel{
+      display:none;
+    }
+
+    .tab-panel.active{
+      display:block;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+      gap:18px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:20px;
+      box-shadow:var(--shadow);
+      min-width:0;
+    }
+
+    .card h2,
     .card h3{
-      margin:0 0 14px;
-      font-size:20px;
+      margin-top:0;
+      margin-bottom:8px;
+    }
+
+    .card p.help{
+      color:var(--muted);
+      margin-top:0;
+      font-size:14px;
+      line-height:1.5;
     }
 
     .field{
       margin-bottom:14px;
     }
 
-    label{
+    .field label{
       display:block;
-      margin-bottom:8px;
-      color:#cbd5e1;
+      margin-bottom:7px;
       font-size:14px;
+      font-weight:700;
     }
 
-    input,textarea{
+    .field input,
+    .field select,
+    .field textarea{
       width:100%;
-      background:#020617;
       border:1px solid var(--border);
+      background:var(--input);
       color:var(--text);
       border-radius:12px;
       padding:12px 14px;
+      font-size:14px;
       outline:none;
     }
 
-    input:focus,textarea:focus{
-      border-color:#3b82f6;
-      box-shadow:0 0 0 3px rgba(59,130,246,.15);
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(37,99,235,.18);
     }
 
-    .small{
-      font-size:12px;
-      color:var(--muted);
-      line-height:1.5;
+    .field textarea{
+      min-height:110px;
+      resize:vertical;
     }
 
-    .status{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:12px 14px;
-      border-radius:14px;
-      background:rgba(2,6,23,.5);
-      border:1px solid var(--border);
-      margin-bottom:14px;
-    }
-
-    .dot{
-      width:11px;
-      height:11px;
-      border-radius:999px;
-      background:#64748b;
-    }
-
-    .dot.online{
-      background:#22c55e;
-      box-shadow:0 0 12px rgba(34,197,94,.8);
-    }
-
-    .list{
+    .row-2{
       display:grid;
-      gap:10px;
-    }
-
-    .list-item{
-      padding:12px 14px;
-      border:1px solid var(--border);
-      border-radius:14px;
-      background:rgba(2,6,23,.45);
-      color:var(--muted);
-    }
-
-    .full{
-      grid-column:1 / -1;
-    }
-
-    .gift-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
+      grid-template-columns:1fr 1fr;
       gap:14px;
     }
 
-    .gift-card{
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:16px;
-      background:linear-gradient(180deg,rgba(2,6,23,.75),rgba(15,23,42,.75));
-    }
-
-    .gift-header{
+    .actions-row{
       display:flex;
-      align-items:center;
-      gap:12px;
-      margin-bottom:10px;
-    }
-
-    .gift-icon{
-      width:52px;
-      height:52px;
-      border-radius:14px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:28px;
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.08);
-      flex-shrink:0;
-    }
-
-    .gift-name{
-      font-size:18px;
-      font-weight:700;
-      color:var(--text);
-      margin:0;
-    }
-
-    .gift-sub{
-      margin:4px 0 0;
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .gift-tags{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin:10px 0;
-    }
-
-    .tag{
-      font-size:12px;
-      padding:5px 9px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.04);
-      color:#cbd5e1;
-    }
-
-    .gift-command{
-      margin-top:10px;
-      padding:10px 12px;
-      border-radius:12px;
-      background:#020617;
-      border:1px solid var(--border);
-      color:#93c5fd;
-      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-      font-size:13px;
-      word-break:break-word;
-    }
-
-    .legend{
-      display:flex;
-      flex-wrap:wrap;
       gap:10px;
-      margin-top:12px;
+      flex-wrap:wrap;
+      margin-top:10px;
     }
 
-    .legend-item{
-      border:1px solid var(--border);
-      border-radius:12px;
-      padding:8px 12px;
-      background:rgba(255,255,255,.03);
-      color:#cbd5e1;
+    .status-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:999px;
       font-size:13px;
+      font-weight:800;
+      background:rgba(148,163,184,.12);
+      border:1px solid var(--border);
     }
 
-    code{
-      background:rgba(255,255,255,.06);
-      padding:2px 6px;
-      border-radius:8px;
-      word-break:break-word;
+    .status-pill.online{
+      color:#dcfce7;
+      background:rgba(22,163,74,.22);
+      border-color:rgba(22,163,74,.35);
     }
 
-    pre{
-      margin:0;
+    .status-pill.offline{
+      color:#fee2e2;
+      background:rgba(220,38,38,.18);
+      border-color:rgba(220,38,38,.35);
+    }
+
+    .status-pill.warning{
+      color:#fef3c7;
+      background:rgba(217,119,6,.2);
+      border-color:rgba(217,119,6,.35);
+    }
+
+    .prebox{
+      background:var(--bg-soft);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:14px;
+      overflow:auto;
       white-space:pre-wrap;
       word-break:break-word;
+      min-height:150px;
+      font-family:Consolas, Monaco, monospace;
       font-size:13px;
-      color:#93c5fd;
-      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      line-height:1.5;
     }
 
-    @media (max-width: 900px){
-      .grid,
-      .gift-grid{
+    .saved-actions{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .saved-item{
+      background:var(--card-2);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:14px;
+    }
+
+    .saved-item-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+      margin-bottom:8px;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      background:rgba(37,99,235,.18);
+      color:#bfdbfe;
+      border:1px solid rgba(37,99,235,.28);
+    }
+
+    .saved-item code{
+      display:block;
+      margin-top:8px;
+      padding:10px 12px;
+      border-radius:10px;
+      background:var(--bg-soft);
+      border:1px solid var(--border);
+      color:var(--text);
+      font-family:Consolas, Monaco, monospace;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .muted{
+      color:var(--muted);
+    }
+
+    .empty{
+      color:var(--muted);
+      padding:20px;
+      text-align:center;
+      border:1px dashed var(--border);
+      border-radius:14px;
+      background:var(--card-2);
+    }
+
+    @media (max-width: 980px){
+      body{
+        flex-direction:column;
+      }
+
+      .sidebar{
+        width:100%;
+        border-right:none;
+        border-bottom:1px solid var(--border);
+      }
+
+      .row-2{
         grid-template-columns:1fr;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">HL</div>
+      <div class="brand-text">
+        <strong>Host LORD</strong>
+        <span>Painel TikTok Live</span>
+      </div>
+    </div>
+
+    <nav class="menu">
+      <a href="index.html">Painel</a>
+      <a href="arquivos.html">Arquivos</a>
+      <a href="console.html">Console</a>
+      <a href="tiktok.html" class="active">TikTok Live</a>
+      <a href="temas.html">Temas</a>
+    </nav>
+  </aside>
+
+  <main class="main">
     <div class="topbar">
-      <div class="title">
-        <h1>📱 TikTok Live</h1>
-        <p>Gerencie os presentes e eventos da live no Host LORD.</p>
+      <div>
+        <h1 class="page-title">TikTok Live</h1>
+        <div class="page-subtitle">Gerencie a conexão com Minecraft e configure ações do plugin.</div>
       </div>
 
-      <div class="actions">
-        <a class="btn btn-secondary" href="panel.html">⬅ Voltar ao painel</a>
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <h3>Configuração da integração</h3>
-
-        <div class="status">
-          <span id="liveDot" class="dot"></span>
-          <span id="liveStatusText">Desconectado</span>
-        </div>
-
-        <div class="field">
-          <label for="tiktokUsername">Usuário do TikTok</label>
-          <input id="tiktokUsername" type="text" placeholder="@seuusuario ou seuusuario" />
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-primary" type="button" onclick="saveTikTokConfig()">Salvar</button>
-          <button class="btn btn-success" type="button" onclick="toggleLiveConnection()">Conectar / Desconectar</button>
-          <button class="btn btn-warning" type="button" onclick="resetPresetMappings()">Restaurar padrão</button>
-        </div>
-
-        <p class="small" style="margin-top:14px;">
-          Essa página salva os dados no navegador. O backend precisa ler esse JSON para executar os comandos no Minecraft.
-        </p>
-      </div>
-
-      <div class="card">
-        <h3>Resumo atual</h3>
-        <div class="list">
-          <div class="list-item"><strong>Usuário:</strong> <span id="summaryUsername">--</span></div>
-          <div class="list-item"><strong>Status:</strong> <span id="summaryStatus">Desconectado</span></div>
-          <div class="list-item"><strong>Total de eventos:</strong> <span id="summaryCount">0</span></div>
-          <div class="list-item"><strong>Player alvo:</strong> <span id="summaryTargetPlayer">lordruann</span></div>
-        </div>
-
-        <div class="legend">
-          <div class="legend-item">👤 Seguidor = 💀 Esqueleto no lordruann</div>
-          <div class="legend-item">🌹 Rosa = 🧟 Zumbi no lordruann</div>
-          <div class="legend-item">🦖 Dino = 💥 Creeper no lordruann</div>
-          <div class="legend-item">🤠 Chapéu = ☠️ Wither no lordruann</div>
-        </div>
-      </div>
-
-      <div class="card full">
-        <h3>Mapa visual dos presentes</h3>
-        <div id="giftList" class="gift-grid"></div>
-      </div>
-
-      <div class="card full">
-        <h3>JSON para o backend</h3>
-        <div class="list">
-          <div class="list-item">
-            <pre id="jsonPreview"></pre>
-          </div>
-        </div>
-      </div>
-
-      <div class="card full">
-        <h3>Exemplos para o backend</h3>
-        <div class="list">
-          <div class="list-item"><code>follow => execute at lordruann run summon skeleton ~ ~ ~</code></div>
-          <div class="list-item"><code>Rosa => execute at lordruann run summon zombie ~ ~ ~</code></div>
-          <div class="list-item"><code>Dinossauro => execute at lordruann run summon creeper ~ ~ ~</code></div>
-          <div class="list-item"><code>Chapéu de cowboy => execute at lordruann run summon wither ~ ~ ~</code></div>
-        </div>
-
-        <p class="small" style="margin-top:14px;">
-          Spawnar wither pode destruir o mapa. Mais seguro seria usar <code>execute at lordruann run summon wither ~ ~20 ~</code>.
-        </p>
+      <div class="top-actions">
+        <button class="btn btn-secondary" onclick="loadSavedData()">Recarregar</button>
+        <button class="btn btn-primary" onclick="testarConexao()">Testar conexão</button>
       </div>
     </div>
-  </div>
 
-  <script>
-    const STORAGE_KEY = "hostlord_tiktok_config";
-    const TARGET_PLAYER = "lordruann";
+    <section class="stats">
+      <div class="stat-card">
+        <div class="label">Status da conexão</div>
+        <div id="statStatus" class="value stat-offline">Offline</div>
+      </div>
 
-    function getDefaultConfig() {
-      return {
-        username: "",
-        connected: false,
-        targetPlayer: TARGET_PLAYER,
-        mappings: [
-          {
-            id: "follow",
-            type: "follow",
-            label: "Seguidor",
-            coins: 0,
-            mob: "skeleton",
-            command: `execute at ${TARGET_PLAYER} run summon skeleton ~ ~ ~`,
-            icon: "👤",
-            mobIcon: "💀"
-          },
-          {
-            id: "rosa",
-            type: "gift",
-            label: "Rosa",
-            coins: 1,
-            mob: "zombie",
-            command: `execute at ${TARGET_PLAYER} run summon zombie ~ ~ ~`,
-            icon: "🌹",
-            mobIcon: "🧟"
-          },
-          {
-            id: "dinossauro",
-            type: "gift",
-            label: "Dinossauro",
-            coins: 10,
-            mob: "creeper",
-            command: `execute at ${TARGET_PLAYER} run summon creeper ~ ~ ~`,
-            icon: "🦖",
-            mobIcon: "💥"
-          },
-          {
-            id: "chapeu-de-cowboy",
-            type: "gift",
-            label: "Chapéu de cowboy",
-            coins: 100,
-            mob: "wither",
-            command: `execute at ${TARGET_PLAYER} run summon wither ~ ~ ~`,
-            icon: "🤠",
-            mobIcon: "☠️"
-          }
-        ]
-      };
-    }
+      <div class="stat-card">
+        <div class="label">Host configurado</div>
+        <div id="statHost" class="value">127.0.0.1</div>
+      </div>
 
-    function loadTikTokConfig() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return getDefaultConfig();
+      <div class="stat-card">
+        <div class="label">Porta</div>
+        <div id="statPort" class="value">4567</div>
+      </div>
 
-        const parsed = JSON.parse(raw);
-        const defaults = getDefaultConfig();
+      <div class="stat-card">
+        <div class="label">Ações cadastradas</div>
+        <div id="statAcoes" class="value">0</div>
+      </div>
+    </section>
 
-        return {
-          ...defaults,
-          ...parsed,
-          targetPlayer: TARGET_PLAYER,
-          mappings: Array.isArray(parsed.mappings) && parsed.mappings.length
-            ? parsed.mappings.map(item => ({
-                ...item,
-                command: fixCommandToTarget(item.mob || "zombie")
-              }))
-            : defaults.mappings
-        };
-      } catch {
-        return getDefaultConfig();
-      }
-    }
+    <div class="subtabs">
+      <button class="subtab-btn active" onclick="openTab('configuracoes', this)">Configurações</button>
+      <button class="subtab-btn" onclick="openTab('acoes', this)">Ações</button>
+    </div>
 
-    function fixCommandToTarget(mob) {
-      return `execute at ${TARGET_PLAYER} run summon ${mob} ~ ~ ~`;
-    }
+    <section id="configuracoes" class="tab-panel active">
+      <div class="grid">
+        <div class="card">
+          <h2>Conexão com Minecraft</h2>
+          <p class="help">
+            Configure os dados da conexão com o plugin estilo ServerTap/TikFinity.
+          </p>
 
-    function saveConfig(config) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
-    }
+          <div class="row-2">
+            <div class="field">
+              <label for="mcHost">Host / IP</label>
+              <input id="mcHost" type="text" placeholder="Ex: 127.0.0.1" value="127.0.0.1" />
+            </div>
 
-    function saveTikTokConfig() {
-      const current = loadTikTokConfig();
-      const updated = {
-        ...current,
-        targetPlayer: TARGET_PLAYER,
-        username: document.getElementById("tiktokUsername").value.trim().replace(/^@/, ""),
-        mappings: (current.mappings || []).map(item => ({
-          ...item,
-          command: fixCommandToTarget(item.mob || "zombie")
-        }))
-      };
-
-      saveConfig(updated);
-      renderTikTokConfig(updated);
-      alert("Configuração do TikTok salva com sucesso.");
-    }
-
-    function toggleLiveConnection() {
-      const current = loadTikTokConfig();
-
-      if (!current.username) {
-        alert("Preencha o usuário do TikTok antes de conectar.");
-        return;
-      }
-
-      const updated = {
-        ...current,
-        connected: !current.connected,
-        targetPlayer: TARGET_PLAYER,
-        mappings: (current.mappings || []).map(item => ({
-          ...item,
-          command: fixCommandToTarget(item.mob || "zombie")
-        }))
-      };
-
-      saveConfig(updated);
-      renderTikTokConfig(updated);
-
-      alert(updated.connected ? "TikTok Live conectada." : "TikTok Live desconectada.");
-    }
-
-    function resetPresetMappings() {
-      const old = loadTikTokConfig();
-      const fresh = getDefaultConfig();
-      fresh.username = old.username || "";
-      fresh.connected = false;
-      fresh.targetPlayer = TARGET_PLAYER;
-
-      saveConfig(fresh);
-      renderTikTokConfig(fresh);
-      alert("Mapeamento padrão restaurado.");
-    }
-
-    function renderTikTokConfig(config) {
-      document.getElementById("tiktokUsername").value = config.username || "";
-
-      document.getElementById("summaryUsername").textContent = config.username || "--";
-      document.getElementById("summaryStatus").textContent = config.connected ? "Conectado" : "Desconectado";
-      document.getElementById("summaryCount").textContent = Array.isArray(config.mappings) ? config.mappings.length : 0;
-      document.getElementById("summaryTargetPlayer").textContent = config.targetPlayer || TARGET_PLAYER;
-
-      const dot = document.getElementById("liveDot");
-      const text = document.getElementById("liveStatusText");
-
-      dot.classList.toggle("online", !!config.connected);
-      text.textContent = config.connected ? "Conectado" : "Desconectado";
-
-      renderMappings(config.mappings || []);
-      document.getElementById("jsonPreview").textContent = JSON.stringify(config, null, 2);
-    }
-
-    function renderMappings(mappings) {
-      const list = document.getElementById("giftList");
-
-      if (!mappings.length) {
-        list.innerHTML = `<div class="list-item">Nenhum mapeamento configurado.</div>`;
-        return;
-      }
-
-      list.innerHTML = mappings.map(item => `
-        <div class="gift-card">
-          <div class="gift-header">
-            <div class="gift-icon">${escapeHtml(item.icon || "🎁")}</div>
-            <div>
-              <p class="gift-name">${escapeHtml(item.label || "Sem nome")}</p>
-              <p class="gift-sub">${item.type === "follow" ? "Evento de seguidor" : "Presente da live"}</p>
+            <div class="field">
+              <label for="mcPort">Porta</label>
+              <input id="mcPort" type="number" placeholder="Ex: 4567" value="4567" />
             </div>
           </div>
 
-          <div class="gift-tags">
-            <span class="tag">tipo: ${escapeHtml(item.type || "--")}</span>
-            <span class="tag">moedas: ${Number(item.coins || 0)}</span>
-            <span class="tag">mob: ${escapeHtml(item.mob || "--")}</span>
-            <span class="tag">alvo: ${TARGET_PLAYER}</span>
-            <span class="tag">resultado: ${escapeHtml(item.mobIcon || "⚡")}</span>
+          <div class="field">
+            <label for="mcToken">Token</label>
+            <input id="mcToken" type="text" placeholder="Seu token do plugin" />
           </div>
 
-          <div class="gift-command">${escapeHtml(item.command || "")}</div>
+          <div class="field">
+            <label for="mcStatus">Status atual</label>
+            <div id="mcStatus" class="status-pill offline">Desconectado</div>
+          </div>
+
+          <div class="actions-row">
+            <button class="btn btn-primary" onclick="salvarConfiguracoes()">Salvar configurações</button>
+            <button class="btn btn-secondary" onclick="testarConexao()">Testar conexão</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Retorno da API</h2>
+          <p class="help">
+            Aqui aparece o resultado do teste de conexão com o backend/plugin.
+          </p>
+          <div id="configResult" class="prebox">Nenhum teste realizado ainda.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="acoes" class="tab-panel">
+      <div class="grid">
+        <div class="card">
+          <h2>Nova ação</h2>
+          <p class="help">
+            Cadastre ações para presentes, likes, follows ou comentários.
+          </p>
+
+          <div class="row-2">
+            <div class="field">
+              <label for="eventoTipo">Evento</label>
+              <select id="eventoTipo">
+                <option value="gift">Presente</option>
+                <option value="like">Like</option>
+                <option value="follow">Follow</option>
+                <option value="comment">Comentário</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="gatilhoNome">Gatilho / nome</label>
+              <input id="gatilhoNome" type="text" placeholder="Ex: Rosa, Galáxia, Meta de Like" />
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div class="field">
+              <label for="acaoTipo">Tipo da ação</label>
+              <select id="acaoTipo" onchange="updatePlaceholder()">
+                <option value="command">Comando</option>
+                <option value="effect">Efeito</option>
+                <option value="message">Mensagem</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="acaoAlvo">Alvo</label>
+              <input id="acaoAlvo" type="text" placeholder="Ex: jogador, servidor, todos" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="acaoValor">Valor da ação</label>
+            <textarea id="acaoValor" placeholder="Ex: say obrigado pelo presente!"></textarea>
+          </div>
+
+          <div class="actions-row">
+            <button class="btn btn-primary" onclick="salvarAcao()">Salvar ação</button>
+            <button class="btn btn-secondary" onclick="limparFormularioAcao()">Limpar</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Resultado</h2>
+          <p class="help">
+            Exibe o retorno do salvamento das ações.
+          </p>
+          <div id="acoesResult" class="prebox">Nenhuma ação salva ainda.</div>
+        </div>
+
+        <div class="card" style="grid-column:1 / -1;">
+          <h2>Ações salvas</h2>
+          <p class="help">
+            Lista local das ações cadastradas neste painel.
+          </p>
+          <div id="savedActions" class="saved-actions">
+            <div class="empty">Nenhuma ação cadastrada.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_CONFIG_KEY = "hostlord_tiktok_config";
+    const STORAGE_ACTIONS_KEY = "hostlord_tiktok_actions";
+
+    function openTab(tabId, button){
+      document.querySelectorAll(".tab-panel").forEach(panel => {
+        panel.classList.remove("active");
+      });
+
+      document.querySelectorAll(".subtab-btn").forEach(btn => {
+        btn.classList.remove("active");
+      });
+
+      document.getElementById(tabId).classList.add("active");
+      button.classList.add("active");
+    }
+
+    function setStatus(status, text){
+      const statusEl = document.getElementById("mcStatus");
+      const statStatus = document.getElementById("statStatus");
+
+      statusEl.className = "status-pill";
+      statStatus.classList.remove("stat-online", "stat-offline");
+
+      if(status === "online"){
+        statusEl.classList.add("online");
+        statusEl.textContent = text || "Conectado";
+        statStatus.textContent = "Online";
+        statStatus.classList.add("stat-online");
+      } else if(status === "warning"){
+        statusEl.classList.add("warning");
+        statusEl.textContent = text || "Aviso";
+        statStatus.textContent = "Aviso";
+        statStatus.classList.add("stat-offline");
+      } else {
+        statusEl.classList.add("offline");
+        statusEl.textContent = text || "Offline";
+        statStatus.textContent = "Offline";
+        statStatus.classList.add("stat-offline");
+      }
+    }
+
+    function getConfigFromInputs(){
+      return {
+        host: document.getElementById("mcHost").value.trim() || "127.0.0.1",
+        port: document.getElementById("mcPort").value.trim() || "4567",
+        token: document.getElementById("mcToken").value.trim()
+      };
+    }
+
+    function saveConfigToStorage(config){
+      localStorage.setItem(STORAGE_CONFIG_KEY, JSON.stringify(config));
+    }
+
+    function loadConfigFromStorage(){
+      try{
+        return JSON.parse(localStorage.getItem(STORAGE_CONFIG_KEY)) || null;
+      }catch{
+        return null;
+      }
+    }
+
+    function getActionsFromStorage(){
+      try{
+        return JSON.parse(localStorage.getItem(STORAGE_ACTIONS_KEY)) || [];
+      }catch{
+        return [];
+      }
+    }
+
+    function saveActionsToStorage(actions){
+      localStorage.setItem(STORAGE_ACTIONS_KEY, JSON.stringify(actions));
+    }
+
+    function salvarConfiguracoes(){
+      const config = getConfigFromInputs();
+      saveConfigToStorage(config);
+
+      document.getElementById("statHost").textContent = config.host || "-";
+      document.getElementById("statPort").textContent = config.port || "-";
+
+      document.getElementById("configResult").textContent = JSON.stringify({
+        ok: true,
+        message: "Configurações salvas no navegador.",
+        config: {
+          host: config.host,
+          port: config.port,
+          token: config.token ? "preenchido" : "vazio"
+        }
+      }, null, 2);
+
+      setStatus("warning", "Configuração salva");
+    }
+
+    async function testarConexao(){
+      const config = getConfigFromInputs();
+      saveConfigToStorage(config);
+
+      document.getElementById("statHost").textContent = config.host || "-";
+      document.getElementById("statPort").textContent = config.port || "-";
+      document.getElementById("configResult").textContent = "Testando conexão...";
+
+      setStatus("warning", "Testando conexão");
+
+      try{
+        const res = await fetch("/api/plugin/status", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        let data;
+        try{
+          data = await res.json();
+        }catch{
+          data = { ok:false, error:"Resposta inválida do backend." };
+        }
+
+        if(res.ok && (data.ok || data.plugin?.ok)){
+          setStatus("online", "Conectado");
+
+          document.getElementById("configResult").textContent = JSON.stringify({
+            ok: true,
+            message: "Conexão com plugin realizada com sucesso.",
+            response: data
+          }, null, 2);
+        } else {
+          setStatus("offline", "Falha na conexão");
+
+          document.getElementById("configResult").textContent = JSON.stringify({
+            ok: false,
+            message: "Não foi possível conectar ao plugin.",
+            response: data
+          }, null, 2);
+        }
+      }catch(err){
+        setStatus("offline", "Erro ao conectar");
+
+        document.getElementById("configResult").textContent = JSON.stringify({
+          ok: false,
+          error: "Erro ao chamar /api/plugin/status",
+          details: err.message
+        }, null, 2);
+      }
+    }
+
+    function updatePlaceholder(){
+      const tipo = document.getElementById("acaoTipo").value;
+      const area = document.getElementById("acaoValor");
+
+      if(tipo === "command"){
+        area.placeholder = "Ex: say obrigado pelo presente!";
+      } else if(tipo === "effect"){
+        area.placeholder = "Ex: SPEED";
+      } else {
+        area.placeholder = "Ex: &aValeu pelo apoio na live!";
+      }
+    }
+
+    function limparFormularioAcao(){
+      document.getElementById("eventoTipo").value = "gift";
+      document.getElementById("gatilhoNome").value = "";
+      document.getElementById("acaoTipo").value = "command";
+      document.getElementById("acaoAlvo").value = "";
+      document.getElementById("acaoValor").value = "";
+      updatePlaceholder();
+    }
+
+    function salvarAcao(){
+      const evento = document.getElementById("eventoTipo").value;
+      const gatilho = document.getElementById("gatilhoNome").value.trim();
+      const tipo = document.getElementById("acaoTipo").value;
+      const alvo = document.getElementById("acaoAlvo").value.trim();
+      const valor = document.getElementById("acaoValor").value.trim();
+
+      if(!gatilho || !valor){
+        document.getElementById("acoesResult").textContent = JSON.stringify({
+          ok: false,
+          error: "Preencha o nome do gatilho e o valor da ação."
+        }, null, 2);
+        return;
+      }
+
+      const actions = getActionsFromStorage();
+
+      const novaAcao = {
+        id: Date.now(),
+        evento,
+        gatilho,
+        tipo,
+        alvo: alvo || "não definido",
+        valor
+      };
+
+      actions.push(novaAcao);
+      saveActionsToStorage(actions);
+      renderActions(actions);
+
+      document.getElementById("acoesResult").textContent = JSON.stringify({
+        ok: true,
+        message: "Ação salva com sucesso.",
+        action: novaAcao
+      }, null, 2);
+
+      limparFormularioAcao();
+    }
+
+    function removerAcao(id){
+      const actions = getActionsFromStorage().filter(action => action.id !== id);
+      saveActionsToStorage(actions);
+      renderActions(actions);
+
+      document.getElementById("acoesResult").textContent = JSON.stringify({
+        ok: true,
+        message: "Ação removida com sucesso.",
+        id
+      }, null, 2);
+    }
+
+    function renderActions(actions){
+      const container = document.getElementById("savedActions");
+      document.getElementById("statAcoes").textContent = actions.length;
+
+      if(!actions.length){
+        container.innerHTML = '<div class="empty">Nenhuma ação cadastrada.</div>';
+        return;
+      }
+
+      container.innerHTML = actions.map(action => `
+        <div class="saved-item">
+          <div class="saved-item-top">
+            <div>
+              <strong>${escapeHtml(action.gatilho)}</strong>
+              <div class="muted" style="margin-top:4px;">
+                Evento: ${escapeHtml(action.evento)} | Tipo: ${escapeHtml(action.tipo)} | Alvo: ${escapeHtml(action.alvo)}
+              </div>
+            </div>
+            <span class="badge">${escapeHtml(action.evento)}</span>
+          </div>
+
+          <code>${escapeHtml(action.valor)}</code>
+
+          <div class="actions-row">
+            <button class="btn btn-secondary" onclick="removerAcao(${action.id})">Remover</button>
+          </div>
         </div>
       `).join("");
     }
 
-    function escapeHtml(str) {
-      return String(str)
+    function escapeHtml(text){
+      return String(text)
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -576,7 +929,32 @@
         .replaceAll("'", "&#039;");
     }
 
-    renderTikTokConfig(loadTikTokConfig());
+    function applySavedTheme(){
+      const savedTheme = localStorage.getItem("theme");
+      if(savedTheme){
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      }
+    }
+
+    function loadSavedData(){
+      applySavedTheme();
+
+      const config = loadConfigFromStorage();
+      if(config){
+        document.getElementById("mcHost").value = config.host || "127.0.0.1";
+        document.getElementById("mcPort").value = config.port || "4567";
+        document.getElementById("mcToken").value = config.token || "";
+
+        document.getElementById("statHost").textContent = config.host || "127.0.0.1";
+        document.getElementById("statPort").textContent = config.port || "4567";
+      }
+
+      const actions = getActionsFromStorage();
+      renderActions(actions);
+      updatePlaceholder();
+    }
+
+    loadSavedData();
   </script>
 </body>
 </html>
