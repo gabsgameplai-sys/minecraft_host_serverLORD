@@ -1,201 +1,226 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Host LORD - Login</title>
-  <style>
-    :root{
-      --bg:#0b1120;
-      --card:#111827;
-      --border:#1f2937;
-      --text:#e5e7eb;
-      --muted:#94a3b8;
-      --primary:#2563eb;
-      --primary-hover:#1d4ed8;
-      --danger-bg:#3a1624;
-      --danger-border:#7f1d1d;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Host LORD - Login</title>
 
-    *{box-sizing:border-box}
+<style>
+:root{
+--bg:#0b1120;
+--card:#111827;
+--border:#1f2937;
+--text:#e5e7eb;
+--muted:#94a3b8;
+--primary:#2563eb;
+--primary-hover:#1d4ed8;
+--danger-bg:#3a1624;
+--danger-border:#7f1d1d;
+}
 
-    body{
-      margin:0;
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      background:linear-gradient(180deg,#0b1120 0%,#0a0f1d 100%);
-      color:var(--text);
-      font-family:Arial,Helvetica,sans-serif;
-      padding:20px;
-    }
+*{box-sizing:border-box}
 
-    .card{
-      width:100%;
-      max-width:420px;
-      background:rgba(17,24,39,.96);
-      border:1px solid var(--border);
-      border-radius:20px;
-      padding:28px;
-      box-shadow:0 12px 40px rgba(0,0,0,.35);
-    }
+body{
+margin:0;
+min-height:100vh;
+display:grid;
+place-items:center;
+background:linear-gradient(180deg,#0b1120 0%,#0a0f1d 100%);
+color:var(--text);
+font-family:Arial,Helvetica,sans-serif;
+padding:20px;
+}
 
-    h1{
-      margin:0 0 8px;
-      font-size:28px;
-    }
+.card{
+width:100%;
+max-width:420px;
+background:rgba(17,24,39,.96);
+border:1px solid var(--border);
+border-radius:20px;
+padding:28px;
+box-shadow:0 12px 40px rgba(0,0,0,.35);
+}
 
-    p{
-      margin:0 0 20px;
-      color:var(--muted);
-    }
+h1{
+margin:0 0 8px;
+font-size:28px;
+}
 
-    label{
-      display:block;
-      margin:14px 0 8px;
-      font-size:14px;
-    }
+p{
+margin:0 0 20px;
+color:var(--muted);
+}
 
-    input{
-      width:100%;
-      padding:12px 14px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      background:#020617;
-      color:var(--text);
-      outline:none;
-    }
+label{
+display:block;
+margin:14px 0 8px;
+font-size:14px;
+}
 
-    .row{
-      margin-top:16px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
+input{
+width:100%;
+padding:12px 14px;
+border-radius:12px;
+border:1px solid var(--border);
+background:#020617;
+color:var(--text);
+outline:none;
+}
 
-    button{
-      border:none;
-      background:var(--primary);
-      color:white;
-      padding:12px 16px;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:700;
-    }
+.row{
+margin-top:16px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
 
-    button:hover{
-      background:var(--primary-hover);
-    }
+button{
+border:none;
+background:var(--primary);
+color:white;
+padding:12px 16px;
+border-radius:12px;
+cursor:pointer;
+font-weight:700;
+}
 
-    .msg{
-      margin-top:16px;
-      padding:14px 16px;
-      border-radius:14px;
-      background:var(--danger-bg);
-      border:1px solid var(--danger-border);
-      display:none;
-    }
+button:hover{
+background:var(--primary-hover);
+}
 
-    .small{
-      font-size:12px;
-      color:var(--muted);
-      margin-top:14px;
-      line-height:1.5;
-    }
-  </style>
+.msg{
+margin-top:16px;
+padding:14px 16px;
+border-radius:14px;
+background:var(--danger-bg);
+border:1px solid var(--danger-border);
+display:none;
+}
+
+.small{
+font-size:12px;
+color:var(--muted);
+margin-top:14px;
+line-height:1.5;
+}
+</style>
 </head>
+
 <body>
-  <div class="card">
-    <h1>Host LORD</h1>
-    <p>Entre com seu usuário e senha para acessar o painel.</p>
 
-    <label for="backendUrl">URL do backend</label>
-    <input id="backendUrl" placeholder="https://minecrafthostserverlord-production.up.railway.app" />
+<div class="card">
 
-    <label for="username">Usuário</label>
-    <input id="username" placeholder="admin ou convidado" />
+<h1>Host LORD</h1>
+<p>Entre com seu usuário e senha para acessar o painel.</p>
 
-    <label for="password">Senha</label>
-    <input id="password" type="password" placeholder="********" />
+<label>URL do backend</label>
+<input id="backendUrl" placeholder="https://minecrafthostserverlord-production.up.railway.app">
 
-    <div class="row">
-      <button onclick="doLogin()">Entrar</button>
-    </div>
+<label>Usuário</label>
+<input id="username" placeholder="admin ou convidado">
 
-    <div id="msg" class="msg"></div>
+<label>Senha</label>
+<input id="password" type="password" placeholder="********">
 
-    <div class="small">
-      O usuário <strong>convidado</strong> pode ver o painel, mas não pode editar nada.
-    </div>
-  </div>
+<div class="row">
+<button onclick="doLogin()">Entrar</button>
+</div>
 
-  <script>
-    const backendInput = document.getElementById("backendUrl");
-    const usernameInput = document.getElementById("username");
-    const passwordInput = document.getElementById("password");
-    const msg = document.getElementById("msg");
+<div id="msg" class="msg"></div>
 
-    backendInput.value = localStorage.getItem("backend_url") || "https://minecrafthostserverlord-production.up.railway.app";
+<div class="small">
+Usuário <b>admin</b> controla o servidor.<br>
+Usuário <b>convidado</b> apenas visualiza o painel.
+</div>
 
-    function showError(text) {
-      msg.style.display = "block";
-      msg.textContent = text;
-    }
+</div>
 
-    function clearError() {
-      msg.style.display = "none";
-      msg.textContent = "";
-    }
+<script>
 
-    async function doLogin() {
-      try {
-        clearError();
+const backendInput = document.getElementById("backendUrl")
+const usernameInput = document.getElementById("username")
+const passwordInput = document.getElementById("password")
+const msg = document.getElementById("msg")
 
-        const backend = backendInput.value.trim();
-        const username = usernameInput.value.trim();
-        const password = passwordInput.value;
+backendInput.value =
+localStorage.getItem("backend_url") ||
+"https://minecrafthostserverlord-production.up.railway.app"
 
-        if (!backend) {
-          showError("Preencha a URL do backend.");
-          return;
-        }
+function showError(text){
+msg.style.display="block"
+msg.textContent=text
+}
 
-        if (!username || !password) {
-          showError("Preencha usuário e senha.");
-          return;
-        }
+function clearError(){
+msg.style.display="none"
+msg.textContent=""
+}
 
-        localStorage.setItem("backend_url", backend);
+async function doLogin(){
 
-        const res = await fetch(backend + "/api/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            username,
-            password
-          })
-        });
+try{
 
-        const data = await res.json();
+clearError()
 
-        if (!res.ok || !data.ok) {
-          throw new Error(data.error || "Falha no login.");
-        }
+const backend = backendInput.value.trim().replace(/\/+$/,"")
+const username = usernameInput.value.trim()
+const password = passwordInput.value
 
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user || {}));
+if(!backend){
+showError("Preencha a URL do backend.")
+return
+}
 
-        window.location.href = "panel.html";
-      } catch (err) {
-        showError(err.message || "Erro no login.");
-      }
-    }
+if(!username || !password){
+showError("Preencha usuário e senha.")
+return
+}
 
-    passwordInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") doLogin();
-    });
-  </script>
+localStorage.setItem("backend_url", backend)
+
+const res = await fetch(backend + "/api/login",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+username,
+password
+})
+})
+
+const text = await res.text()
+
+let data=null
+
+try{
+data = text ? JSON.parse(text) : null
+}catch{
+throw new Error("Resposta inválida do backend.")
+}
+
+if(!res.ok || !data || !data.ok){
+throw new Error((data && data.error) || "Falha no login.")
+}
+
+localStorage.setItem("token", data.token)
+localStorage.setItem("user", JSON.stringify(data.user || {}))
+
+window.location.href="panel.html"
+
+}catch(err){
+
+showError(err.message || "Erro no login.")
+
+}
+
+}
+
+passwordInput.addEventListener("keydown",(e)=>{
+if(e.key==="Enter") doLogin()
+})
+
+</script>
+
 </body>
 </html>
